@@ -1,5 +1,9 @@
 # CoWidget
 CoWidget
+> a javascript framework.
+> simple and quick
+> 
+
 
 計劃整合UI:
 - Dojo Tookit.
