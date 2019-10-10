@@ -2,13 +2,17 @@
 CoWidget
 
 計劃整合UI:
-1. Dojo Tookit
-2. OpenUI5
+- Dojo Tookit.
+- OpenUI5.
+- Prue HTML5 fragment.
 
 計劃架構:
-1. JacaScript Framework, run on cloud.
-2. Token by json and xml with Application Server.
-3. Application target is Java EE.
+- JacaScript Framework, run on cloud application.
+- Token by json and xml with Application Server.
+- Application Target is Java EE.
 
 Next:
+- CowApp a dynamic web project, support json, xml protocols.
+- Tomcat, TomEE, Websphere.
+- JPA automatic generation java code from database, Entity concept.
 
