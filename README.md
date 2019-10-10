@@ -20,5 +20,5 @@ CoWidget
 > - CoWebapp a dynamic web project, support json, xml protocols.
 > - Tomcat, TomEE, Websphere.
 > - JPA automatic generation java code from database, Entity concept.
->> OpenJPA, Hibernat
+>>> OpenJPA, Hibernat
 
