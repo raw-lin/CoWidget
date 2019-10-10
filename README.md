@@ -7,5 +7,8 @@ CoWidget
 
 計劃架構:
 1. JacaScript Framework, run on cloud.
-2. Token by json with Application Server.
+2. Token by json and xml with Application Server.
 3. Application target is Java EE.
+
+Next:
+
