@@ -4,7 +4,7 @@ CoWidget
 計劃整合UI:
 - Dojo Tookit.
 - OpenUI5.
-- Prue HTML5 fragment.
+- Prue HTML5 fragment - XML.
 
 計劃架構:
 - JacaScript Framework, run on cloud application.
