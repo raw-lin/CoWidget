@@ -1,10 +1,11 @@
 # CoWidget
 ## CoWidget:
 > - Javascript framework.
-> - Dynamic lazy load package and class.
-> > > ClassLoader Implement.
-> - Proxy pattern.
-> - Composite pattern.
+> - Lazy load package and class.
+> > - Proxy pattern.
+> > - ClassLoader Implement.
+> - CoWidget
+> > - Composite pattern.
 > - Adapter pattern.
 
 
