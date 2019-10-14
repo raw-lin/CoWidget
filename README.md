@@ -2,6 +2,7 @@
 ## CoWidget:
 > - Javascript framework.
 > - Dynamic lazy load package and class.
+> > ClassLoader Impl
 > - Proxy pattern.
 > - Composite pattern.
 > - Adapter pattern.
