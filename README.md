@@ -12,7 +12,6 @@
 ## 計劃整合UI:
 > - Dojo Tookit.
 > - Prue DHTML5 fragment: XML.
-> - OpenUI5.
 
 
 ## 計劃架構:
