@@ -1,18 +1,14 @@
 /*
-	Copyright (c) 2004-2016, The JS Foundation All Rights Reserved.
-	Available via Academic Free License >= 2.1 OR the modified BSD license.
-	see: http://dojotoolkit.org/license for details
+ * CoWidget
+ * 
+ * (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
  */
-
 /*
- This is an optimized version of CoWidget, built for deployment and not for
- development. To get sources and documentation, please visit:
-
- http://CoWidget.rawya.net
+ * This is an optimized version of CoWidget, built for deployment and not for development. To get sources and documentation, please visit: http://cow.rawya.net
  */
 
+'use strict';
 (function() {
-	'use strict';
 
 	return {
 		
