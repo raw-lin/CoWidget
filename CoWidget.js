@@ -37,15 +37,15 @@
             return jsScripts[jsScripts.length - 1];
         })(doc);
 
-        console.debug('[CoWidget.factory] console: ', console);
-        console.debug('[CoWidget.factory] console.method: ', console.table());
-        console.debug('[CoWidget.factory] currentScript: ', currentScript);
+        console.debug('[CoWidget.factory.currentBaseHref] console: ', console);
+        console.debug('[CoWidget.factory.currentBaseHref] console.method: ', console.table());
+        console.debug('[CoWidget.factory.currentBaseHref] currentScript: ', currentScript);
 
         var currentHref = currentScript && currentScript.src ? currentScript.src : './';
 
-        console.debug('[CoWidget.factory] currentHref: ', currentHref);
+        console.debug('[CoWidget.factory.currentBaseHref] currentHref: ', currentHref);
         var currentBaseHref = currentHref ? currentHref.replace('/cowidget/CoWidget.js', '') : './';
-        console.debug('[CoWidget.factory] currentBaseHref: ', currentBaseHref);
+        console.debug('[CoWidget.factory.currentBaseHref] currentBaseHref: ', currentBaseHref);
 
         return currentBaseHref;
 
@@ -56,107 +56,68 @@
 // static get log() {
 // return LogFactory.getLog(ClassLoader);
 // }
-
-    	    static getProxyHandler() {
-    	        return {    	        	
-    	            'get': function(obj, prop) {obj, prop
-    	                console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
-    	                console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
-    	                console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
-
-// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol(Symbol.toPrimitive)\']: ' + (typeof obj['Symbol(Symbol.toPrimitive)']));
-// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol\']: ' + (typeof obj['Symbol']));
-// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol.toPrimitive\']: ' + (typeof obj['Symbol.toPrimitive']));
-// console.debug('[ClassLoader.proxyHandler] obj[\'toPrimitive\']: ' + (typeof obj['toPrimitive']));
-
-    	                if ('symbol' === typeof prop) {
-    	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
-    	                    return function(hint) {
-    	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
-    	                        return obj.toString();
-    	                    };
-    	                } else if (typeof obj[prop] === 'undefined') {
-    	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
-                                // match naming Class
-                                obj[prop] = ClassLoader.findClass(obj.packageName + '.' + prop);
-                                
-                                if(obj[prop]) {
-                                	 //Object.assign(obj[prop], {
-                                     //	packageName: obj.packageName,
-                                     //	className: prop
-                                     //});
-                                }
-                            } else {
-                                // match naming Package
-                                let packageObj = ClassLoader.findClass(obj.packageName + '.' + prop + '.package');
-
-                                if (packageObj) {
-                                    Object.assign(packageObj, {
-                                        'packageName': obj.packageName + '.' + prop
-                                    });
-                                } else {
-                                    packageObj = {
-                                        packageName: obj.packageName + '.' + prop
-                                    };
-
-                                }
-                                obj[prop] = new Proxy(packageObj, ClassLoader.getProxyHandler());
-                            }
-    	                } else {
-    	                    
-    	                }
-    	                
-    	                return obj[prop];
-    	            },
-
-    	            none: null
-    	        }
+    	    
+    	    constructor(options) {
+    	    	console.error('[ClassLoader.constructor] not work');
+            }
+    	    
+    	    static getSystemClassLoader() {
+    	    	let self = this;
+    	    	
+    	    	return self;
     	    }
     	    
     	    static findClass(className) {
-    	    	let targetUrl = ClassLoader.baseHref + '/' + className.replace(/\./gi, '/') + '.js';
-    	    	console.debug('[ClassLoader.proxyHandler.findClass] targetUrl: ' + targetUrl);
+    	    	let self = this;
+    	    	let classObj = null;
+    	    	console.debug('[ClassLoader.proxyHandler] self: ' + self);
     	    	
-    	    	let scriptObj = null;
-    	    	var xhrOptions = {
-    	    			url: targetUrl,
-    	    			method: 'GET',
-                        sync: true,
-                        handleAs: 'script',
+    	    	if('cowidget.lang.ClassLoader' === className) {
+    	    		classObj = self;
+    	    	}else {
+    	    		let targetUrl = ClassLoader.baseHref + '/' + className.replace(/\./gi, '/') + '.js';
+        	    	console.debug('[ClassLoader.proxyHandler.findClass] targetUrl: ' + targetUrl);
+        	    	
+        	    	var xhrOptions = {
+        	    			url: targetUrl,
+        	    			method: 'GET',
+                            sync: true,
+                            handleAs: 'script',
 
-//                        onLoad: function(e) {                        	
-//                            console.debug('[xhr.onLoad] xhrOptions: ', xhrOptions);
-//                            console.debug('[xhr.onLoad] xhr: ', xhr);
-//                            if (200 === xhr.status) {
-//                                // console.debug('[xhr.onLoad] e: ', e);
-//                                var arraybuffer = xhr.response; // not responseText
-//                                // console.debug('arraybuffer: ', arraybuffer);
-//
-//                                try {
-//                                    scriptObj = eval(arraybuffer);
-//                                    // console.debug('[xhr.onLoad] scriptObj: ', scriptObj);
-//                                } catch (exception) {
-//                                    console.error('[xhr.onLoad] scriptObj: ', scriptObj);
-//                                    console.error('[xhr.onLoad] exception: ', exception);
-//                                    console.trace('[xhr.onLoad]');
+//                            onLoad: function(e) {                        	
+//                                console.debug('[xhr.onLoad] xhrOptions: ', xhrOptions);
+//                                console.debug('[xhr.onLoad] xhr: ', xhr);
+//                                if (200 === xhr.status) {
+//                                    // console.debug('[xhr.onLoad] e: ', e);
+//                                    var arraybuffer = xhr.response; // not responseText
+//                                    // console.debug('arraybuffer: ', arraybuffer);
+    //
+//                                    try {
+//                                        scriptObj = eval(arraybuffer);
+//                                        // console.debug('[xhr.onLoad] scriptObj: ', scriptObj);
+//                                    } catch (exception) {
+//                                        console.error('[xhr.onLoad] scriptObj: ', scriptObj);
+//                                        console.error('[xhr.onLoad] exception: ', exception);
+//                                        console.trace('[xhr.onLoad]');
+//                                        scriptObj = null;
+//                                    }
+//                                } else {
+//                                    console.error('[xhr.onLoad] xhr.status: ', xhr.status);
+//                                    console.error('[xhr.onLoad] xhr.statusText: ', xhr.statusText);
+//                                    console.error('[xhr.onLoad] xhr.response: ', xhr.response);
 //                                    scriptObj = null;
 //                                }
-//                            } else {
-//                                console.error('[xhr.onLoad] xhr.status: ', xhr.status);
-//                                console.error('[xhr.onLoad] xhr.statusText: ', xhr.statusText);
-//                                console.error('[xhr.onLoad] xhr.response: ', xhr.response);
-//                                scriptObj = null;
 //                            }
-//                        }
-                        none : null
-                    };
+                            none : null
+                        };
+        	    	
+        	    	classObj = ClassLoader.xhr(xhrOptions);
+    	    	}
     	    	
-    	    	scriptObj = ClassLoader.xhr(xhrOptions);
-    	    	
-    	    	return scriptObj;
+    	    	return classObj;
     	    }
     	    
-    	    static xhr(xhrOptions) {
+    		static xhr(xhrOptions) {
     	    	var retObj = null;
     	    	
     	    	let xhr = new XMLHttpRequest();
@@ -235,20 +196,85 @@
         	    
     	        return retObj;
     	    }
+    	    
+    	    static getProxyHandler() {
+    	    	let self = this;
+    	    	
+    	        return {    	        	
+    	            'get': function(obj, prop, receiver) {obj, prop
+    	                console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
+    	                console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
+    	                console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
+
+// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol(Symbol.toPrimitive)\']: ' + (typeof obj['Symbol(Symbol.toPrimitive)']));
+// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol\']: ' + (typeof obj['Symbol']));
+// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol.toPrimitive\']: ' + (typeof obj['Symbol.toPrimitive']));
+// console.debug('[ClassLoader.proxyHandler] obj[\'toPrimitive\']: ' + (typeof obj['toPrimitive']));
+
+    	                if ('symbol' === typeof prop) {
+    	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
+    	                    return function(hint) {
+    	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
+    	                        return obj.toString();
+    	                    };
+    	                } else if (typeof obj[prop] === 'undefined') {
+    	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
+                                // match naming Class
+                                obj[prop] = ClassLoader.findClass(obj.packageName + '.' + prop);
+                                
+                                if(obj[prop]) {
+                                	 //Object.assign(obj[prop], {
+                                     //	packageName: obj.packageName,
+                                     //	className: prop
+                                     //});
+                                }
+                            } else {
+                                // match naming Package
+                                let packageObj = ClassLoader.findClass(obj.packageName + '.' + prop + '.package');
+
+                                if (packageObj) {
+                                    Object.assign(packageObj, {
+                                        'packageName': obj.packageName + '.' + prop
+                                    });
+                                } else {
+                                    packageObj = {
+                                        packageName: obj.packageName + '.' + prop
+                                    };
+
+                                }
+                                obj[prop] = new Proxy(packageObj, ClassLoader.getProxyHandler());
+                            }
+    	                } else {
+    	                    
+    	                }
+    	                
+    	                return obj[prop];
+    	            },
+
+    	            none: null
+    	        }
+    	    }
     	}
     	
     	Object.assign(ClassLoader, {
-        	baseHref: currentBaseHref
+        	baseHref: currentBaseHref,
+        	container : container
          });
+    	console.debug('[CoWidget.factory] ClassLoader: ', ClassLoader);
 
+    	//let classLoader = new ClassLoader();
         // package lazy loading
         container.cowidget = container.cowidget ? container.cowidget : new Proxy({
             packageName: 'cowidget',
         }, ClassLoader.getProxyHandler());
+    	
+    	// plugin ClassLoader to cowidget.lang
+        console.debug('[CoWidget.factory] cowidget.lang.ClassLoader: ', cowidget.lang.ClassLoader);
+        console.debug('[CoWidget.factory] cowidget.lang.ClassLoade.getProxyHandler: ', cowidget.lang.ClassLoader.getProxyHandler());
     };
 
-    console.debug('[CoWidget] currentBaseHref: ', currentBaseHref);
-    console.debug('[CoWidget] cowidget.common: ', cowidget.common);
+    console.debug('[CoWidget.factory] currentBaseHref: ', currentBaseHref);
+    console.debug('[CoWidget.factory] cowidget.common: ', cowidget.common);
     var defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
         place: '#coWidget',
@@ -268,8 +294,8 @@
     // Object.assign(CoWidget.defaultConfig, {'defaultConfig' : defaultConfig});
     // CoWidget.defaultConfig = defaultConfig;
     
-    console.debug('[CoWidget] CoWidget.defaultConfig: ', CoWidget.defaultConfig);
-    console.debug('[CoWidget] CoWidget: ', CoWidget);
+    console.debug('[CoWidget.factory] CoWidget.defaultConfig: ', CoWidget.defaultConfig);
+    console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));
