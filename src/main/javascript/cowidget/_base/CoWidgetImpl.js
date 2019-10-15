@@ -134,7 +134,7 @@
             self.omponents.push(coWidget);
         };
 
-        placeAta(place) {
+        placeAt(place) {
             var self = this;
             dojo.ready(0, function() {
             	
