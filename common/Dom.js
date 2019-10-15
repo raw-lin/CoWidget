@@ -28,7 +28,7 @@
 	            try {
 	                dojo.ready(priority, context, callback);
 	            } catch (exception) {
-	                console.error('[Util.ready] exception: ', exception);
+	                console.error('[Dom.ready] exception: ', exception);
 	            } finally {
 
 	            }

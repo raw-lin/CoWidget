@@ -70,7 +70,7 @@
     	    static findClass(className) {
     	    	let self = this;
     	    	let classObj = null;
-    	    	console.debug('[ClassLoader.proxyHandler] self: ' + self);
+    	    	console.debug('[ClassLoader.findClass] className: ' + className);
     	    	
     	    	if('cowidget.lang.ClassLoader' === className) {
     	    		classObj = self;
@@ -84,30 +84,30 @@
                             sync: true,
                             handleAs: 'script',
 
-//                            onLoad: function(e) {                        	
-//                                console.debug('[xhr.onLoad] xhrOptions: ', xhrOptions);
-//                                console.debug('[xhr.onLoad] xhr: ', xhr);
-//                                if (200 === xhr.status) {
-//                                    // console.debug('[xhr.onLoad] e: ', e);
-//                                    var arraybuffer = xhr.response; // not responseText
-//                                    // console.debug('arraybuffer: ', arraybuffer);
+// load: function(response) {
+// console.debug('[xhr.onLoad] xhrOptions: ', xhrOptions);
+// console.debug('[xhr.onLoad] xhr: ', xhr);
+// if (200 === xhr.status) {
+// // console.debug('[xhr.onLoad] e: ', e);
+// var arraybuffer = xhr.response; // not responseText
+// // console.debug('arraybuffer: ', arraybuffer);
     //
-//                                    try {
-//                                        scriptObj = eval(arraybuffer);
-//                                        // console.debug('[xhr.onLoad] scriptObj: ', scriptObj);
-//                                    } catch (exception) {
-//                                        console.error('[xhr.onLoad] scriptObj: ', scriptObj);
-//                                        console.error('[xhr.onLoad] exception: ', exception);
-//                                        console.trace('[xhr.onLoad]');
-//                                        scriptObj = null;
-//                                    }
-//                                } else {
-//                                    console.error('[xhr.onLoad] xhr.status: ', xhr.status);
-//                                    console.error('[xhr.onLoad] xhr.statusText: ', xhr.statusText);
-//                                    console.error('[xhr.onLoad] xhr.response: ', xhr.response);
-//                                    scriptObj = null;
-//                                }
-//                            }
+// try {
+// scriptObj = eval(arraybuffer);
+// // console.debug('[xhr.onLoad] scriptObj: ', scriptObj);
+// } catch (exception) {
+// console.error('[xhr.onLoad] scriptObj: ', scriptObj);
+// console.error('[xhr.onLoad] exception: ', exception);
+// console.trace('[xhr.onLoad]');
+// scriptObj = null;
+// }
+// } else {
+// console.error('[xhr.onLoad] xhr.status: ', xhr.status);
+// console.error('[xhr.onLoad] xhr.statusText: ', xhr.statusText);
+// console.error('[xhr.onLoad] xhr.response: ', xhr.response);
+// scriptObj = null;
+// }
+// }
                             none : null
                         };
         	    	
@@ -118,14 +118,29 @@
     	    }
     	    
     		static xhr(xhrOptions) {
+    			xhrOptions = xhrOptions ? xhrOptions:{};
     	    	var retObj = null;
     	    	
     	    	let xhr = new XMLHttpRequest();
     	    	xhr.open(xhrOptions.method, xhrOptions.url, false);
-                
-	    	    xhr.onload = function(e) {
-	    	    	retObj = ClassLoader.eval(xhr.responseText);
+    	    	
+    	    	xhr.onload = function(e) {
+	    	    	if(xhrOptions.load) {
+	    	    		if ('json' === xhrOptions.handleAs) {
+	    	    			retObj = JSON.parse(xhr.response);
+	    	    			xhrOptions.load(retObj); // not responseText
+	    	    		}else {
+	    	    			xhrOptions.load(xhr.response);
+	    	    		}
+	    	    	}else if ('script' === xhrOptions.handleAs) {
+	    	    		retObj = ClassLoader.eval(xhr.response);
+	    	    	}else if ('json' === xhrOptions.handleAs) {
+	    	    		retObj = JSON.parse(xhr.response);
+    	    	    }else {
+	    	    		retObj = xhr.responseText;
+	    	    	}
 	    	    }
+    	    	
 	    	    xhr.onerror = function(e) {
 	    	    	retObj = null;
 	    	    }
@@ -168,20 +183,20 @@
 			 */
     	    static eval(functionBody) {
     	    	let retObj = null;
-    	        //functionBody = 'console.debug("[top] ClassLoader: ", ClassLoader.container); return class { constructor(options) { this.options = options ? options:{}; console.debug("[constructor] caller: ", this.caller); console.debug("[constructor] options: ", options ? options:{}); console.debug("[constructor] new Class"); } };';
+    	        // functionBody = 'console.debug("[top] ClassLoader: ", ClassLoader.container); return class { constructor(options) { this.options = options ? options:{}; console.debug("[constructor] caller: ", this.caller); console.debug("[constructor] options: ", options ? options:{}); console.debug("[constructor] new Class"); } };';
 
-    	        //functionBody = 'return ' + '(function(ClassLoader) { ' + functionBody + ' })(ClassLoader);';
+    	        // functionBody = 'return ' + '(function(ClassLoader) { ' + functionBody + ' })(ClassLoader);';
     	        
-//    	    	functionBody = 'return (function() {' + functionBody + '})()';
-//    	        try {
-//    	        	retObj = Function('ClassLoader', functionBody)(ClassLoader);
-//    	        	//retObj = Function(functionBody)();
-//    	        } catch (exception) {
-//        	    	retObj = null;
+// functionBody = 'return (function() {' + functionBody + '})()';
+// try {
+// retObj = Function('ClassLoader', functionBody)(ClassLoader);
+// //retObj = Function(functionBody)();
+// } catch (exception) {
+// retObj = null;
 //        	    	 
-//    	            console.error('functionBody: ', functionBody);
-//    	            console.error('exception: ', exception);
-//    	        }
+// console.error('functionBody: ', functionBody);
+// console.error('exception: ', exception);
+// }
     	        
     	    	try {
     	    		retObj = eval(functionBody);
@@ -202,9 +217,11 @@
     	    	
     	        return {    	        	
     	            'get': function(obj, prop, receiver) {obj, prop
-    	                console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
-    	                console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
-    	                console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
+    	            	if ('undefined' === typeof obj[prop]) {
+        	                console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
+        	                console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
+        	                console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
+    	            	}
 
 // console.debug('[ClassLoader.proxyHandler] obj[\'Symbol(Symbol.toPrimitive)\']: ' + (typeof obj['Symbol(Symbol.toPrimitive)']));
 // console.debug('[ClassLoader.proxyHandler] obj[\'Symbol\']: ' + (typeof obj['Symbol']));
@@ -215,7 +232,8 @@
     	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
     	                    return function(hint) {
     	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
-    	                        return obj.toString();
+    	                        //return obj.toString();
+    	                        return obj.prop;
     	                    };
     	                } else if (typeof obj[prop] === 'undefined') {
     	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
@@ -223,10 +241,10 @@
                                 obj[prop] = ClassLoader.findClass(obj.packageName + '.' + prop);
                                 
                                 if(obj[prop]) {
-                                	 //Object.assign(obj[prop], {
-                                     //	packageName: obj.packageName,
-                                     //	className: prop
-                                     //});
+                                	 // Object.assign(obj[prop], {
+                                     // packageName: obj.packageName,
+                                     // className: prop
+                                     // });
                                 }
                             } else {
                                 // match naming Package
@@ -244,8 +262,6 @@
                                 }
                                 obj[prop] = new Proxy(packageObj, ClassLoader.getProxyHandler());
                             }
-    	                } else {
-    	                    
     	                }
     	                
     	                return obj[prop];
@@ -260,9 +276,9 @@
         	baseHref: currentBaseHref,
         	container : container
          });
-    	console.debug('[CoWidget.factory] ClassLoader: ', ClassLoader);
+    	//console.debug('[CoWidget.factory] ClassLoader: ', ClassLoader);
 
-    	//let classLoader = new ClassLoader();
+    	// let classLoader = new ClassLoader();
         // package lazy loading
         container.cowidget = container.cowidget ? container.cowidget : new Proxy({
             packageName: 'cowidget',
@@ -277,7 +293,7 @@
     console.debug('[CoWidget.factory] cowidget.common: ', cowidget.common);
     var defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
-        place: '#coWidget',
+        place: '#cowidget',
         baseHref: currentBaseHref,
         isMock: true,
         'null': null
@@ -287,14 +303,40 @@
     	// static get defaultConfig() {
     		
     	// }
+    	
+    	placeAt(place) {
+            var self = this;
+            console.debug('[CoWidget.placeAt] self: ', self);
+			
+            
+            dojo.ready(0, function() {
+            	
+            	if (self.omponents.length > 0) {
+            		place = 'coWidget';
+            		self.omponents.forEach(function(element) {
+            			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+            			element.placeAt();
+            		});
+            	}else {
+	                place = place ? place : self.place;
+	                if (0 === place.indexOf('#')) {
+	                	place = place.replace('#', '');
+	                }
+	                console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+	                // self.widget.buildRendering();
+	                self.widget.placeAt(place, 'only');
+            	}
+                // plugin ajax method
+            });
+            
+            return self;
+        };
     }
 
-    Object.assign(CoWidget, {'container' : container});    
-    Object.assign(CoWidget, {'defaultConfig' : defaultConfig});    
-    // Object.assign(CoWidget.defaultConfig, {'defaultConfig' : defaultConfig});
-    // CoWidget.defaultConfig = defaultConfig;
-    
-    console.debug('[CoWidget.factory] CoWidget.defaultConfig: ', CoWidget.defaultConfig);
+    Object.assign(CoWidget, {
+    	'container' : container,
+    	'defaultConfig' : defaultConfig}); 
+    console.debug('[CoWidget.factory] CoWidget.test: ', CoWidget.test());
     console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
 
     return CoWidget;
