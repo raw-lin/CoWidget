@@ -1,4 +1,4 @@
-/**
+/*
  * CoWidget
  * 
  * (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
