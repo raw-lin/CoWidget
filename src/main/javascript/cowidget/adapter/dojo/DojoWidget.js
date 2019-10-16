@@ -6,34 +6,9 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 		// from relative
 		// paths
 ], function(declare, _WidgetBase, _TemplatedMixin, domStyle, baseFx, lang, on, mouse, require, string) {
-
-	// module:
-	//		dijit/_TemplatedMixin
+	'use strict';
 
 	var DojoWidget = declare("cowidget.Widget", [_WidgetBase, _TemplatedMixin], {
-		_stringRepl : function(tmpl) {
-			let self = this;
-			
-			var className = this.declaredClass, _this = this;
-			// Cache contains a string because we need to do property replacement
-			// do the property replacement
-			return string.substitute(tmpl, this, function(value, key) {
-				if (key.charAt(0) == '!') {
-					value = lang.getObject(key.substr(1), false, _this);
-				}
-				if (typeof value == "undefined") {
-					//throw new Error(className + " template:" + key); // replace
-					return "";
-				} // a debugging aide
-				if (value == null) {
-					return "";
-				}
-
-				// Substitution keys beginning with ! will skip the transform step,
-				// in case a user wishes to insert unescaped markup, e.g. ${!foo}
-				return key.charAt(0) == "!" ? value : this._escapeValue("" + value);
-			}, this);
-		},
 		
 		postCreate : function() {
 			let self = this;

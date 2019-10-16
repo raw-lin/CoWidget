@@ -10,8 +10,8 @@
 
  http://CoWidget.rawya.net
  */
-'use strict';
 (function() {
+	'use strict';
 		  
 	class Net {
 			static xhr(xhrOptions) {
