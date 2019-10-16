@@ -1,19 +1,30 @@
-define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "dojo/dom-style", "dojo/_base/fx",
-		"dojo/_base/lang", "dojo/on", "dojo/mouse", "require", 'dojo/string', 'dijit/_WidgetsInTemplateMixin' // context-sensitive
-		// require to
-		// get URLs to
-		// resources
-		// from relative
-		// paths
-], function(declare, _WidgetBase, _TemplatedMixin, domStyle, baseFx, lang, on, mouse, require, string) {
+define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "dojox/mvc/at", "dojo/Stateful", "dojo/parser", "dojo/dom-style", "dojo/_base/fx",
+		"dojo/_base/lang", "dojo/on", "dojo/mouse", "require", 'dojo/string', 'dijit/_WidgetsInTemplateMixin'
+], function(declare, _WidgetBase, _TemplatedMixin, at, Stateful, parser, domStyle, baseFx, lang, on, mouse, require, string) {
 	'use strict';
 
 	var DojoWidget = declare("cowidget.Widget", [_WidgetBase, _TemplatedMixin], {
+		buildRenderingX : function() {
+			let self = this;
+			console.log('[DojoWidget.buildRendering] self: ', self);
+			
+			//super.buildRendering();
+		},
+		
+		init: function() {
+			let self = this;
+			console.log('[DojoWidget.init]');
+			
+			self.model = new Stateful(self.model);
+		},
 		
 		postCreate : function() {
 			let self = this;
 			// Get a DOM node reference for the root of our widget
 			var domNode = self.domNode;
+			
+			//self.set('model', new Stateful(self.model));
+			//self.set('model', {});
 
 			console.log('[DojoWidget.postCreate] self: ', self);
 			console.log('[DojoWidget.postCreate] model: ', self.model);
@@ -43,7 +54,7 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 				});
 				var xhrArgs = {
 					url : dojo.attr(formDom, 'action') + '?!' + buttonName,
-					form : dojo.query('form', self.dom)[0],
+					form : formDom,
 					handleAs : 'json',
 					load : function(data) {
 						console.log('[DojoWidget.postCreate] xhrArgs data: ', data);
@@ -51,7 +62,12 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 						// mock
 						let coWidgetOpts = data[buttonName][0];
 						console.log('[DojoWidget.postCreate] coWidgetOpts: ', coWidgetOpts);
-						new CoWidget(coWidgetOpts).placeAt();
+						
+						self.model = new Stateful(coWidgetOpts.model);
+						
+						//self.set('model', coWidgetOpts.model);
+						//self.postMixInProperties();
+						//new CoWidget(coWidgetOpts).placeAt();
 					},
 					error : function(error) {
 						// We'll 404 in the demo, but that's okay. We don't have
