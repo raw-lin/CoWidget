@@ -6,8 +6,8 @@
 /*
  * This is an optimized version of CoWidget, built for deployment and not for development. To get sources and documentation, please visit: http://cow.rawya.net
  */
-'use strict';
 (function() {
+	'use strict';
     console.debug('[CoWidgetImpl] return CoWidgetImpl class');
     return class CoWidgetImpl {
     	static test(){
@@ -93,9 +93,6 @@
             self.metaData.ui = 'dojo';
             self.omponents = [];  
             self.widget = null;
-            self.model = {
-               
-            };
             
             self.model = option.model ? option.model:{};
             self.place = option.place ? option.place : 'coWidget';
@@ -115,6 +112,8 @@
                         self.widget = new dojoWidget({
                             model: self.model
                         });
+                        
+                        self.widget.init();
                         console.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
                     }
                 });
