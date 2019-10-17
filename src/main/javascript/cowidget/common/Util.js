@@ -6,52 +6,49 @@
 /*
  * This is an optimized version of CoWidget, built for deployment and not for development. To get sources and documentation, please visit: http://cow.rawya.net
  */
-'use strict';
-(function() {
-    console.log('[Util] return Util class');
+class Util {
+	
+    constructor(option) {
 
-    // var RgMuiBox = {};
-    // RgMuiBox.method = function() {
-    // // ....
-    // }
+    }
 
-    return class Util {
+    static callTest() {
+        console.log('[Util.callTest] callTest');
+        return 'success';
+    }
 
-        constructor(option) {
+    static mixin(desObj, srcObj) {
+//    	//Traditional JavaScript Mixins
+//    	for (var prop in source) {
+//    	    if (source.hasOwnProperty(prop)) {
+//    	      target[prop] = source[prop];
+//    	    }
+//    	  }
+    	
+        desObj = desObj ? desObj : {};
+        console.log('[cow] ' + typeof srcObj);
 
-        }
+        var empty = {};
 
-        static callTest() {
-            console.log('[Util.callTest] callTest');
-            return 'success';
-        }
-
-        static mixin(desObj, srcObj) {
-            desObj = desObj ? desObj : {};
-            console.log('[cow] ' + typeof srcObj);
-
-            var empty = {};
-
-            if (typeof srcObj === 'object') {
-                if (true) {
-                    for (var p in srcObj) {
-                        if (!(p in empty)) {
-                            desObj[p] = srcObj[p];
-                        }
+        if (typeof srcObj === 'object') {
+            if (true) {
+                for (var p in srcObj) {
+                    if (!(p in empty)) {
+                        desObj[p] = srcObj[p];
                     }
-                } else {
-                    desObj = Object.assign(desObj, srcObj);
                 }
-            } else if (typeof srcObj === 'function') {
-                eval(srcObj);
+            } else {
+                desObj = Object.assign(desObj, srcObj);
             }
-
-            return desObj;
+        } else if (typeof srcObj === 'function') {
+            eval(srcObj);
         }
-        // Getter
-        get area() {
-            return 'area';
-        }
-    };
 
-})();
+        return desObj;
+    }
+    // Getter
+    get area() {
+        return 'area';
+    }
+}
+    

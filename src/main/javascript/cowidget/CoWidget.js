@@ -22,17 +22,6 @@
         });
         console.debug('[Universal JS module loader] global.CoWidget: ', global.CoWidget ? 'success' : 'failure');
     }
-    
-// if (typeof define === 'function' && define.amd) {
-// // AMD
-// define(['jquery'], factory);
-// } else if (typeof exports === 'object') {
-// // CommonJS
-// module.exports = factory(require('jquery'));
-// } else {
-// // 全局变量
-// root.returnExports = factory(root.jQuery);
-// }
 
 }(this, (function(container, userConfig) {
     'use strict';
@@ -64,12 +53,172 @@
     })(container.document);
 
     {
-    	/*
-		 * A class loader is an object that is responsible for loading classes.
-		 * 
+    	class _Class {
+	    	static assertSame(targetClass) {
+	    		console.debug('[ClassLoader.loadClass] targetClass.name: ', (null === targetClass ? 'null':targetClass.name));
+	    		return null === targetClass ? false:(this === targetClass);
+	    	}
+    	}
+    	
+    	class NetXhr extends _Class {
+			constructor(xhrProps) {
+
+		    }
+			
+			static xhrProps = {
+				sync: false
+			}
+			
+			static eval(jsBody) {
+		    	//console.debug('[TestClass.eval] classBody: ', classBody);
+				let retClass = Function('return (' + jsBody + ');')();
+				return retClass;
+			}
+			
+			static evalExtend(jsBody) {
+		    	//console.debug('[TestClass.eval] classBody: ', classBody);
+				let retClass = Function('return (' + jsBody + ');')();
+				return retClass;
+			}
+			
+			static xhr( /*bar._base._XhrArgss*/ xhrProps) {				
+				let response = '';
+				
+				xhrProps = xhrProps ? xhrProps : Object.assign({}, NetXhr.xhrProps);
+				
+		        if (typeof xhrProps.sync === 'undefined') {
+		            xhrProps.sync = true;
+		        }
+			        
+				if(false) {
+				//async function asyncCall(xhrProps) {
+					NetXhr._xhrPromise(xhrProps);
+					console.log('[NetXhr.xhr] xhrProps: ', xhrProps);	
+				//}
+				}else{
+					NetXhr._xhr(xhrProps);
+					console.log('[NetXhr.xhr] response: ', response);
+				}
+				
+				return xhrProps.response;
+			}
+			
+			static _xhrLoad(xhr, xhrProps, event) {
+				let response = '';
+				console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
+				console.debug('[NetXhr.xhr._xhrLoad] xhr: ', xhr);
+                // This is called even on 404 etc
+                // so check the status
+                if (200 === xhr.status) {
+                    // Resolve the promise with the response text
+                    Object.assign(xhrProps, { response : xhr.response });
+                    
+                    if(xhrProps.load) {
+                    	if ('json' === xhrProps.handleAs) {
+                    		xhrProps.load(NetXhr.eval(xhr.response));
+                    	}
+                    }
+                } else {
+                    // Otherwise reject with the status text
+                    // which will hopefully be a meaningful error
+                    //response = xhr.statusText;
+                }
+                
+                return response;
+			}
+			
+			static _xhr( /*NetXhr._xhrProps*/ xhrProps) {
+		        let req = new XMLHttpRequest();
+	            //req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
+	            req.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
+	            
+	            req.onload = function (event) {
+	            	NetXhr._xhrLoad(this, xhrProps, event);
+	            };
+	            // Handle network errors
+	            req.onerror = function(event) {
+	            	//response = 'Network Error';
+	            };
+
+	            // Make the request
+	            req.send();
+		    }
+
+		    static _xhrPromise( /*bar._base._XhrArgss*/ xhrProps) {
+		        let retObj = null;
+
+		        xhrProps = xhrProps ? xhrProps : {};
+		        if (typeof xhrProps.sync === 'undefined') {
+		            xhrProps.sync = true;
+		        }
+		        //const xhrPromise = new Promise(xhrProps);				
+		        //promise.then(/*successCallback*/function() {}, /*failureCallback*/function() {});
+		        
+		        let xhrPromise = new Promise( /* executor */ function(resolve, reject) {
+		        	
+	        		// Do the usual XHR stuff
+		            let req = new XMLHttpRequest();
+		            //req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
+		            req.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
+
+		            req.onload = function() {
+		                // This is called even on 404 etc
+		                // so check the status
+		                if (200 === req.status) {
+		                    // Resolve the promise with the response text
+		                    resolve(req.response);
+		                } else {
+		                    // Otherwise reject with the status text
+		                    // which will hopefully be a meaningful error
+		                    reject(Error(req.statusText));
+		                }
+		            };
+
+		            // Handle network errors
+		            req.onerror = function() {
+		                reject(Error("Network Error"));
+		            };
+
+		            // Make the request
+		            req.send();
+		        }).then(function(result) {
+		        	Object.assign(xhrProps, {response: result});
+		        	
+		        	let retClass = TestClass.eval(xhrProps.response);
+					console.debug('[TestClass._xhrPromise] retClass: ', retClass);
+		        	
+ 				}).catch(function(result) {
+ 					console.log('Do catch: ', result);
+ 					xhrProps.resObj = null;
+ 					
+ 					return null;
+ 				});
+		    }
+		}
+    	
+    	/**
+		 * Loads the class with the specified <a href="#binary-name">binary name</a>.
+		 * This method searches for classes in the same manner as the {@link
+		 * #loadClass(String, boolean)} method.  It is invoked by the Java virtual
+		 * machine to resolve class references.  Invoking this method is equivalent
+		 * to invoking {@link #loadClass(String, boolean) loadClass(name,
+		 * false)}.
+		 *
+		 * <blockquote><pre>
+		 *     let response = TestXhr.xhr(xhrProps).getRequest();
+		 * </pre></blockquote>
+		 *
 		 * @author rawlin
+		 * 
+		 * @param  name
+		 *         The <a href="#binary-name">binary name</a> of the class
+		 *
+		 * @return  The resulting {@code Class} object
+		 *
+		 * @throws  ClassNotFoundException
+		 *          If the class was not found
 		 */
-    	class ClassLoader {
+	    class ClassLoader extends _Class {
 // static get log() {
 // return LogFactory.getLog(ClassLoader);
 // }
@@ -85,159 +234,49 @@
     	    	return self;
     	    }
     	    
-    	    static findClass(className) {
+    	    static loadClass(name) {
     	    	let self = this;
-    	    	let classObj = null;
-    	    	console.debug('[ClassLoader.findClass] className: ' + className);
+    	    	let retClass = null;
+    	    	console.debug('[ClassLoader.loadClass] name: ' + name);
     	    	
-    	    	if('cowidget.lang.ClassLoader' === className) {
-    	    		classObj = self;
+    	    	if('cowidget.ClassLoader' === name) {
+					retClass = (function() {return ClassLoader;})();
+				}else if('cowidget.NetXhr' === name) {
+					retClass = (function() {return NetXhr;})();
+				}else if('cowidget.lang.ClassLoader1' === name) {
+    	    		
+    	    		class TmpClass extends (function(dstClass, superclass) {
+    	    				return class extends dstClass {};
+    	    			})(retClass, ClassLoader) {
+    	    		};
+    	    		
+    	    		retClass = (function() {return TmpClass;})();
+    	    		console.debug('[ClassLoader.loadClass] retClass is cowidget.lang.ClassLoader: ', retClass.assertTrue());
+    	    		//retClass = Object.assign(retClass, ClassLoader);
     	    	}else {
-    	    		let targetUrl = ClassLoader.baseHref + '/' + className.replace(/\./gi, '/') + '.js';
-        	    	console.debug('[ClassLoader.findClass] targetUrl: ' + targetUrl);
+    	    		let targetUrl = ClassLoader.baseHref + '/' + name.replace(/\./gi, '/') + '.js';
+        	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
-        	    	var xhrOptions = {
-        	    			url: targetUrl,
-        	    			method: 'GET',
-                            sync: true,
-                            handleAs: 'script',
-
-// load: function(response) {
-// console.debug('[xhr.onLoad] xhrOptions: ', xhrOptions);
-// console.debug('[xhr.onLoad] xhr: ', xhr);
-// if (200 === xhr.status) {
-// // console.debug('[xhr.onLoad] e: ', e);
-// var arraybuffer = xhr.response; // not responseText
-// // console.debug('arraybuffer: ', arraybuffer);
-    //
-// try {
-// scriptObj = eval(arraybuffer);
-// // console.debug('[xhr.onLoad] scriptObj: ', scriptObj);
-// } catch (exception) {
-// console.error('[xhr.onLoad] scriptObj: ', scriptObj);
-// console.error('[xhr.onLoad] exception: ', exception);
-// console.trace('[xhr.onLoad]');
-// scriptObj = null;
-// }
-// } else {
-// console.error('[xhr.onLoad] xhr.status: ', xhr.status);
-// console.error('[xhr.onLoad] xhr.statusText: ', xhr.statusText);
-// console.error('[xhr.onLoad] xhr.response: ', xhr.response);
-// scriptObj = null;
-// }
-// }
-                            none : null
-                        };
-        	    	
-        	    	classObj = ClassLoader.xhr(xhrOptions);
-        	    	
-
-	    	    	if('cowidget.common.Net' === className) {
-						Object.assign(className, {
-							xhr: ClassLoader.xhr
-						});
-	    	    	}
+    				let xhrProps = {
+    						url: targetUrl,
+    						sync: false,
+    						handleAs: 'classloader'
+    				}
+    				
+    				NetXhr.xhr(xhrProps);
+    				console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
+    				console.debug('[ClassLoader.loadClass] xhrProps.response: ' + xhrProps.response);
+    				retClass = NetXhr.eval(xhrProps.response);
+    				console.debug('[ClassLoader.loadClass] retClass: ', retClass);
+    				
+//    				console.debug('[ClassLoader.loadClass] retClass.assertSame: ' + name + ', ' + ClassLoader.name);
+//    	    		console.debug('[ClassLoader.loadClass] retClass.assertSame: ', retClass.assertSame(ClassLoader));
+//    	    		if('undefined' != typeof retClass.assertSame && false === retClass.assertSame(ClassLoader)) {
+//    	    			console.debug('[ClassLoader.loadClass] extends retClass.assertSame: ', retClass);
+//    	    		}
     	    	}
     	    	
-    	    	return classObj;
-    	    }
-    	    
-    		static xhr(xhrOptions) {
-    			xhrOptions = xhrOptions ? xhrOptions:{};
-    	    	var retObj = null;
-    	    	
-    	    	let xhr = new XMLHttpRequest();
-    	    	xhr.open(xhrOptions.method, xhrOptions.url, false);
-    	    	
-    	    	xhr.onload = function(e) {
-	    	    	if(xhrOptions.load) {
-	    	    		if ('json' === xhrOptions.handleAs) {
-	    	    			retObj = JSON.parse(xhr.response);
-	    	    			xhrOptions.load(retObj); // not responseText
-	    	    		}else {
-	    	    			xhrOptions.load(xhr.response);
-	    	    		}
-	    	    	}else if ('script' === xhrOptions.handleAs) {
-	    	    		retObj = ClassLoader.eval(xhr.response);
-	    	    	}else if ('json' === xhrOptions.handleAs) {
-	    	    		retObj = JSON.parse(xhr.response);
-    	    	    }else {
-	    	    		retObj = xhr.response;
-	    	    	}
-	    	    }
-    	    	
-	    	    xhr.onerror = function(e) {
-	    	    	retObj = null;
-	    	    }
-
-                xhr.send(null);
-                
-                return retObj;
-    	    }
-
-    	    static xhrX(xhrOptions) {
-    	    	var retObj = null;
-    	    	
-    	    	console.debug('[ClassLoader.xhr.promise.then] xhrOptions: ', xhrOptions);
-    	    	
-    	    	let xhrPromise = new Promise(function(resolve, reject) {
-    	    	    let xhr = new XMLHttpRequest();
-    	    	    xhr.open(xhrOptions.method, xhrOptions.url, true);
-                    
-    	    	    xhr.onload = function() {
-    	    	    	resolve(xhr);
-    	    	    }
-    	    	    xhr.onerror = function() {
-    	    	    	reject(xhr ? xhr: {});
-    	    	    }
-
-                    xhr.send(null);
-    	    	});
-    	    	
-    	        
-    	    	xhrPromise.then(function(xhrObj) {
-    	            console.debug('[ClassLoader.xhr.promise.then] ', value);
-    	            retObj = ClassLoader.eval(xhrObj.response);
-    	        }).catch(function(xhrObj) {
-    	        	retObj = null;
-    	            console.error('[ClassLoader.xhr.promise.then] xhrObj: ', xhrObj);
-    	        });
-    	    	
-    	    	return retObj;
-    	    }
-
-    	    /*
-			 * evaluates JavaScript code
-			 */
-    	    static eval(functionBody) {
-    	    	let retObj = null;
-    	        // functionBody = 'console.debug("[top] ClassLoader: ", ClassLoader.container); return class { constructor(options) { this.options = options ? options:{}; console.debug("[constructor] caller: ", this.caller); console.debug("[constructor] options: ", options ? options:{}); console.debug("[constructor] new Class"); } };';
-
-    	        // functionBody = 'return ' + '(function(ClassLoader) { ' + functionBody + ' })(ClassLoader);';
-    	        
-// functionBody = 'return (function() {' + functionBody + '})()';
-// try {
-// retObj = Function('ClassLoader', functionBody)(ClassLoader);
-// //retObj = Function(functionBody)();
-// } catch (exception) {
-// retObj = null;
-//        	    	 
-// console.error('functionBody: ', functionBody);
-// console.error('exception: ', exception);
-// }
-    	        
-    	    	try {
-    	    		retObj = eval(functionBody);
-        	    } catch (exception) {
-        	    	retObj = null;
-        	    	 
-    	            console.error('[ClassLoader.eval] functionBody: ', functionBody);
-    	            console.error('[ClassLoader.eval] exception: ', exception);
-    	        }
-        	    
-        	    console.debug('[ClassLoader.eval] retObj: ', retObj);
-        	    
-    	        return retObj;
+    	    	return retClass;
     	    }
     	    
     	    static getProxyHandler() {
@@ -256,17 +295,24 @@
 // console.debug('[ClassLoader.proxyHandler] obj[\'Symbol.toPrimitive\']: ' + (typeof obj['Symbol.toPrimitive']));
 // console.debug('[ClassLoader.proxyHandler] obj[\'toPrimitive\']: ' + (typeof obj['toPrimitive']));
 
-    	                if ('symbol' === typeof prop) {
+    	                if ('then' === typeof prop) {
     	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
     	                    return function(hint) {
     	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
     	                        // return obj.toString();
     	                        return obj.prop;
     	                    };
-    	                } else if (typeof obj[prop] === 'undefined') {
+    	                }else if ('symbol' === typeof prop) {
+    	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
+    	                    return function(hint) {
+    	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
+    	                        // return obj.toString();
+    	                        return obj.prop;
+    	                    };
+    	                }else if (typeof obj[prop] === 'undefined') {
     	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
                                 // match naming Class
-                                obj[prop] = ClassLoader.findClass(obj.packageName + '.' + prop);
+                                obj[prop] = ClassLoader.loadClass(obj.packageName + '.' + prop);
                                 
                                 if(obj[prop]) {
                                 	 // Object.assign(obj[prop], {
@@ -276,7 +322,7 @@
                                 }
                             } else {
                                 // match naming Package
-                                let packageObj = ClassLoader.findClass(obj.packageName + '.' + prop + '.package');
+                                let packageObj = {};//ClassLoader.loadClass(obj.packageName + '.' + prop + '.package');
 
                                 if (packageObj) {
                                     Object.assign(packageObj, {
@@ -298,6 +344,15 @@
     	            none: null
     	        }
     	    }
+    	    
+    	    extend(target, source) {
+//    	    	//Traditional JavaScript Mixins
+    	    	for (var prop in source) {
+    	    	    if (source.hasOwnProperty(prop)) {
+    	    	      target[prop] = source[prop];
+    	    	    }
+    	    	  }
+    	    }
     	}
     	
     	Object.assign(ClassLoader, {
@@ -306,17 +361,10 @@
         	'defaultConfig' : defaultConfig
     	});
     	
-    	// console.debug('[CoWidget.factory] ClassLoader: ', ClassLoader);
-
-    	// let classLoader = new ClassLoader();
         // package lazy loading
-        container.cowidget = container.cowidget ? container.cowidget : new Proxy({
+    	container.cowidget = container.cowidget ? container.cowidget : new Proxy({
             packageName: 'cowidget',
         }, ClassLoader.getProxyHandler());
-    	
-    	// plugin ClassLoader to cowidget.lang
-        console.debug('[CoWidget.factory] cowidget.lang.ClassLoader: ', cowidget.lang.ClassLoader);
-        console.debug('[CoWidget.factory] cowidget.lang.ClassLoade.getProxyHandler: ', cowidget.lang.ClassLoader.getProxyHandler());
     };
 
     console.debug('[CoWidget.factory] currentBaseHref: ', currentBaseHref);
@@ -334,17 +382,16 @@
     		
     	// }
     	
-    	placeAt2(place) {
+    	placeAtFork(place) {
             var self = this;
             console.debug('[CoWidget.placeAt] self: ', self);
-			
             
             dojo.ready(0, function() {
             	
             	if (self.omponents.length > 0) {
             		place = 'coWidget';
             		self.omponents.forEach(function(element) {
-            			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+            			console.debug('[CoWidget.placeAt] element: ', element);
             			element.placeAt();
             		});
             	}else {
@@ -352,7 +399,7 @@
 	                if (0 === place.indexOf('#')) {
 	                	place = place.replace('#', '');
 	                }
-	                console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+	                console.debug('[CoWidget.placeAt] place: ' + place);
 	                // self.widget.buildRendering();
 	                self.widget.placeAt(place, 'only');
             	}

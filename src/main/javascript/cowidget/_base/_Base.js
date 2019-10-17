@@ -29,6 +29,6 @@ class _Base {
         var self = this;
         return self;
     };
-};
+}
     
 //})();

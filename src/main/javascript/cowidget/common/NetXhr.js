@@ -7,7 +7,5 @@
  * 
  * http://CoWidget.rawya.net
  */
-
-{
-	"package": "package.cowidget"
+class NetXhr extends cowidget.NetXhr {
 }
