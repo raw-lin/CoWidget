@@ -1,12 +1,11 @@
-sap.ui.define([ 'cowidget/UI5WidgetController', 'sap/ui/core/mvc/Controller', "sap/ui/model/json/JSONModel", 'sap/m/MessageToast', 'sap/m/MessageBox' ], function(
-		UI5WidgetController, Controller, JSONModel, MessageToast, MessageBox) {
+sap.ui.define([ 'sap/ui/core/mvc/Controller', "sap/ui/model/json/JSONModel", 'sap/m/MessageToast', 'sap/m/MessageBox' ], function(
+		Controller, JSONModel, MessageToast, MessageBox) {
 	'use strict';
 	
-	return UI5WidgetController.extend("controller.Logon", {
+	return Controller.extend("cowidegit.UI5WidgetController", {
 		onInit : function() {
 			var that = this;
 			console.debug('[UI5WidgetController.onInit] that: ', that);
-			console.debug('[UI5WidgetController.onInit] that.getView:', that.getView());
 			
 			// set binding model
 			var oModel = new JSONModel({

@@ -23,7 +23,6 @@ class CoWidgetImpl {
     static load(url) {
     	console.debug('[CoWidgetImpl.load] url: ', url);
         var retCoWidget = null;
-        console.debug('[CoWidgetImpl.load] ui: dojo');
 
         var xhrOptions = {
             url: url,
@@ -65,12 +64,21 @@ class CoWidgetImpl {
         }
     };
     
+    /**
+     * TODO
+     */
     static query() {
-    	return dojo.query(id, doc);
+    	//return dojo.query(id, doc);
+    	return document.getElementById(id);
     }
     
+    /**
+     * TODO
+     */
     static byId(id, doc) {
-    	return dojo.byId(id, doc);
+    	//return dojo.byId(id, doc);
+    	console.debug('[Dom.byId] cowidget.common.ClassLoader.container.document: ', cowidget.common.ClassLoader.container.document);
+    	return cowidget.common.Dom.byId(id, doc);
     };
     
     static create(){
@@ -82,33 +90,29 @@ class CoWidgetImpl {
         option = option ? option : {};
 
         console.debug('[CoWidgetImpl.constructor] self: ', self);
-        console.debug('[CoWidgetImpl.constructor] option: ', option);
-
+        console.debug('[CoWidgetImpl.constructor] option: ', option);;
+        
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};
-        self.metaData.ui = 'dojo';
-        self.omponents = [];  
+        self.metaData.uiType = CoWidget.configure.ui;
+        self.omponents = [];
         self.widget = null;
         
         self.model = option.model ? option.model:{};
         self.place = option.place ? option.place : 'coWidget';
-        var cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
+        let cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
 
-        // Object.defineProperty(self, 'model', {
-        // message : 'xxxx'
-        // });
-
-        if ('' !== cowidgetViewName && 'dojo' === self.metaData.ui) {
-            console.debug('[CoWidgetImpl.constructor] cowidgetViewName: ', cowidgetViewName);
-            require([cowidgetViewName, 'dojo/Stateful'], function(DojoWidget, Stateful) {
+        if ('' !== cowidgetViewName && 'dojo' === self.metaData.uiType) {
+            console.debug('[CoWidgetImpl.constructor] dojo cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
+            require([cowidgetViewName, 'dojo/Stateful'], (DojoWidget, Stateful) => {
                 console.debug('[CoWidgetImpl.constructor] DojoWidget: ', DojoWidget);
 
                 if (true /* dojo */ ) {
                     // success
                 	// require('dojo.Stateful');
                     self.widget = new DojoWidget({
-                        model1: new dojo.Stateful(self.model),
-                        model: {
+                        model: new dojo.Stateful(self.model),
+                        model2: {
                         	field01 : '1',
                         	field02 : '2'
                         }
@@ -118,6 +122,13 @@ class CoWidgetImpl {
                     self.widget.postCreateAfter(self.model);
                 }
             });
+        }else if ('' !== cowidgetViewName && 'ui5' === self.metaData.uiType) {
+            console.debug('[CoWidgetImpl.constructor] cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
+        	self.widget = sap.ui.xmlview({
+                viewName : "mock.ui5.view.Logon"
+             });
+
+			console.debug('[CoWidgetImpl.constructor] self.widget:', self.widget);
         }
     };
 
@@ -136,7 +147,9 @@ class CoWidgetImpl {
 
     placeAt(place) {
         var self = this;
-        dojo.ready(0, function() {
+        console.debug('[CoWidgetImpl.placeAt] self: ', self);
+        
+        //dojo.ready(0, () => {
         	
         	if (self.omponents.length > 0) {
         		place = 'coWidget';
@@ -151,10 +164,11 @@ class CoWidgetImpl {
                 }
                 console.debug('[CoWidgetImpl.placeAt] place: ' + place);
                 // self.widget.buildRendering();
+                place = 'cowidget';
                 self.widget.placeAt(place, 'only');
         	}
             // plugin ajax method
-        });
+        //});
         
         return self;
     };

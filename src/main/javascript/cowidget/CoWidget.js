@@ -404,9 +404,9 @@
 
     Object.assign(CoWidget, {
     	'container' : container,
-    	'defaultConfig' : defaultConfig}); 
+    	'configure' : defaultConfig}); 
     console.debug('[CoWidget.factory] CoWidget.test: ', CoWidget.test());
-    console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
+    //console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));
