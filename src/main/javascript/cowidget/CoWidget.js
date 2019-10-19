@@ -117,12 +117,14 @@
                     if(xhrProps.load) {
                     	if ('json' === xhrProps.handleAs) {
                     		xhrProps.load(NetXhr.eval(xhr.response));
+                    	}else if ('classloader' === xhrProps.handleAs) {
+                    		xhrProps.load(NetXhr.eval(xhr.response));
                     	}
                     }
                 } else {
-                    // Otherwise reject with the status text
-                    // which will hopefully be a meaningful error
-                    //response = xhr.statusText;
+                    if(xhrProps.error) { 
+                		xhrProps.error(xhr.statusText);
+                	}
                 }
                 
                 return response;
@@ -244,30 +246,24 @@
 					retClass = (function() {return ClassLoader;})();
 				}else if('cowidget.NetXhr' === name) {
 					retClass = (function() {return NetXhr;})();
-				}else if('cowidget.lang.ClassLoader1' === name) {
-    	    		
-    	    		class TmpClass extends (function(dstClass, superclass) {
-    	    				return class extends dstClass {};
-    	    			})(retClass, ClassLoader) {
-    	    		};
-    	    		
-    	    		retClass = (function() {return TmpClass;})();
-    	    		console.debug('[ClassLoader.loadClass] retClass is cowidget.lang.ClassLoader: ', retClass.assertTrue());
-    	    		//retClass = Object.assign(retClass, ClassLoader);
-    	    	}else {
+				}else {
     	    		let targetUrl = ClassLoader.baseHref + '/' + name.replace(/\./gi, '/') + '.js';
         	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
     				let xhrProps = {
     						url: targetUrl,
     						sync: false,
-    						handleAs: 'classloader'
+    						handleAs: 'classloader',
+    						
+    						load: (data) => {
+    							retClass = data;
+    						}
     				}
     				
     				NetXhr.xhr(xhrProps);
     				console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
     				console.debug('[ClassLoader.loadClass] xhrProps.response: ' + xhrProps.response);
-    				retClass = NetXhr.eval(xhrProps.response);
+    				//retClass = NetXhr.eval(xhrProps.response);
     				console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     				
 //    				console.debug('[ClassLoader.loadClass] retClass.assertSame: ' + name + ', ' + ClassLoader.name);
@@ -346,7 +342,10 @@
     	        }
     	    }
     	    
-    	    extend(target, source) {
+    	    /**
+    	     * TODO
+    	     */
+    	    mixinClass(target, ...source) {
 //    	    	//Traditional JavaScript Mixins
     	    	for (var prop in source) {
     	    	    if (source.hasOwnProperty(prop)) {

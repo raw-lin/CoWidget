@@ -32,12 +32,12 @@ class CoWidgetImpl {
             preventCache: false,
             sync: false,
 
-            load: function(data) {
+            load: (data) => {
                 console.debug('[CoWidgetImpl.load] data: ', data);
 
                 if (Array.isArray(data)) {
                     retCoWidget = new CoWidget();
-                    data.forEach(function(item, index, array) {
+                    data.forEach((item, index, array) => {
                         console.debug('[CoWidgetImpl.load xhrArgs.load] item: ' + index + ', ', item);
                         // if (0 == index) {
                         retCoWidget.push(new CoWidget(item));
@@ -50,7 +50,7 @@ class CoWidgetImpl {
                 console.debug('[CoWidgetImpl.load xhrArgs.load] retCoWidget ', retCoWidget);
             },
 
-            error: function(error) {
+            error: (error) => {
                 console.error('[CoWidgetImpl.load xhrArgs.error] error ', error);
             }
         };
