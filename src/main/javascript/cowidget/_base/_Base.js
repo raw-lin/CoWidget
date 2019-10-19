@@ -1,13 +1,11 @@
-/*
- * CoWidget
+/**
+ * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
  * 
- * (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
+ * <pre>
+ * This is an optimized version of CoWidget, built for deployment and not for development.
+ * To get sources and documentation, please visit: http://cowidget.rawya.net
+ * </pre>
  */
-/*
- * This is an optimized version of CoWidget, built for deployment and not for development. To get sources and documentation, please visit: http://cow.rawya.net
- */
-//(function() { 'use strict'; return 
-
 class _Base {
 	
     static foo() {
@@ -30,5 +28,3 @@ class _Base {
         return self;
     };
 }
-    
-//})();

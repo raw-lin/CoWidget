@@ -65,20 +65,21 @@
 
 		    }
 			
-			static xhrProps = {
-				sync: false
+			static get xhrProps() {
+				return {
+					sync: false
+				};
 			}
 			
 			static eval(jsBody) {
 		    	//console.debug('[TestClass.eval] classBody: ', classBody);
-				let retClass = Function('return (' + jsBody + ');')();
-				return retClass;
-			}
-			
-			static evalExtend(jsBody) {
-		    	//console.debug('[TestClass.eval] classBody: ', classBody);
-				let retClass = Function('return (' + jsBody + ');')();
-				return retClass;
+				let retObj;
+				try {
+					retObj = Function('return (' + jsBody + ');')();
+				}catch(exception) {
+					retObj = null;
+				}
+				return retObj;
 			}
 			
 			static xhr( /*bar._base._XhrArgss*/ xhrProps) {				

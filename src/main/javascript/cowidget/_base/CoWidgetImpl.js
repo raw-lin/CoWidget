@@ -1,10 +1,10 @@
-/*
- * CoWidget
+/**
+ * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
  * 
- * (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
- */
-/*
- * This is an optimized version of CoWidget, built for deployment and not for development. To get sources and documentation, please visit: http://cow.rawya.net
+ * <pre>
+ * This is an optimized version of CoWidget, built for deployment and not for development.
+ * To get sources and documentation, please visit: http://cowidget.rawya.net
+ * </pre>
  */
 class CoWidgetImpl {
 	static test(){
@@ -105,7 +105,7 @@ class CoWidgetImpl {
 
                 if (true /* dojo */ ) {
                     // success
-                	//require('dojo.Stateful');
+                	// require('dojo.Stateful');
                     self.widget = new DojoWidget({
                         model1: new dojo.Stateful(self.model),
                         model: {
