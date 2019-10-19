@@ -200,26 +200,18 @@
 		}
     	
     	/**
+    	 * 
 		 * Loads the class with the specified <a href="#binary-name">binary name</a>.
 		 * This method searches for classes in the same manner as the {@link
-		 * #loadClass(String, boolean)} method.  It is invoked by the Java virtual
-		 * machine to resolve class references.  Invoking this method is equivalent
-		 * to invoking {@link #loadClass(String, boolean) loadClass(name,
-		 * false)}.
+		 * #loadClass(String, boolean)} method.  It is invoked to resolve class references.
+		 * Invoking this method is equivalent
+		 * to invoking {@link #loadClass(String)}.
 		 *
 		 * <blockquote><pre>
-		 *     let response = TestXhr.xhr(xhrProps).getRequest();
+		 *     let retCLass =ClassLoader.loadClass(<packageName.ClassName>);
 		 * </pre></blockquote>
 		 *
 		 * @author rawlin
-		 * 
-		 * @param  name
-		 *         The <a href="#binary-name">binary name</a> of the class
-		 *
-		 * @return  The resulting {@code Class} object
-		 *
-		 * @throws  ClassNotFoundException
-		 *          If the class was not found
 		 */
 	    class ClassLoader extends _Class {
 // static get log() {
