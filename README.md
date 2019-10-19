@@ -8,7 +8,6 @@
 
 > <code>
 	let test = cowidget.common.Util.callTest();
-	let test = ~.common.Util.callTest();
 > </code>
 
 - CoWidget
