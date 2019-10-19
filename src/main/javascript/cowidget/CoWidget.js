@@ -199,20 +199,6 @@
 		    }
 		}
     	
-    	/**
-    	 * 
-		 * Loads the class with the specified <a href="#binary-name">binary name</a>.
-		 * This method searches for classes in the same manner as the {@link
-		 * #loadClass(String, boolean)} method.  It is invoked to resolve class references.
-		 * Invoking this method is equivalent
-		 * to invoking {@link #loadClass(String)}.
-		 *
-		 * <blockquote><pre>
-		 *     let retCLass =ClassLoader.loadClass(<packageName.ClassName>);
-		 * </pre></blockquote>
-		 *
-		 * @author rawlin
-		 */
 	    class ClassLoader extends _Class {
 // static get log() {
 // return LogFactory.getLog(ClassLoader);
@@ -357,6 +343,8 @@
     	container.cowidget = container.cowidget ? container.cowidget : new Proxy({
             packageName: 'cowidget',
         }, ClassLoader.getProxyHandler());
+    	
+    	 container['~'] = container.cowidget;
     };
 
     console.debug('[CoWidget.factory] currentBaseHref: ', currentBaseHref);

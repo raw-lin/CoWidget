@@ -65,18 +65,18 @@ class CoWidgetImpl {
     };
     
     /**
-     * TODO
-     */
+	 * TODO
+	 */
     static query() {
-    	//return dojo.query(id, doc);
+    	// return dojo.query(id, doc);
     	return document.getElementById(id);
     }
     
     /**
-     * TODO
-     */
+	 * TODO
+	 */
     static byId(id, doc) {
-    	//return dojo.byId(id, doc);
+    	// return dojo.byId(id, doc);
     	console.debug('[Dom.byId] cowidget.common.ClassLoader.container.document: ', cowidget.common.ClassLoader.container.document);
     	return cowidget.common.Dom.byId(id, doc);
     };
@@ -154,8 +154,48 @@ class CoWidgetImpl {
         var self = this;
         console.debug('[CoWidgetImpl.placeAt] self: ', self);
         
-        //dojo.ready(0, () => {
-        	
+//	        () => {
+//	        	if (self.omponents.length > 0) {
+//	        		place = 'coWidget';
+//	        		self.omponents.forEach(function(element) {
+//	        			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+//	        			element.placeAt();
+//	        		});
+//	        	}else {
+//	                place = place ? place : self.place;
+//	                if (0 === place.indexOf('#')) {
+//	                	place = place.replace('#', '');
+//	                }
+//	                console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+//	                // self.widget.buildRendering();
+//	                place = 'cowidget';
+//	                self.widget.placeAt(place, 'only');
+//	        	}
+//	        }
+	        
+        if ('dojo' === self.metaData.uiType) {
+        	dojo.ready(0, () => {
+            	
+            	if (self.omponents.length > 0) {
+            		place = 'coWidget';
+            		self.omponents.forEach(function(element) {
+            			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+            			element.placeAt();
+            		});
+            	}else {
+                    place = place ? place : self.place;
+                    if (0 === place.indexOf('#')) {
+                    	place = place.replace('#', '');
+                    }
+                    console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+                    // self.widget.buildRendering();
+                    place = 'coWidget';
+                    self.widget.placeAt(place, 'only');
+            	}
+                // plugin ajax method
+            });
+        }else {
+        	// ui5
         	if (self.omponents.length > 0) {
         		place = 'coWidget';
         		self.omponents.forEach(function(element) {
@@ -172,8 +212,7 @@ class CoWidgetImpl {
                 place = 'cowidget';
                 self.widget.placeAt(place, 'only');
         	}
-            // plugin ajax method
-        //});
+        }
         
         return self;
     };
