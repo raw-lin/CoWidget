@@ -128,7 +128,12 @@ class CoWidgetImpl {
                 viewName : "mock.ui5.view.Logon"
              });
 
-			console.debug('[CoWidgetImpl.constructor] self.widget:', self.widget);
+			console.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
+			sap.ui.require("sap/ui/model/json/JSONModel");
+			let oModel = new sap.ui.model.json.JSONModel({
+				field01: "[CoWidgetImpl.constructor] Hi, my name is Harry Hawk"
+			});
+			self.widget.setModel(oModel);
         }
     };
 

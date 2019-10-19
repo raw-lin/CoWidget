@@ -4,22 +4,18 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', "sap/ui/model/json/JSONModel", 'sa
 	
 	return Controller.extend("cowidegit.UI5WidgetController", {
 		onInit : function() {
-			var that = this;
+			let that = this;
 			console.debug('[UI5WidgetController.onInit] that: ', that);
 			
 			// set binding model
-			var oModel = new JSONModel({
-				field01: "Hi, my name is Harry Hawk"
-			});
+			//let oModel = new JSONModel({
+			//	field01: "Hi, my name is Harry Hawk"
+			//});
 			
 			// Assign the model object to the SAPUI5 core
-			that.getView().setModel(oModel);
+			//that.getView().setModel(oModel);
 
-		},
-
-		onTap : function(oEvent) {
-			let that = this;
-			console.debug('that', that);
+			// plugin ajax to button
 		},
 
 		onPress : function(oEvent) {
