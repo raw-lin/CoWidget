@@ -11,11 +11,6 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 
 	var DojoWidget = declare("cowidget.Widget", [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 		
-		at: null,
-		ctrl: null,
-		
-		//model : null,
-		
 		buildRenderingX : function() {
 			let self = this;
 			console.log('[DojoWidget.buildRendering] self: ', self);
@@ -30,29 +25,32 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 			//self.model = new Stateful(model);
 		},
 		
-		buildRenderingx: function(){
-			console.log("call myMvcTemplated buildRendering");
-			//window.at = at;		
-			//this.inherited(arguments);
-		},
+//		buildRendering: function(){
+//			console.log('[DojoWidget.buildRendering] self: ', self);
+//			window.at = at;
+//			super.buildRendering();
+//			//this.inherited(arguments);
+//		},
 		
 		postCreate : function() {
 			let self = this;
+			
+			window.at = at;
 			// Get a DOM node reference for the root of our widget
-			var domNode = self.domNode;
-			domNode.at = at;
+			//domNode.at = at;
 			//self.set('model', new Stateful(self.model));
 			//self.set('model', {});
 			
 			self.model = new dojo.Stateful({
             	field01 : {
-            		value: '1'
+            		value: 'DojoWidget 1'
             		},
             	field02 : {
-            		value: '2'
+            		value: 'DojoWidget 2'
             	}});
-			domNode.model = self.model;
-			parser.parse();
+			at(self.model, 'model3');
+			this.set('model3', self.model);
+			//domNode.model = self.model;
 			console.log('[DojoWidget.postCreate] self: ', self);
 			console.log('[DojoWidget.postCreate] model: ', self.model);
 			console.log('[DojoWidget.postCreate] templatePath: ', self.templatePath);
@@ -61,14 +59,14 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 				// plugin ajax event
 
 
-				console.log('[DojoWidget.postCreate] dojo.query: ', dojo.query('button[type="reset"]', domNode));
-				let buttons = dojo.query('button[type="reset"]', domNode).on("click", function() {
+				console.log('[DojoWidget.postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
+				let buttons = dojo.query('button[type="reset"]', self.domNode).on("click", function() {
 					alert('reset');
 					console.log('[DojoWidget.postCreate] self: ', self);
 					// ajax submit
 				});
 
-				dojo.query('[type="submit"]', domNode).on("click", function(evt) {
+				dojo.query('[type="submit"]', self.domNode).on("click", function(evt) {
 					dojo.stopEvent(evt);
 					
 					self.model.set('field02', 'xxxx');
@@ -116,7 +114,9 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 				});
 			}
 			
-			self.postCreateAfter();
+			if(self.postCreateAfter){
+				self.postCreateAfter();
+			}
 		},
 		
 		none : null
