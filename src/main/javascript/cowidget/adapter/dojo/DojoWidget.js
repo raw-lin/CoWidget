@@ -1,10 +1,8 @@
-/**
- * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
+/*
+ * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version >=2.0 - see LICENSE.
  * 
- * <pre>
  * This is an optimized version of CoWidget, built for deployment and not for development.
  * To get sources and documentation, please visit: http://cowidget.rawya.net
- * </pre>
  */
 define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "dojox/mvc/at", "dojo/Stateful", "dojo/parser", "dojo/dom-style", "dojo/_base/fx",
 		"dojo/_base/lang", "dojo/on", "dojo/mouse", "require", 'dojo/string', 'dojox/mvc/EditModelRefController', 'dijit/_WidgetsInTemplateMixin'
