@@ -6,6 +6,9 @@
  */
 class _Base {
 	
+	/**
+	 * TODO
+	 */
 	static get constructorOpts() {
 		return {
 			/* arg01 */ arg01: null,
@@ -14,7 +17,10 @@ class _Base {
 		}
 	}
 
-    constructor(/**/options) {
+	/**
+	 * TODO
+	 */
+	constructor(/**/options) {
         let self = this;
         options = options ? options : {};
 
@@ -24,13 +30,19 @@ class _Base {
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};
     }
-	
-    static foo() {
-        console.log('[_Base.foo] call');
-    }
 
-    getBase() {
+	/**
+	 * TODO
+	 */
+	getBase() {
         var self = this;
         return self;
+    }
+	
+	/**
+	 * TODO
+	 */
+	static fork() {
+        console.log('[_Base.foo] call');
     }
 }

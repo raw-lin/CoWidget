@@ -26,6 +26,9 @@
 }(this, (function(container, userConfig) {
     'use strict';
 
+    let emptyObject = {};
+    Object.freeze(emptyObject);
+
     {
     	/* prepare Class for usage */
     	
@@ -380,9 +383,6 @@
     /* start plugin */
     //console.debug('[CoWidget.factory] container: ', container);
     console.debug('[CoWidget.factory] userConfig: ', userConfig);
-
-    let emptyObject = {};
-    Object.freeze(emptyObject);
 
     console.debug('[CoWidget.factory] Util.getBaseHref(container.document): ', cowidget.common.Util.getBaseHref(container.document));
     let defaultConfig = cowidget.common.Util.mixin({
