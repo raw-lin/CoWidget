@@ -75,7 +75,7 @@ class CoWidgetImpl {
 	 */
     static byId(id, doc) {
     	// return dojo.byId(id, doc);
-    	console.debug('[Dom.byId] cowidget.common.ClassLoader.container.document: ', cowidget.common.ClassLoader.container.document);
+    	//console.debug('[Dom.byId] cowidget.lang.ClassLoader.container.document: ', cowidget.lang.ClassLoader.container.document);
     	return cowidget.common.Dom.byId(id, doc);
     };
     
@@ -109,8 +109,15 @@ class CoWidgetImpl {
                     // success
                 	// require('dojo.Stateful');
                     self.widget = new DojoWidget({
-                        model: new dojo.Stateful(self.model),
-                        model2: {
+                        model2: new dojo.Stateful(self.model),
+                        model: new dojo.Stateful({
+				                        	field01 : {
+				                        		value: '1'
+				                        		},
+				                        	field02 : {
+				                        		value: '2'
+				                        	}}),
+                        model23: {
                         	field01 : '1',
                         	field02 : '2'
                         }

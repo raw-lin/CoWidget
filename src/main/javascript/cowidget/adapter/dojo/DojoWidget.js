@@ -44,10 +44,13 @@ define([ "dojo/_base/declare", "dijit/_WidgetBase", "dijit/_TemplatedMixin", "do
 			//self.set('model', new Stateful(self.model));
 			//self.set('model', {});
 			
-			self.model = new dojo.Stateful({model: {
-            	field01 : '1',
-            	field02 : '2'
-            }});
+			self.model = new dojo.Stateful({
+            	field01 : {
+            		value: '1'
+            		},
+            	field02 : {
+            		value: '2'
+            	}});
 			domNode.model = self.model;
 			parser.parse();
 			console.log('[DojoWidget.postCreate] self: ', self);

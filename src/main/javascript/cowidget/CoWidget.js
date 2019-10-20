@@ -87,6 +87,8 @@
 					
 					console.error('[NetXhr.eval] jsBody: ', jsBody);
 					console.error('[NetXhr.eval] exception: ', exception);
+					
+					throw exception;
 				}
 				return retObj;
 			}
