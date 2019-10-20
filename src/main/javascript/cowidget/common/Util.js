@@ -1,12 +1,10 @@
-/**
- * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
+/*
+ * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version >=2.0 - see LICENSE.
  * 
- * <pre>
  * This is an optimized version of CoWidget, built for deployment and not for development.
  * To get sources and documentation, please visit: http://cowidget.rawya.net
- * </pre>
  */
-class Util {
+class Util extends cowidget.Util {
 	
     constructor(option) {
 
@@ -26,9 +24,9 @@ class Util {
 //    	  }
     	
         desObj = desObj ? desObj : {};
-        console.log('[cow] ' + typeof srcObj);
+        console.log('[Util.mixin] srcObj: ' + typeof srcObj);
 
-        var empty = {};
+        let empty = {};
 
         if (typeof srcObj === 'object') {
             if (true) {
@@ -46,6 +44,7 @@ class Util {
 
         return desObj;
     }
+    
     // Getter
     get area() {
         return 'area';

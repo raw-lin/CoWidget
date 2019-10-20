@@ -7,9 +7,9 @@
  * </pre>
  */
 class CoWidgetImpl {
-	static test(){
-		console.debug('[CoWidgetImpl.test] success');
-		return 'success';
+	static isWork(){
+		console.debug('[CoWidgetImpl.isWork] success');
+		return true;
     };
     
     static _init(userConfig, defaultConfig) {

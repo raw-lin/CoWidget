@@ -1,10 +1,10 @@
-/**
- * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version 2.0 - see LICENSE.
+/*
+ * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License,
+ * Version >=2.0 - see LICENSE.
  * 
- * <pre>
- * This is an optimized version of CoWidget, built for deployment and not for development.
- * To get sources and documentation, please visit: http://cowidget.rawya.net
- * </pre>
+ * This is an optimized version of CoWidget, built for deployment and not for
+ * development. To get sources and documentation, please visit:
+ * http://cowidget.rawya.net
  */
 (function(global, factory) {
 	'use strict';
@@ -26,76 +26,81 @@
 }(this, (function(container, userConfig) {
     'use strict';
 
-    console.debug('[factory] container: ', container);
-    console.debug('[factory] userConfig: ', userConfig);
-
-    var emptyObject = {};
-    Object.freeze(emptyObject);
-
-    var currentBaseHref = (function(doc) {
-        var currentScript = doc.currentScript ? doc.currentScript : (function(doc) {
-            var jsScripts = doc.scripts;
-            return jsScripts[jsScripts.length - 1];
-        })(doc);
-
-        console.debug('[CoWidget.factory.currentBaseHref] console: ', console);
-        console.debug('[CoWidget.factory.currentBaseHref] console.method: ', console.table());
-        console.debug('[CoWidget.factory.currentBaseHref] currentScript: ', currentScript);
-
-        var currentHref = currentScript && currentScript.src ? currentScript.src : './';
-
-        console.debug('[CoWidget.factory.currentBaseHref] currentHref: ', currentHref);
-        var currentBaseHref = currentHref ? currentHref.replace('/cowidget/CoWidget.js', '') : './';
-        console.debug('[CoWidget.factory.currentBaseHref] currentBaseHref: ', currentBaseHref);
-
-        return currentBaseHref;
-
-    })(container.document);
-
     {
-    	class _Class {
+    	/* prepare Class for usage */
+    	
+    	class _CoWidgetClass {
 	    	static assertSame(targetClass) {
-	    		console.debug('[ClassLoader.loadClass] targetClass.name: ', (null === targetClass ? 'null':targetClass.name));
+	    		console.debug('[_CoWidgetClass.assertSame] targetClass.name: ', (null === targetClass ? 'null':targetClass.name));
 	    		return null === targetClass ? false:(this === targetClass);
 	    	}
     	}
     	
-    	class NetXhr extends _Class {
+    	class Util {
+    		
+    		static getCurrentScripUrl(/* document */ doc) {
+    			let jsScripts = doc.scripts;
+    			
+    			let currentScriptUrl = jsScripts[jsScripts.length - 1];
+    			console.debug('[Util.getCurrentScripUrl] currentScriptUrl: ', currentScriptUrl);
+    			
+    	        return currentScriptUrl;
+    		}
+    		
+    		static getBaseHref(/* document */ doc) {
+    			let currentScript = Util.getCurrentScripUrl(doc);
+
+    	        console.debug('[Util.getBaseHref] currentScript: ', currentScript);
+
+    	        let currentHref = currentScript && currentScript.src ? currentScript.src : './';
+
+    	        console.debug('[Util.getBaseHref] currentHref: ', currentHref);
+    	        let currentBaseHref = currentHref ? currentHref.replace('/cowidget/CoWidget.js', '') : './';
+    	        console.debug('[Util.getBaseHref] currentBaseHref: ', currentBaseHref);
+
+    	        return currentBaseHref;
+    		}
+    	}
+    	
+    	class NetXhr extends _CoWidgetClass {
 			constructor(xhrProps) {
 
 		    }
 			
 			static get xhrProps() {
 				return {
-					sync: false
+					/* options: text|html|xml|json|classloader */
+					handleAs: 'text',
+					
+					/* is sync request */
+					sync: true
 				};
 			}
 			
 			static eval(jsBody) {
-		    	//console.debug('[TestClass.eval] classBody: ', classBody);
+		    	// console.debug('[TestClass.eval] classBody: ', classBody);
 				let retObj;
 				try {
 					retObj = Function('return (' + jsBody + ');')();
 				}catch(exception) {
 					retObj = null;
+					
+					console.error('[NetXhr.eval] jsBody: ', jsBody);
+					console.error('[NetXhr.eval] exception: ', exception);
 				}
 				return retObj;
 			}
 			
-			static xhr( /*bar._base._XhrArgss*/ xhrProps) {				
+			static xhr( /* bar._base._XhrArgss */ xhrProps) {				
 				let response = '';
 				
 				xhrProps = xhrProps ? xhrProps : Object.assign({}, NetXhr.xhrProps);
-				
-		        if (typeof xhrProps.sync === 'undefined') {
-		            xhrProps.sync = true;
-		        }
 			        
 				if(false) {
-				//async function asyncCall(xhrProps) {
+				// async function asyncCall(xhrProps) {
 					NetXhr._xhrPromise(xhrProps);
 					console.log('[NetXhr.xhr] xhrProps: ', xhrProps);	
-				//}
+				// }
 				}else{
 					NetXhr._xhr(xhrProps);
 					console.log('[NetXhr.xhr] response: ', response);
@@ -106,20 +111,29 @@
 			
 			static _xhrLoad(xhr, xhrProps, event) {
 				let response = '';
-				console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
+				
 				console.debug('[NetXhr.xhr._xhrLoad] xhr: ', xhr);
+				console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
                 // This is called even on 404 etc
                 // so check the status
+
+				console.debug('[NetXhr.xhr._xhrLoad] xhr.status: ', xhr.status);
                 if (200 === xhr.status) {
                     // Resolve the promise with the response text
                     Object.assign(xhrProps, { response : xhr.response });
                     
                     if(xhrProps.load) {
+        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is exsits: ');
                     	if ('json' === xhrProps.handleAs) {
                     		xhrProps.load(NetXhr.eval(xhr.response));
                     	}else if ('classloader' === xhrProps.handleAs) {
                     		xhrProps.load(NetXhr.eval(xhr.response));
+                    	}else {
+                    		xhrProps.load(xhr.response);
                     	}
+                    }else {
+        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is not exsits: ');
+                    	xhrProps.load(NetXhr.eval(xhr.response));
                     }
                 } else {
                     if(xhrProps.error) { 
@@ -130,38 +144,42 @@
                 return response;
 			}
 			
-			static _xhr( /*NetXhr._xhrProps*/ xhrProps) {
-		        let req = new XMLHttpRequest();
-	            //req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
-	            req.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
+			static _xhr( /* NetXhr._xhrProps */ xhrProps) {
+		        let xhrReq = new XMLHttpRequest();
+	            // req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
+		        xhrReq.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
 	            
-	            req.onload = function (event) {
-	            	NetXhr._xhrLoad(this, xhrProps, event);
+		        xhrReq.onload = (event) => {
+	            	NetXhr._xhrLoad(xhrReq, xhrProps, event);
 	            };
 	            // Handle network errors
-	            req.onerror = function(event) {
-	            	//response = 'Network Error';
+	            xhrReq.onerror = (event) => {
+	            	// response = 'Network Error';
+	            	// New Error('Network Error');
+	            	
+	            	// throw 'Error2';
 	            };
 
 	            // Make the request
-	            req.send();
+	            xhrReq.send();
 		    }
 
-		    static _xhrPromise( /*bar._base._XhrArgss*/ xhrProps) {
+		    static _xhrPromise( /* bar._base._XhrArgss */ xhrProps) {
 		        let retObj = null;
 
 		        xhrProps = xhrProps ? xhrProps : {};
 		        if (typeof xhrProps.sync === 'undefined') {
 		            xhrProps.sync = true;
 		        }
-		        //const xhrPromise = new Promise(xhrProps);				
-		        //promise.then(/*successCallback*/function() {}, /*failureCallback*/function() {});
+		        // const xhrPromise = new Promise(xhrProps);
+		        // promise.then(/*successCallback*/function() {},
+				// /*failureCallback*/function() {});
 		        
 		        let xhrPromise = new Promise( /* executor */ function(resolve, reject) {
 		        	
 	        		// Do the usual XHR stuff
 		            let req = new XMLHttpRequest();
-		            //req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
+		            // req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
 		            req.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
 
 		            req.onload = function() {
@@ -199,7 +217,7 @@
 		    }
 		}
     	
-	    class ClassLoader extends _Class {
+	    class ClassLoader extends _CoWidgetClass {
 // static get log() {
 // return LogFactory.getLog(ClassLoader);
 // }
@@ -222,8 +240,10 @@
     	    	
     	    	if('cowidget.ClassLoader' === name) {
 					retClass = (function() {return ClassLoader;})();
-				}else if('cowidget.NetXhr' === name) {
+    	    	}else if('cowidget.NetXhr' === name) {
 					retClass = (function() {return NetXhr;})();
+    	    	}else if('cowidget.Util' === name) {
+					retClass = (function() {return Util;})();
 				}else {
     	    		let targetUrl = ClassLoader.baseHref + '/' + name.replace(/\./gi, '/') + '.js';
         	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
@@ -241,14 +261,18 @@
     				NetXhr.xhr(xhrProps);
     				console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
     				console.debug('[ClassLoader.loadClass] xhrProps.response: ' + xhrProps.response);
-    				//retClass = NetXhr.eval(xhrProps.response);
+    				// retClass = NetXhr.eval(xhrProps.response);
     				console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     				
-//    				console.debug('[ClassLoader.loadClass] retClass.assertSame: ' + name + ', ' + ClassLoader.name);
-//    	    		console.debug('[ClassLoader.loadClass] retClass.assertSame: ', retClass.assertSame(ClassLoader));
-//    	    		if('undefined' != typeof retClass.assertSame && false === retClass.assertSame(ClassLoader)) {
-//    	    			console.debug('[ClassLoader.loadClass] extends retClass.assertSame: ', retClass);
-//    	    		}
+// console.debug('[ClassLoader.loadClass] retClass.assertSame: ' + name + ', ' +
+// ClassLoader.name);
+// console.debug('[ClassLoader.loadClass] retClass.assertSame: ',
+// retClass.assertSame(ClassLoader));
+// if('undefined' != typeof retClass.assertSame && false ===
+// retClass.assertSame(ClassLoader)) {
+// console.debug('[ClassLoader.loadClass] extends retClass.assertSame: ',
+// retClass);
+// }
     	    	}
     	    	
     	    	return retClass;
@@ -258,17 +282,22 @@
     	    	let self = this;
     	    	
     	        return {    	        	
-    	            'get': function(obj, prop, receiver) {//obj, prop
+    	            'get': function(obj, prop, receiver) {// obj, prop
     	            	if ('undefined' === typeof obj[prop]) {
         	                console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
         	                console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
         	                console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
     	            	}
 
-// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol(Symbol.toPrimitive)\']: ' + (typeof obj['Symbol(Symbol.toPrimitive)']));
-// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol\']: ' + (typeof obj['Symbol']));
-// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol.toPrimitive\']: ' + (typeof obj['Symbol.toPrimitive']));
-// console.debug('[ClassLoader.proxyHandler] obj[\'toPrimitive\']: ' + (typeof obj['toPrimitive']));
+// console.debug('[ClassLoader.proxyHandler]
+// obj[\'Symbol(Symbol.toPrimitive)\']: ' + (typeof
+// obj['Symbol(Symbol.toPrimitive)']));
+// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol\']: ' + (typeof
+// obj['Symbol']));
+// console.debug('[ClassLoader.proxyHandler] obj[\'Symbol.toPrimitive\']: ' +
+// (typeof obj['Symbol.toPrimitive']));
+// console.debug('[ClassLoader.proxyHandler] obj[\'toPrimitive\']: ' + (typeof
+// obj['toPrimitive']));
 
     	                if ('then' === typeof prop) {
     	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
@@ -297,7 +326,9 @@
                                 }
                             } else {
                                 // match naming Package
-                                let packageObj = {};//ClassLoader.loadClass(obj.packageName + '.' + prop + '.package');
+                                let packageObj = {};// ClassLoader.loadClass(obj.packageName
+													// + '.' + prop +
+													// '.package');
 
                                 if (packageObj) {
                                     Object.assign(packageObj, {
@@ -321,10 +352,10 @@
     	    }
     	    
     	    /**
-    	     * TODO
-    	     */
+			 * TODO
+			 */
     	    mixinClass(target, ...source) {
-//    	    	//Traditional JavaScript Mixins
+// //Traditional JavaScript Mixins
     	    	for (var prop in source) {
     	    	    if (source.hasOwnProperty(prop)) {
     	    	      target[prop] = source[prop];
@@ -334,29 +365,34 @@
     	}
     	
     	Object.assign(ClassLoader, {
-        	baseHref: currentBaseHref,
-        	'container' : container,
-        	'defaultConfig' : defaultConfig
+        	baseHref: Util.getBaseHref(container.document),
+        	'container' : container
     	});
-    	
+	    
         // package lazy loading
     	container.cowidget = container.cowidget ? container.cowidget : new Proxy({
             packageName: 'cowidget',
         }, ClassLoader.getProxyHandler());
-    	
-    	 container['~'] = container.cowidget;
     };
+    
+    /* start plugin */
+    //console.debug('[CoWidget.factory] container: ', container);
+    console.debug('[CoWidget.factory] userConfig: ', userConfig);
 
-    console.debug('[CoWidget.factory] currentBaseHref: ', currentBaseHref);
-    console.debug('[CoWidget.factory] cowidget.common: ', cowidget.common);
-    var defaultConfig = cowidget.common.Util.mixin({
+    let emptyObject = {};
+    Object.freeze(emptyObject);
+
+    console.debug('[CoWidget.factory] Util.getBaseHref(container.document): ', cowidget.common.Util.getBaseHref(container.document));
+    let defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
         place: '#cowidget',
-        baseHref: currentBaseHref,
+        baseHref: cowidget.common.Util.getBaseHref(container.document),
         isMock: true,
         'null': null
     }, userConfig);
-
+    console.debug('[CoWidget.factory] CoWidgetConfig: ', defaultConfig);
+    
+    /* start up */
     class CoWidget extends cowidget._base.CoWidgetImpl {
     	// static get defaultConfig() {
     		
@@ -393,8 +429,8 @@
     Object.assign(CoWidget, {
     	'container' : container,
     	'configure' : defaultConfig}); 
-    console.debug('[CoWidget.factory] CoWidget.test: ', CoWidget.test());
-    //console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
+    console.debug('[CoWidget.factory] CoWidget.test: ', CoWidget.isWork());
+    // console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));
