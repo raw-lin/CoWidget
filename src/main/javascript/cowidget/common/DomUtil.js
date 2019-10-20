@@ -12,7 +12,7 @@ class DomUtil  {
 			try{
 	        	// dojo.byId(id, doc);
 	        	
-	        	return ((typeof id == "string") ? (doc || cowidget.lang.ClassLoader.container.document).getElementById(id) : id) || null; // DOMNode
+				return ((typeof id == "string") ? (doc || cowidget.lang.ClassLoader.container.document).getElementById(id) : id) || null;
 			}catch(exception) {
 				console.error('');
 			}
