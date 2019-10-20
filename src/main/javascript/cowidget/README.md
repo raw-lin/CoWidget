@@ -6,6 +6,8 @@
 > - Proxy pattern.
 > - ClassLoader Implement.
 
+> > let test = new cowiaget.test.Test();
+
 - CoWidget
 
 > - Composite pattern.
