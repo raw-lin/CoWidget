@@ -9,7 +9,6 @@
 > <code>
 	let test = cowidget.common.Util.callTest();
 > </code>
-
 > <code>
 	class Test extends cowidget.common.Util {
 	}
