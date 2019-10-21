@@ -1,4 +1,3 @@
-'use strict';
 class Composite {
 	constructor(options) {
 		options = options ? options:{name:'Composite'};
