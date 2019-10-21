@@ -94,6 +94,16 @@
 		    	// console.debug('[TestClass.eval] classBody: ', classBody);
 				let retObj;
 				try {
+					//var jsObj = new Function('jsBody', 'b', 'return (jsBody);');
+
+					// Call the function
+					//jsObj(jsBody);
+					
+					// TODO
+//					let jsObj = Function(jsBody);
+//					console.debug('[NetXhr.eval] jsObj: ', jsObj);
+//					retObj = (new Function(jsBody, 'return jsBody;'))(jsBody);
+					
 					retObj = Function('return (' + jsBody + ');')();
 				}catch(exception) {
 					retObj = null;
@@ -275,7 +285,7 @@
     				
     				NetXhr.xhr(xhrProps);
     				console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
-    				console.debug('[ClassLoader.loadClass] xhrProps.response: ' + xhrProps.response);
+    				//console.debug('[ClassLoader.loadClass] xhrProps.response: ' + xhrProps.response);
     				// retClass = NetXhr.eval(xhrProps.response);
     				console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     				

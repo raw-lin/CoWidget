@@ -6,15 +6,19 @@
 > - Proxy pattern.
 > - ClassLoader Implement.
 
+> Example:
+
 > <code>
-	let test = cowidget.common.Util.callTest();
+>	let test = cowidget.common.Util.callTest();
 > </code>
+
 > <code>
-	class Test extends cowidget.common.Util {
-	}
-	
-	let test2 = Test.callTest();
+>	class Test extends cowidget.common.Util {
+>	}
+>	
+>	let test2 = Test.callTest();
 > </code>
+
 
 - CoWidget
 
