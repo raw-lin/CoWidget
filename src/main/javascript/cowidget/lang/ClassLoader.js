@@ -26,7 +26,7 @@ class ClassLoader extends cowidget.ClassLoader {
 		
 	}
 	
-	static loadClass(name) {
-		return super().loadClass(name);
-	}
+	//static loadClass(name) {
+	//	return super.loadClass(name);
+	//}
 }
