@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
+
+</head>
+<body class="app">
+	<div>Composite</div>
+	<script type="text/javascript">
+	'use strict';
+	class Composite {
+		constructor(options) {
+			options = options ? options:{name:'Composite'};
+			this.name = options.name;
+		}
+		
+		placeAt() {
+			let that = this;
+
+			if(Array.isArray(that.composites)) {
+				that.composites.forEach(function(element) {
+					console.debug('[.placeAt] element: ', element);
+				});
+			}else {
+				console.debug('[.placeAt] this: ', this);
+			}
+		}
+		
+		add(/*Composite*/ child) {
+			let that = this;
+			if('undefined' == typeof that.composites) {
+				that.composites = [];
+				
+				that.composites.push(that);
+			}
+			that.composites.push(child);
+		}
+	}
+	
+	let composite = new Composite({name: 'A'});
+	composite.add(new Composite({name: 'B'}));
+	composite.add(new Composite({name: 'C'}));
+	composite.placeAt();
+	
+</script>
+	</script>
+</body>
+</html>
