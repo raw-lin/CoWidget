@@ -16,15 +16,15 @@
 <script type="text/javascript">
 	'use strict';
 
-	cowidget.common.Dom.byId('output').value = 'testing....\r';
+	cowidget.common.DomUtil.byId('output').value = 'testing....\r';
 	
 	if (true) {		
 		class T {};
 	}
 	if (true) {
-		console.log('[app test] cowidget.common.Dom.byId: ', cowidget.common.Dom.byId('output'));
-		cowidget.common.Dom.byId('output').value = cowidget.common.Dom.byId('output').value + 'xxx\r';
-		cowidget.common.Dom.byId('output').value = cowidget.common.Dom.byId('output').value + cowidget.common + '\r';
+		console.log('[app test] cowidget.common.DomUtil.byId: ', cowidget.common.DomUtil.byId('output'));
+		cowidget.common.DomUtil.byId('output').value = cowidget.common.DomUtil.byId('output').value + 'xxx\r';
+		cowidget.common.DomUtil.byId('output').value = cowidget.common.DomUtil.byId('output').value + cowidget.common + '\r';
 		
 		console.log('[app test] cowidget.common: '+ cowidget.common);
 		console.log('[app test] cowidget.common: ', cowidget.common);

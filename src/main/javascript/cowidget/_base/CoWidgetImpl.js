@@ -75,8 +75,8 @@ class CoWidgetImpl {
 	 */
     static byId(id, doc) {
     	// return dojo.byId(id, doc);
-    	//console.debug('[Dom.byId] cowidget.lang.ClassLoader.container.document: ', cowidget.lang.ClassLoader.container.document);
-    	return cowidget.common.Dom.byId(id, doc);
+    	//console.debug('[DomUtil.byId] cowidget.lang.ClassLoader.container.document: ', cowidget.lang.ClassLoader.container.document);
+    	return cowidget.common.DomUtil.byId(id, doc);
     };
     
     static create(){
