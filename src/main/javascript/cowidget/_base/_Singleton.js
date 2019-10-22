@@ -3,8 +3,7 @@
  * Version >=2.0 - see LICENSE.
  * 
  * This is an optimized version of CoWidget, built for deployment and not for
- * development. To get sources and documentation, please visit:
- * http://cowidget.rawya.net
+ * development.
  */
 class _Singleton {
 

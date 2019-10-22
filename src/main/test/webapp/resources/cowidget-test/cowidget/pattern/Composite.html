@@ -3,50 +3,24 @@
 <head>
 <meta charset="utf-8">
 
-<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
+<script type="text/javascript" src="../../../cowidget/CoWidget.js"></script>
 
 </head>
 <body class="app">
 	<div>Simple Composite Pattern</div>
+	<br/>
+	<div>
+		<code id="logger"
+			style="overflow: scroll; width: 100%; htight: 200px; border: 1px; display: flex; white-space: normal; word-break: break-word;"></code>
+	</div>
+
 	<script type="text/javascript">
 	'use strict';
-	class Composite {
-		constructor(options) {
-			options = options ? options:{name:'Composite'};
-			this.name = options.name;
-		}
-		
-		placeAt() {
-			let that = this;
-
-			if(Array.isArray(that.composites)) {
-				that.composites.forEach(function(element) {
-					console.debug('[.placeAt] element: ', element);
-				});
-			}else {
-				console.debug('[.placeAt] this: ', this);
-			}
-		}
-		
-		add(/*Composite*/ child) {
-			let that = this;
-			if('undefined' == typeof that.composites) {
-				that.composites = [];
-				
-				that.composites.push(that);
-			}
-			that.composites.push(child);
-		}
-	}
 	
-	let composite = new Composite({name: 'A'});
-	composite.add(new Composite({name: 'B'}));
-	composite.add(new Composite({name: 'C'}));
-	composite.placeAt();
-	
-	
-	let aa = new cowidget._base._Composite({name: 'A'});
-	aa.placeAt();
+	let composites = new cowidget._base._Composite({name: 'A'});
+	composites.add(new cowidget._base._Composite({name: 'B'}));
+	composites.add(new cowidget._base._Composite({name: 'C'}));
+	composites.placeAt();
 </script>
 </body>
 </html>

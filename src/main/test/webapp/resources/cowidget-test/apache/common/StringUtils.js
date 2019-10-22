@@ -5,6 +5,9 @@
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
 class StringUtils {
+	static get LOG() {
+		return cowidget.common.LogFactory.getLog(StringUtils);
+	}
 	
 	/**
      * Checks if a CharSequence is empty ("") or null.
@@ -13,6 +16,8 @@ class StringUtils {
      */
     static isEmpty(str) {
     	let ret = false;
+    	
+    	this.LOG.debug('str: ' + str);
     	
     	if (str) {
     		ret = true;
@@ -26,6 +31,7 @@ class StringUtils {
      * @return {string} the trimmed string, null if null String input.
      */
     static trim(str) {
+    	this.LOG.debug('str: ' + str);
     	if (str) {
     		str = str.replace(/^\s+|\s+$/g, '')
     	}

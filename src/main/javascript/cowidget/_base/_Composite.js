@@ -1,4 +1,19 @@
+/*
+ * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License,
+ * Version >=2.0 - see LICENSE.
+ * 
+ * This is an optimized version of CoWidget, built for deployment and not for
+ * development.
+ */
 class Composite {
+	static get LOG() {
+		return cowidget.common.LogFactory.getLog(this);
+	}
+	
+	get LOG() {
+		return this.constructor.LOG;
+	}
+	
 	constructor(options) {
 		options = options ? options:{name:'Composite'};
 		this.name = options.name;
@@ -9,10 +24,10 @@ class Composite {
 
 		if(Array.isArray(that.composites)) {
 			that.composites.forEach(function(element) {
-				console.debug('[cowidget._base._Composite.placeAt] element: ', element);
+				that.LOG.debug('[cowidget._base._Composite.placeAt] element: ', element);
 			});
 		}else {
-			console.debug('[cowidget._base._Composite.placeAt] this: ', this);
+			that.LOG.debug('[cowidget._base._Composite.placeAt] this: ', that);
 		}
 	}
 	

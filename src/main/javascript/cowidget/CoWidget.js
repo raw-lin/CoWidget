@@ -1,20 +1,15 @@
 /*
- * Copyright 2019 CoWidget RawYa HOME.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2019 CoWidget RawYa HOME. Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  * 
- * This is an optimized version of CoWidget, built for deployment and not for
- * development. To get sources and documentation, please visit:
- * http://cowidget.rawya.net
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 (function(global, factory) {
 	'use strict';
@@ -94,15 +89,16 @@
 		    	// console.debug('[TestClass.eval] classBody: ', classBody);
 				let retObj;
 				try {
-					//var jsObj = new Function('jsBody', 'b', 'return (jsBody);');
+					// var jsObj = new Function('jsBody', 'b', 'return
+					// (jsBody);');
 
 					// Call the function
-					//jsObj(jsBody);
+					// jsObj(jsBody);
 					
 					// TODO
-//					let jsObj = Function(jsBody);
-//					console.debug('[NetXhr.eval] jsObj: ', jsObj);
-//					retObj = (new Function(jsBody, 'return jsBody;'))(jsBody);
+// let jsObj = Function(jsBody);
+// console.debug('[NetXhr.eval] jsObj: ', jsObj);
+// retObj = (new Function(jsBody, 'return jsBody;'))(jsBody);
 					
 					retObj = Function('return (' + jsBody + ');')();
 				}catch(exception) {
@@ -158,8 +154,8 @@
 				let response = '';
 				
 				console.debug('[NetXhr.xhr._xhrLoad] xhr: ');
-				//console.debug('[NetXhr.xhr._xhrLoad]', xhr);
-				//console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
+				// console.debug('[NetXhr.xhr._xhrLoad]', xhr);
+				// console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
                 // This is called even on 404 etc
                 // so check the status
 
@@ -279,8 +275,9 @@
 					retClass = (function() {return Util;})();
 				}else {
 					let prePackage = name.split('.', 1);
-        	    	//console.debug('[ClassLoader.loadClass] prePackage: ' + prePackage);
-    	    		let baseHref = ClassLoader.packageMap.get(prePackage+'');
+        	    	// console.debug('[ClassLoader.loadClass] prePackage: ' +
+					// prePackage);
+    	    		let baseHref = ClassLoader.packageMap[prePackage+''];
     	    		let targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
         	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
@@ -296,7 +293,8 @@
     				
     				NetXhr.xhr(xhrProps);
     				console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
-    				//console.debug('[ClassLoader.loadClass] xhrProps.response: ' + xhrProps.response);
+    				// console.debug('[ClassLoader.loadClass] xhrProps.response:
+					// ' + xhrProps.response);
     				// retClass = NetXhr.eval(xhrProps.response);
     				console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     				
@@ -401,26 +399,40 @@
     	}
 	    
 	    // Package Map
-    	let packageMap = new Map(userConfig.packages ? userConfig.packages:[]);
-    	packageMap.set('cowidget', Util.getBaseHref(container.document) + '/cowidget');
+	    // let packageMap = new Array(userConfig.packages ?
+		// userConfig.packages:[]);
+	    let packageMap = userConfig.packages ? userConfig.packages:{};
+	    packageMap = Object.assign(packageMap, {
+	    		cowidget: Util.getBaseHref(container.document) + '/cowidget'
+	    	});
+		console.debug('[CoWidget.factory] packageMap: ', packageMap);
     	
     	Object.assign(ClassLoader, {
         	baseHref: Util.getBaseHref(container.document),
         	'container' : container,
         	packageMap : packageMap
     	});
-	    
-        // package lazy loading
-    	packageMap.forEach((value, key, map) => {
+		
+    	// let package lazy loading
+    	Object.keys(packageMap).forEach(function(key, index, array) {
+    		console.debug('[CoWidget.factory] key: ', key);
+    		
     		console.log(key);
     		container[key] = container[key] ? container[key] : new Proxy({
                 packageName: key,
             }, ClassLoader.getProxyHandler());
-  		});
+    	});
+       
+//    	packageMap.forEach((value, key, map) => {
+//    		console.log(key);
+//    		container[key] = container[key] ? container[key] : new Proxy({
+//                packageName: key,
+//            }, ClassLoader.getProxyHandler());
+//  		});
     };
     
     /* start plugin */
-    //console.debug('[CoWidget.factory] container: ', container);
+    // console.debug('[CoWidget.factory] container: ', container);
     console.debug('[CoWidget.factory] userConfig: ', userConfig);
 
     console.debug('[CoWidget.factory] Util.getBaseHref(container.document): ', cowidget.common.Util.getBaseHref(container.document));

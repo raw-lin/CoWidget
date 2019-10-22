@@ -3,26 +3,42 @@
 <head>
 <meta charset="utf-8">
 
-<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
-	
+<script type="text/javascript" src="../../../cowidget/CoWidget.js"></script>
+
 </head>
 <body class="app">
+	<div>Simple Singleton Pattern</div>
+	<br />
+	<div>
+		<code id="logger"
+			style="overflow: scroll; width: 100%; htight: 200px; border: 1px; display: flex; white-space: normal; word-break: break-word;"></code>
+	</div>
 
-<script type="text/javascript">
-	'use strict';
-	
-	if (true) {
-		console.log('[pattern] cowidget._base._Singleton.getInstance: ', cowidget._base._Singleton.getInstance());
-		console.log('[pattern] cowidget._base._Singleton.getInstance.fork: ', cowidget._base._Singleton.getInstance().fork());
-		
+	<script type="text/javascript">
+		'use strict';
 
-		console.log('[pattern] cowidget._base._Singleton.getInstance: ', cowidget._base._Singleton.getInstance());
-		console.log('[pattern] cowidget._base._Singleton.getInstance.fork: ', cowidget._base._Singleton.getInstance().fork());
-		
+		if (true) {
+			cowidget.common.LogFactory.getLog().debug(
+					'[pattern] cowidget._base._Singleton.getInstance: ',
+					cowidget._base._Singleton.getInstance());
+			cowidget.common.LogFactory.getLog().debug(
+					'[pattern] cowidget._base._Singleton.getInstance.fork: ',
+					cowidget._base._Singleton.getInstance().fork());
 
-		console.log('[pattern] cowidget._base._Singleton.getInstance: ', cowidget._base._Singleton.getInstance());
-		console.log('[pattern] cowidget._base._Singleton.getInstance.fork: ', cowidget._base._Singleton.getInstance().fork());
-	}
-</script>
+			cowidget.common.LogFactory.getLog().debug(
+					'[pattern] cowidget._base._Singleton.getInstance: ',
+					cowidget._base._Singleton.getInstance());
+			cowidget.common.LogFactory.getLog().debug(
+					'[pattern] cowidget._base._Singleton.getInstance.fork: ',
+					cowidget._base._Singleton.getInstance().fork());
+
+			cowidget.common.LogFactory.getLog().debug(
+					'[pattern] cowidget._base._Singleton.getInstance: ',
+					cowidget._base._Singleton.getInstance());
+			cowidget.common.LogFactory.getLog().debug(
+					'[pattern] cowidget._base._Singleton.getInstance.fork: ',
+					cowidget._base._Singleton.getInstance().fork());
+		}
+	</script>
 </body>
 </html>
