@@ -281,7 +281,7 @@
 					let prePackage = name.split('.', 1);
         	    	//console.debug('[ClassLoader.loadClass] prePackage: ' + prePackage);
     	    		let baseHref = ClassLoader.packageMap.get(prePackage+'');
-    	    		let targetUrl = baseHref + '/' + name.replace(/\./gi, '/') + '.js';
+    	    		let targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
         	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
     				let xhrProps = {
@@ -402,7 +402,7 @@
 	    
 	    // Package Map
     	let packageMap = new Map(userConfig.packages ? userConfig.packages:[]);
-    	packageMap.set('cowidget', Util.getBaseHref(container.document));
+    	packageMap.set('cowidget', Util.getBaseHref(container.document) + '/cowidget');
     	
     	Object.assign(ClassLoader, {
         	baseHref: Util.getBaseHref(container.document),
