@@ -6,9 +6,6 @@
  */
 class _Base {
 	
-	/**
-	 * TODO
-	 */
 	static get constructorOpts() {
 		return {
 			/* arg01 */ arg01: null,
@@ -16,10 +13,21 @@ class _Base {
 			/* arg02 */ arg03: null
 		}
 	}
-
+	
 	/**
-	 * TODO
-	 */
+     * Get the x value.
+     * @return {number} The x value.
+     */
+    getX() {
+        // ...
+    }
+
+
+    /**
+     * Create a point.
+     * @param {number} x - The x value.
+     * @param {number} y - The y value.
+     */
 	constructor(/**/options) {
         let self = this;
         options = options ? options : {};
@@ -40,9 +48,11 @@ class _Base {
     }
 	
 	/**
-	 * TODO
-	 */
-	static fork() {
+     * Convert a string containing two comma-separated numbers into a point.
+     * @param {string} str - The string containing two comma-separated numbers.
+     * @return {Point} A Point object.
+     */
+    static fork() {
         console.log('[_Base.foo] call');
     }
 }

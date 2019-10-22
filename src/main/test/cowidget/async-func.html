@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<script type="text/javascript" src="../cowidget/CoWidget.js"></script>
+
+
+<title>Example</title>
+<body class="api">
+	<div>...........</div>
+	<script type="text/javascript">
+	
+	class Fly {
+		constructor(options) {
+			Object.assign(this, {options: options});
+		}
+	}
+	
+	class xPromise{
+		
+		constructor(options) {
+			//this._init(options);
+		}
+		
+		async placeAt(options) {
+			let promise = new Promise((resolve, reject) => {		
+				if(true){
+					let timeout = Math.floor(Math.random() * Math.floor(5000));
+					console.log('timeout: ', timeout);
+					setTimeout(function () {
+					    	console.log('resolve: setTimeout options: ', options);
+		
+							let fly = new Fly(options);					
+							resolve(fly);
+							//reject('Error');
+					    }, timeout);
+				}else {
+					let xhrProps = {
+							url: '../cowidget/CoWidget.js',
+							sync: true,
+							handleAs: 'text',
+							
+							load: (data) => {
+						    	//console.log('resolve: ', data);
+								resolve(data);
+							}
+					}
+					
+					cowidget.common.NetXhr.xhr(xhrProps);
+				}
+			});
+			
+			promise.then(function (value) {
+				  console.log('then: ' + value);
+				  return value;
+				}).catch(function (error) {
+				  console.log(error);
+				});
+		
+			//Object.assign(this, {promise: promise});
+
+			let result = await Promise.resolve(promise);
+			console.log('_init: ');
+			//console.log('', result);
+			Object.assign(this, {fly: result});
+			try {
+				await Promise.resolve(this.promise);
+				console.log('placeAt: ');
+				//console.log('', this.fly);
+			}catch(exception){
+				console.error('exception: ', exception);
+			}
+			
+			console.debug('placeAt result: ', result);
+			return this;
+		}
+		
+		fork() {
+			
+			try {
+				//await Promise.resolve(this.promise);
+				console.log('fork: ', this.fly);
+			}catch(exception){
+				console.error('exception: ', exception);
+			}
+			
+			return this;
+		}
+	}
+		
+	new xPromise().placeAt({fork: 'A'});
+ 	let b = new xPromise();
+ 	let c = new xPromise();
+	
+	c.placeAt({fork: 'B'});
+ 	b.placeAt({fork: 'C'});
+	
+	
+// 	try {
+// 		// not work
+// 		//c.placeAt().fork();
+// 		console.log('c.placeAt();', c.placeAt());
+// 	}catch(exception){
+// 		console.error('exception: ', exception);
+// 	}
+	
+	//console.log('top: ', b);
+	//console.log('top: ', c);
+	console.log('end')
+	</script>
+</body>
+</html>

@@ -134,41 +134,6 @@
 				return xhrProps.response;
 			}
 			
-			static _xhrLoad(xhr, xhrProps, event) {
-				let response = '';
-				
-				console.debug('[NetXhr.xhr._xhrLoad] xhr: ', xhr);
-				console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
-                // This is called even on 404 etc
-                // so check the status
-
-				console.debug('[NetXhr.xhr._xhrLoad] xhr.status: ', xhr.status);
-                if (200 === xhr.status) {
-                    // Resolve the promise with the response text
-                    Object.assign(xhrProps, { response : xhr.response });
-                    
-                    if(xhrProps.load) {
-        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is exsits: ');
-                    	if ('json' === xhrProps.handleAs) {
-                    		xhrProps.load(NetXhr.eval(xhr.response));
-                    	}else if ('classloader' === xhrProps.handleAs) {
-                    		xhrProps.load(NetXhr.eval(xhr.response));
-                    	}else {
-                    		xhrProps.load(xhr.response);
-                    	}
-                    }else {
-        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is not exsits: ');
-                    	xhrProps.load(NetXhr.eval(xhr.response));
-                    }
-                } else {
-                    if(xhrProps.error) { 
-                		xhrProps.error(xhr.statusText);
-                	}
-                }
-                
-                return response;
-			}
-			
 			static _xhr( /* NetXhr._xhrProps */ xhrProps) {
 		        let xhrReq = new XMLHttpRequest();
 	            // req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
@@ -188,8 +153,51 @@
 	            // Make the request
 	            xhrReq.send();
 		    }
+			
+			static _xhrLoad(xhr, xhrProps, event) {
+				let response = '';
+				
+				console.debug('[NetXhr.xhr._xhrLoad] xhr: ');
+				//console.debug('[NetXhr.xhr._xhrLoad]', xhr);
+				//console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
+                // This is called even on 404 etc
+                // so check the status
 
-		    static _xhrPromise( /* bar._base._XhrArgss */ xhrProps) {
+				console.debug('[NetXhr.xhr._xhrLoad] xhr.status: ', xhr.status);
+                if (200 === xhr.status) {
+                    // Resolve the promise with the response text
+                    Object.assign(xhrProps, { response : xhr.response });
+                    
+                    if(xhrProps.load) {
+        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is exsits: ');
+                    	if ('json' === xhrProps.handleAs) {
+                    		xhrProps.load(NetXhr.eval(xhr.response));
+                    	}else if ('classloader' === xhrProps.handleAs) {
+                    		xhrProps.load(NetXhr.eval(xhr.response));
+                    	}else {
+                    		xhrProps.load(xhr.response);
+                    	}
+                    }else {
+        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is not exsits: ');
+        				response = xhr.response;
+                    }
+                } else {
+                    if(xhrProps.error) { 
+                		xhrProps.error(xhr.statusText);
+                	}
+                }
+                
+                return response;
+			}
+
+			static _xhrPromise( /* bar._base._XhrArgss */ xhrProps) {
+				
+				class _xhrPromise {
+					constructor(options) {
+						
+					}
+				}
+				
 		        let retObj = null;
 
 		        xhrProps = xhrProps ? xhrProps : {};
