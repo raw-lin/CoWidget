@@ -400,6 +400,7 @@
     	    }
     	}
 	    
+	    // Package Map
     	let packageMap = new Map(userConfig.packages ? userConfig.packages:[]);
     	packageMap.set('cowidget', Util.getBaseHref(container.document));
     	
