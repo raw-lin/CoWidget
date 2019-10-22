@@ -278,7 +278,10 @@
     	    	}else if('cowidget.Util' === name) {
 					retClass = (function() {return Util;})();
 				}else {
-    	    		let targetUrl = ClassLoader.baseHref + '/' + name.replace(/\./gi, '/') + '.js';
+					let prePackage = name.split('.', 1);
+        	    	//console.debug('[ClassLoader.loadClass] prePackage: ' + prePackage);
+    	    		let baseHref = ClassLoader.packageMap.get(prePackage+'');
+    	    		let targetUrl = baseHref + '/' + name.replace(/\./gi, '/') + '.js';
         	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
     				let xhrProps = {
@@ -396,16 +399,23 @@
     	    	  }
     	    }
     	}
+	    
+    	let packageMap = new Map(userConfig.packages ? userConfig.packages:[]);
+    	packageMap.set('cowidget', Util.getBaseHref(container.document));
     	
     	Object.assign(ClassLoader, {
         	baseHref: Util.getBaseHref(container.document),
-        	'container' : container
+        	'container' : container,
+        	packageMap : packageMap
     	});
 	    
         // package lazy loading
-    	container.cowidget = container.cowidget ? container.cowidget : new Proxy({
-            packageName: 'cowidget',
-        }, ClassLoader.getProxyHandler());
+    	packageMap.forEach((value, key, map) => {
+    		console.log(key);
+    		container[key] = container[key] ? container[key] : new Proxy({
+                packageName: key,
+            }, ClassLoader.getProxyHandler());
+  		});
     };
     
     /* start plugin */
@@ -459,8 +469,9 @@
     Object.assign(CoWidget, {
     	'container' : container,
     	'configure' : defaultConfig}); 
-    console.debug('[CoWidget.factory] CoWidget.test: ', CoWidget.isWork());
-    // console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
+    
+    console.debug('[CoWidget.factory] CoWidget work test: ', CoWidget.isWork());
+	console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));

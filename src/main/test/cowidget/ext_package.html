@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<script type="text/javascript">
+	'use strict';
+	var coWidgetConfig = {
+		isDebug : true,
+		ui : 'dojo',
+		packages : [
+			['apache', '../../test']
+		]
+	};
+</script>
+<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
+
+
+<title>Example</title>
+<body class="api">
+	<div>...........</div>
+	<script type="text/javascript">
+	//http://localhost:9080/CoWeb/resources/test/apache/comon/StringUtils.js
+	//http://localhost:9080/CoWeb/resources/test/apache/common/StringUtils.js
+	console.debug(apache.common.StringUtils.trim(' xxx '));
+	</script>
+</body>
+</html>
