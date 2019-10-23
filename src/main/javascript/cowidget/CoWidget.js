@@ -45,26 +45,29 @@
     	}
     	
     	class Util {
+    	}
+    	
+    	class UrlUtil {
     		
     		static getCurrentScripUrl(/* document */ doc) {
     			let jsScripts = doc.scripts;
     			
     			let currentScriptUrl = jsScripts[jsScripts.length - 1];
-    			console.debug('[Util.getCurrentScripUrl] currentScriptUrl: ', currentScriptUrl);
+    			console.debug('[UrlUtil.getCurrentScripUrl] currentScriptUrl: ', currentScriptUrl);
     			
     	        return currentScriptUrl;
     		}
     		
     		static getBaseHref(/* document */ doc) {
-    			let currentScript = Util.getCurrentScripUrl(doc);
+    			let currentScript = UrlUtil.getCurrentScripUrl(doc);
 
-    	        console.debug('[Util.getBaseHref] currentScript: ', currentScript);
+    	        console.debug('[UrlUtil.getBaseHref] currentScript: ', currentScript);
 
     	        let currentHref = currentScript && currentScript.src ? currentScript.src : './';
 
-    	        console.debug('[Util.getBaseHref] currentHref: ', currentHref);
+    	        console.debug('[UrlUtil.getBaseHref] currentHref: ', currentHref);
     	        let currentBaseHref = currentHref ? currentHref.replace('/cowidget/CoWidget.js', '') : './';
-    	        console.debug('[Util.getBaseHref] currentBaseHref: ', currentBaseHref);
+    	        console.debug('[UrlUtil.getBaseHref] currentBaseHref: ', currentBaseHref);
 
     	        return currentBaseHref;
     		}
@@ -185,65 +188,6 @@
                 
                 return response;
 			}
-
-			static _xhrPromise( /* bar._base._XhrArgss */ xhrProps) {
-				
-				class _xhrPromise {
-					constructor(options) {
-						
-					}
-				}
-				
-		        let retObj = null;
-
-		        xhrProps = xhrProps ? xhrProps : {};
-		        if (typeof xhrProps.sync === 'undefined') {
-		            xhrProps.sync = true;
-		        }
-		        // const xhrPromise = new Promise(xhrProps);
-		        // promise.then(/*successCallback*/function() {},
-				// /*failureCallback*/function() {});
-		        
-		        let xhrPromise = new Promise( /* executor */ function(resolve, reject) {
-		        	
-	        		// Do the usual XHR stuff
-		            let req = new XMLHttpRequest();
-		            // req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
-		            req.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
-
-		            req.onload = function() {
-		                // This is called even on 404 etc
-		                // so check the status
-		                if (200 === req.status) {
-		                    // Resolve the promise with the response text
-		                    resolve(req.response);
-		                } else {
-		                    // Otherwise reject with the status text
-		                    // which will hopefully be a meaningful error
-		                    reject(Error(req.statusText));
-		                }
-		            };
-
-		            // Handle network errors
-		            req.onerror = function() {
-		                reject(Error("Network Error"));
-		            };
-
-		            // Make the request
-		            req.send();
-		        }).then(function(result) {
-		        	Object.assign(xhrProps, {response: result});
-		        	
-		        	let retClass = TestClass.eval(xhrProps.response);
-					console.debug('[TestClass._xhrPromise] retClass: ', retClass);
-		        	
- 				}).catch(function(result) {
- 					console.log('Do catch: ', result);
- 					xhrProps.resObj = null;
- 					
- 					return null;
- 				});
-		    }
 		}
     	
 	    class ClassLoader extends _CoWidgetClass {
@@ -271,6 +215,8 @@
 					retClass = (function() {return ClassLoader;})();
     	    	}else if('cowidget.NetXhr' === name) {
 					retClass = (function() {return NetXhr;})();
+    	    	}else if('cowidget.UrlUtil' === name) {
+					retClass = (function() {return UrlUtil;})();
     	    	}else if('cowidget.Util' === name) {
 					retClass = (function() {return Util;})();
 				}else {
@@ -348,13 +294,17 @@
     	                }else if (typeof obj[prop] === 'undefined') {
     	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
                                 // match naming Class
-                                obj[prop] = ClassLoader.loadClass(obj.packageName + '.' + prop);
+    	                		let retClass = ClassLoader.loadClass(obj.packageName + '.' + prop);
+                                obj[prop] = retClass;
                                 
-                                if(obj[prop]) {
-                                	 // Object.assign(obj[prop], {
-                                     // packageName: obj.packageName,
-                                     // className: prop
-                                     // });
+                                if(retClass) {
+                                	obj[prop] = retClass;
+									Object.assign(obj[prop], {
+									    packageName: obj.packageName
+									});
+                                }else {
+                                	console.error('[ClassLoader.proxyHandler.get] failure generate Class: ' + prop);
+                                	//TODO throw new Error();
                                 }
                             } else {
                                 // match naming Package
@@ -386,7 +336,7 @@
     	    /**
 			 * TODO
 			 */
-    	    mixinClass(target, ...source) {
+    	    mixinClass(target, ...source) { 
 // //Traditional JavaScript Mixins
     	    	for (var prop in source) {
     	    	    if (source.hasOwnProperty(prop)) {
@@ -399,12 +349,12 @@
 	    // Package Map
 	    let packageMap = userConfig.packages ? userConfig.packages:{};
 	    packageMap = Object.assign(packageMap, {
-	    		cowidget: Util.getBaseHref(container.document) + '/cowidget'
+	    		cowidget: UrlUtil.getBaseHref(container.document) + '/cowidget'
 	    	});
 		console.debug('[CoWidget.factory] packageMap: ', packageMap);
     	
     	Object.assign(ClassLoader, {
-        	baseHref: Util.getBaseHref(container.document),
+        	baseHref: UrlUtil.getBaseHref(container.document),
         	'container' : container,
         	packageMap : packageMap
     	});
@@ -431,11 +381,11 @@
     // console.debug('[CoWidget.factory] container: ', container);
     console.debug('[CoWidget.factory] userConfig: ', userConfig);
 
-    console.debug('[CoWidget.factory] Util.getBaseHref(container.document): ', cowidget.common.Util.getBaseHref(container.document));
+    console.debug('[CoWidget.factory] UrlUtil.getBaseHref(container.document): ', cowidget.common.UrlUtil.getBaseHref(container.document));
     let defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
         place: '#cowidget',
-        baseHref: cowidget.common.Util.getBaseHref(container.document),
+        baseHref: cowidget.common.UrlUtil.getBaseHref(container.document),
         isMock: true,
         'null': null
     }, userConfig);
