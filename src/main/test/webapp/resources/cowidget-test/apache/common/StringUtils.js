@@ -5,8 +5,13 @@
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
 class StringUtils {
+
 	static get LOG() {
-		return cowidget.common.LogFactory.getLog(StringUtils);
+		return cowidget.common.LogFactory.getLog(this);
+	}
+	
+	get LOG() {
+		return this.constructor.LOG;
 	}
 	
 	/**

@@ -26,7 +26,7 @@
 		let LOG = cowidget.common.LogFactory.getLog();
 		class TestLogger {
 			static get LOG() {
-				return cowidget.common.LogFactory.getLog(TestLogger);
+				return cowidget.common.LogFactory.getLog(this);
 			}
 			
 			get LOG() {
