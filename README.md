@@ -6,7 +6,7 @@
 > - Proxy pattern.
 > - ClassLoader Implement.
 
-> Example:
+> Example
 
 > <code>
 >	let test = cowidget.common.Util.callTest();
@@ -25,6 +25,8 @@
 > - Composite pattern.
 
 - Adapter pattern.
+
+> Demo: <a hre="http://res.rawya.net/cowidget-test/cowidget/">http://res.rawya.net/cowidget-test/cowidget/</a>
 
 
 ## 計劃整合UI:
