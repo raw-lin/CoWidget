@@ -18,51 +18,78 @@ class Log {
 	getPrefix(args) {
 		let prefix = '';
 		
-		prefix = this.clazz.prototype.constructor.name + '';
+		if(this.clazz.packageName) {
+			prefix = prefix + this.clazz.packageName + '.';
+		}
+		prefix = prefix + this.clazz.prototype.constructor.name + '';
 		
 		prefix = 'Logger - [' + prefix + ']';
 		return prefix;
 	}
 	
 	appendLoggerNode(argus) {
+		let txt = '';
 		if(this.loggerNode) {
 			for (var i = 0; i < argus.length; i++) {
 				try{
 					if ('object' === typeof argus[i]) {
 						// error: cyclic object value
-						this.loggerNode.innerHTML += (JSON && JSON.stringify ? JSON.stringify(argus[i], undefined, 2) : argus[i]) + '<br />';
+						txt = txt + (i+'a. ') +  (JSON && JSON.stringify ? JSON.stringify(argus[i], undefined, 2) : argus[i]);
 					} else {
-						this.loggerNode.innerHTML += argus[i] + '<br />';
+						txt = txt + (i+'b. ') + argus[i];
 					}
 				}catch(exception) {
+					console.error('[cowidget.common.Log] argus[i]: ' + i + ': ', argus[i]);
 					console.error('[cowidget.common.Log] exception: ', exception);
 				}
 			}
+			
+			this.loggerNode.innerHTML = this.loggerNode.innerHTML + '<br />' + txt ;
 		}
 	}
 	
 	log() {
-		console.log.apply(console, arguments);
+		let args = Object.create(arguments);
+		
+		args[0] = this.getPrefix(args) + ' [INFO] ' + args[0];
+		console.log.apply(console, args);
+		
+		this.appendLoggerNode(args);
 	}
 	
-	log() {		
-		arguments[0] = this.getPrefix(arguments) + ' [INFO] ' + arguments[0];
-		console.log.apply(console, arguments);
+	info() {
+		let args = Object.create(arguments);
 		
-		this.appendLoggerNode(arguments);
+		args[0] = this.getPrefix(args) + ' [INFO] ' + args[0];
+		console.log.apply(console, args);
+		
+		this.appendLoggerNode(args);
 	}
 	
-	debug() {		
-		arguments[0] = this.getPrefix(arguments) + ' [DEBUG] ' + arguments[0];
-		console.debug.apply(console, arguments);
+	debug() {	
+		let args = Object.create(arguments);
 		
-		this.appendLoggerNode(arguments);
+		args[0] = this.getPrefix(args) + ' [DEBUG] ' + args[0];
+		console.debug.apply(console, args);
+		
+		this.appendLoggerNode(args);
 	}
 	
-	error() {		
-		arguments[0] = this.getPrefix(arguments) + ' [ERROR] ' + arguments[0];
-		console.error.apply(console, arguments);
+	warn() {
+		let args = Object.create(arguments);
 		
-		this.appendLoggerNode(arguments);
+		args[0] = this.getPrefix(args) + ' [WARN] ' + args[0];
+		console.warn.apply(console, args);
+		
+		this.appendLoggerNode(args);
+	}
+	
+	error() {
+		let args = Object.create(arguments);
+		
+		args[0] = this.getPrefix(args) + ' [ERROR] ' + args[0];
+		console.error.apply(console, args);
+		
+		this.appendLoggerNode(args);
 	}
 }

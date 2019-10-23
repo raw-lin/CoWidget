@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+<link href="../../cowidget/CoWidget.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript">
 	'use strict';
@@ -15,10 +17,9 @@
 
 <title>Example</title>
 <body class="api">
-	<br/>
-	<div>
-		<code id="logger"
-			style="overflow: scroll; width: 100%; htight: 200px; border: 1px; display: flex; white-space: normal; word-break: break-word;"></code>
+	<br />
+	<div class="logger">
+		<code id="logger"></code>
 	</div>
 
 	<script type="text/javascript">
@@ -27,10 +28,6 @@
 		class TestLogger {
 			static get LOG() {
 				return cowidget.common.LogFactory.getLog(this);
-			}
-			
-			get LOG() {
-				return this.constructor.LOG;
 			}
 			
 			test() {
@@ -45,7 +42,11 @@
 		new TestLogger().test();
 		TestLogger.test();
 		
-		LOG.debug('document write', new Date());
+		//console.debug(new Error());
+		LOG.info('document write: ', new Date());
+		LOG.debug('document write: ', new Date());
+		LOG.warn('document write: ', new Date());
+		LOG.error('document write: ', new Date());
 	</script>
 </body>
 </html>

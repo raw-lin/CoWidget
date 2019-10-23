@@ -29,20 +29,24 @@ class _Base {
 		}
 	}
 	
+	get field() {
+		if('undefined' === typeof this.field) {
+			Object.assign(this, {
+				field: '<default field value>'
+			});
+		}
+		
+		return this.field;
+	}
+	
 	/**
-     * Get the x value.
-     * @return {number} The x value.
-     */
-    getX() {
-        // ...
-    }
-
-
-    /**
-     * Create a point.
-     * @param {number} x - The x value.
-     * @param {number} y - The y value.
-     */
+	 * Create a point.
+	 * 
+	 * @param {number}
+	 *            x - The x value.
+	 * @param {number}
+	 *            y - The y value.
+	 */
 	constructor(/**/options) {
         let self = this;
         options = options ? options : {};
@@ -52,6 +56,17 @@ class _Base {
 
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};
+    }
+	
+	/**
+	 * Convert a string containing two comma-separated numbers into a point.
+	 * 
+	 * @param {string}
+	 *            str - The string containing two comma-separated numbers.
+	 * @return {Point} A Point object.
+	 */
+    static fork() {
+        console.log('[_Base.foo] call');
     }
 
 	/**
@@ -63,11 +78,11 @@ class _Base {
     }
 	
 	/**
-     * Convert a string containing two comma-separated numbers into a point.
-     * @param {string} str - The string containing two comma-separated numbers.
-     * @return {Point} A Point object.
-     */
-    static fork() {
-        console.log('[_Base.foo] call');
+	 * TODO Get the x value.
+	 * 
+	 * @return {number} The x value.
+	 */
+    getX() {
+        // ...
     }
 }
