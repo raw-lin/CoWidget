@@ -12,16 +12,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * <p>Operations on {@link string} that are
+ * {@code null} safe.</p>
+ */
 class StringUtils {
+	
+	static get LOG() {
+		return cowidget.common.LogFactory.getLog(this);
+	}
+	
+	constructor(options) {
+		super();
+	}
+	
+	/**
+	 * The empty String
+	 */
+	static get EMPTY() {
+		return '';
+	}
+	
+	/**
+	 * A String for linefeed LF ("\n").
+	 */
+	static get LF () {
+		return '\n';
+	}
+	
 	/**
      * Checks if a CharSequence is empty ("") or null.
      * @param {string} str - a string.
-     * @return {boolean} true if the string is empty or null.
+     * @return {@code true} if the str is empty or null
      */
     static isEmpty(str) {
     	let ret = false;
+    	var regEx = /^$/;
     	
-    	if (str) {
+    	if (str && !str.match(regEx)) {
+        	ret = true;
+    	}else {
     		ret = true;
     	}
     	return ret;

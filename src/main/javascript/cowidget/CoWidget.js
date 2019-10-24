@@ -359,7 +359,7 @@
         	packageMap : packageMap
     	});
 		
-    	// let package lazy loading
+    	// let package lazy loading like java
     	Object.keys(packageMap).forEach(function(key, index, array) {
     		console.debug('[CoWidget.factory] key: ', key);
     		
@@ -389,7 +389,7 @@
         isMock: true,
         'null': null
     }, userConfig);
-    console.debug('[CoWidget.factory] CoWidgetConfig: ', defaultConfig);
+    cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidgetConfig: ', defaultConfig);
     
     /* start up */
     class CoWidget extends cowidget._base.CoWidgetImpl {
@@ -429,8 +429,8 @@
     	'container' : container,
     	'configure' : defaultConfig}); 
     
-    console.debug('[CoWidget.factory] CoWidget work test: ', CoWidget.isWork());
-	console.debug('[CoWidget.factory] CoWidget: ', CoWidget);
+    cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidget work test: ', CoWidget.isWork());
+    cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));

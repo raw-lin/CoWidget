@@ -17,31 +17,32 @@ class Log {
 	
 	getPrefix(args, logTag) {
 		let prefix = '';
+		let emptyString = '';
 		
 		if(this.clazz.packageName) {
 			prefix = prefix + this.clazz.packageName + '.';
 		}
 		prefix = prefix + this.clazz.prototype.constructor.name + '';
 		
-		prefix = 'CoWLogger - ' + logTag.padEnd(5, ' ') + ' [' + prefix + ']';
+		prefix = 'CoWLogger - ' + (logTag ? logTag.padEnd(5, ' '):emptyString.padEnd(5, ' ')) + ' [' + prefix + ']';
 		return prefix;
 	}
 	
-	appendLoggerNode(argus) {
+	appendLoggerNode(args, logTag) {
 		let txt = '';
 		if(this.loggerNode) {
-			for (var i = 0; i < argus.length; i++) {
+			for (var i = 0; i < args.length; i++) {
 				try{
-					if ('object' === typeof argus[i]) {
+					if ('object' === typeof args[i]) {
 						// error: cyclic object value
-						txt = txt + (i+'a. ') +  (JSON && JSON.stringify ? JSON.stringify(argus[i], undefined, 2) : argus[i]);
-					}else if ('string' === typeof argus[i]) {
-						txt = txt + (i+'b. ') + argus[i];
+						txt = txt + (i+'a. ') +  (JSON && JSON.stringify ? JSON.stringify(args[i], undefined, 2) : args[i]);
+					}else if ('string' === typeof args[i]) {
+						txt = txt + (i+'b. ') + args[i];
 					} else {
-						txt = txt + (i+'c. ') + argus[i];
+						txt = txt + (i+'c. ') + args[i];
 					}
 				}catch(exception) {
-					console.error('[cowidget.common.Log] argus[i]: ' + i + ': ', argus[i]);
+					console.error('[cowidget.common.Log] args[i]: ' + i + ': ', args[i]);
 					console.error('[cowidget.common.Log] exception: ', exception);
 				}
 			}
@@ -56,7 +57,7 @@ class Log {
 		args[0] = this.getPrefix(args, 'INFO') + ' ' + args[0];
 		console.log.apply(console, args);
 		
-		this.appendLoggerNode(args);
+		this.appendLoggerNode(args, 'INFO');
 	}
 	
 	info() {
@@ -65,7 +66,7 @@ class Log {
 		args[0] = this.getPrefix(args, 'INFO') + ' ' + args[0];
 		console.log.apply(console, args);
 		
-		this.appendLoggerNode(args);
+		this.appendLoggerNode(args, 'INFO');
 	}
 	
 	debug() {	
@@ -74,7 +75,7 @@ class Log {
 		args[0] = this.getPrefix(args, 'DEBUG') + ' ' + args[0];
 		console.debug.apply(console, args);
 		
-		this.appendLoggerNode(args);
+		this.appendLoggerNode(args, 'INFO');
 	}
 	
 	warn() {
@@ -83,7 +84,7 @@ class Log {
 		args[0] = this.getPrefix(args, 'WARN') + ' ' + args[0];
 		console.warn.apply(console, args);
 		
-		this.appendLoggerNode(args);
+		this.appendLoggerNode(args, 'INFO');
 	}
 	
 	error() {
@@ -92,6 +93,6 @@ class Log {
 		args[0] = this.getPrefix(args, 'ERROR') + ' ' + args[0];
 		console.error.apply(console, args);
 		
-		this.appendLoggerNode(args);
+		this.appendLoggerNode(args, 'INFO');
 	}
 }

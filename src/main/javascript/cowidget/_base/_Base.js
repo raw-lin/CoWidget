@@ -14,11 +14,7 @@
 class _Base {
 	
 	static get LOG() {
-		return cowidget.common.LogFactory.getLog(_Base);
-	}
-	
-	get LOG() {
-		return this.constructor.LOG;
+		return cowidget.common.LogFactory.getLog(this);
 	}
 	
 	static get constructorOpts() {

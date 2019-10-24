@@ -6,13 +6,17 @@
  * development.
  */
 class CoWidgetImpl {
+	static get LOG() {
+		return cowidget.common.LogFactory.getLog(this);
+	}
+	
 	static isWork(){
-		console.debug('[CoWidgetImpl.isWork] success');
+		this.LOG.debug('[CoWidgetImpl.isWork] success');
 		return true;
     };
     
     static _init(userConfig, defaultConfig) {
-        console.debug('[CoWidgetImpl._init] call');
+        this.LOG.debug('[CoWidgetImpl._init] call');
     };
 
     static ready(priority, context, callback) {
@@ -20,7 +24,7 @@ class CoWidgetImpl {
     };
 
     static load(url) {
-    	console.debug('[CoWidgetImpl.load] url: ', url);
+    	this.LOG.debug('[CoWidgetImpl.load] url: ', url);
         var retCoWidget = null;
 
         var xhrOptions = {
@@ -31,12 +35,12 @@ class CoWidgetImpl {
             sync: false,
 
             load: (data) => {
-                console.debug('[CoWidgetImpl.load] data: ', data);
+                this.LOG.debug('[CoWidgetImpl.load] data: ', data);
 
                 if (Array.isArray(data)) {
                     retCoWidget = new CoWidget();
                     data.forEach((item, index, array) => {
-                        console.debug('[CoWidgetImpl.load xhrArgs.load] item: ' + index + ', ', item);
+                        this.LOG.debug('[CoWidgetImpl.load xhrArgs.load] item: ' + index + ', ', item);
                         // if (0 == index) {
                         retCoWidget.push(new CoWidget(item));
                         // };
@@ -45,11 +49,11 @@ class CoWidgetImpl {
                     retCoWidget = new CoWidget(data);
                 }
 
-                console.debug('[CoWidgetImpl.load xhrArgs.load] retCoWidget ', retCoWidget);
+                this.LOG.debug('[CoWidgetImpl.load xhrArgs.load] retCoWidget ', retCoWidget);
             },
 
             error: (error) => {
-                console.error('[CoWidgetImpl.load xhrArgs.error] error ', error);
+                this.LOG.error('[CoWidgetImpl.load xhrArgs.error] error ', error);
             }
         };
 
@@ -57,7 +61,7 @@ class CoWidgetImpl {
             // Call the asynchronous xhr
             cowidget.common.NetXhr.xhr(xhrOptions);
         } catch (exception) {
-            console.error('[CoWidgetImpl.load] exception: ', exception);
+            this.LOG.error('[CoWidgetImpl.load] exception: ', exception);
         } finally {
             return retCoWidget;
         }
@@ -76,7 +80,7 @@ class CoWidgetImpl {
 	 */
     static byId(id, doc) {
     	// return dojo.byId(id, doc);
-    	//console.debug('[DomUtil.byId] cowidget.lang.ClassLoader.container.document: ', cowidget.lang.ClassLoader.container.document);
+    	//this.LOG.debug('[DomUtil.byId] cowidget.lang.ClassLoader.container.document: ', cowidget.lang.ClassLoader.container.document);
     	return cowidget.common.DomUtil.byId(id, doc);
     };
     
@@ -88,8 +92,8 @@ class CoWidgetImpl {
         var self = this;
         option = option ? option : {};
 
-        console.debug('[CoWidgetImpl.constructor] self: ', self);
-        console.debug('[CoWidgetImpl.constructor] option: ', option);;
+        this.LOG.debug('[CoWidgetImpl.constructor] self: ', self);
+        this.LOG.debug('[CoWidgetImpl.constructor] option: ', option);;
         
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};
@@ -102,9 +106,9 @@ class CoWidgetImpl {
         let cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
 
         if ('' !== cowidgetViewName && 'dojo' === self.metaData.uiType) {
-            console.debug('[CoWidgetImpl.constructor] dojo cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
+            this.LOG.debug('[CoWidgetImpl.constructor] dojo cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
             require([cowidgetViewName, 'dojo/Stateful'], (DojoWidget, Stateful) => {
-                console.debug('[CoWidgetImpl.constructor] DojoWidget: ', DojoWidget);
+                this.LOG.debug('[CoWidgetImpl.constructor] DojoWidget: ', DojoWidget);
 
                 if (true /* dojo */ ) {
                     // success
@@ -124,17 +128,17 @@ class CoWidgetImpl {
                         }
                     });
 
-                    console.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
+                    this.LOG.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
                     self.widget.postCreateAfter(self.model);
                 }
             });
         }else if ('' !== cowidgetViewName && 'ui5' === self.metaData.uiType) {
-            console.debug('[CoWidgetImpl.constructor] cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
+            this.LOG.debug('[CoWidgetImpl.constructor] cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
         	self.widget = sap.ui.xmlview({
                 viewName : "mock.ui5.view.Logon"
              });
 
-			console.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
+			this.LOG.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
 			sap.ui.require("sap/ui/model/json/JSONModel");
 			let oModel = new sap.ui.model.json.JSONModel({
 				field01: "[CoWidgetImpl.constructor] Hi, my name is Harry Hawk"
@@ -151,20 +155,20 @@ class CoWidgetImpl {
     push(coWidget) {
         var self = this;
 
-        console.debug('[CoWidgetImpl.push] coWidget: ', coWidget);
+        this.LOG.debug('[CoWidgetImpl.push] coWidget: ', coWidget);
         
         self.omponents.push(coWidget);
     };
 
     placeAt(place) {
         var self = this;
-        console.debug('[CoWidgetImpl.placeAt] self: ', self);
+        this.LOG.debug('[CoWidgetImpl.placeAt] self: ', self);
         
 //	        () => {
 //	        	if (self.omponents.length > 0) {
 //	        		place = 'coWidget';
 //	        		self.omponents.forEach(function(element) {
-//	        			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+//	        			this.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
 //	        			element.placeAt();
 //	        		});
 //	        	}else {
@@ -172,7 +176,7 @@ class CoWidgetImpl {
 //	                if (0 === place.indexOf('#')) {
 //	                	place = place.replace('#', '');
 //	                }
-//	                console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+//	                this.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
 //	                // self.widget.buildRendering();
 //	                place = 'cowidget';
 //	                self.widget.placeAt(place, 'only');
@@ -185,7 +189,7 @@ class CoWidgetImpl {
             	if (self.omponents.length > 0) {
             		place = 'coWidget';
             		self.omponents.forEach(function(element) {
-            			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+            			this.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
             			element.placeAt();
             		});
             	}else {
@@ -193,7 +197,7 @@ class CoWidgetImpl {
                     if (0 === place.indexOf('#')) {
                     	place = place.replace('#', '');
                     }
-                    console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+                    this.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
                     // self.widget.buildRendering();
                     place = 'coWidget';
                     self.widget.placeAt(place, 'only');
@@ -205,7 +209,7 @@ class CoWidgetImpl {
         	if (self.omponents.length > 0) {
         		place = 'coWidget';
         		self.omponents.forEach(function(element) {
-        			console.debug('[CoWidgetImpl.placeAt] element: ', element);
+        			this.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
         			element.placeAt();
         		});
         	}else {
@@ -213,7 +217,7 @@ class CoWidgetImpl {
                 if (0 === place.indexOf('#')) {
                 	place = place.replace('#', '');
                 }
-                console.debug('[CoWidgetImpl.placeAt] place: ' + place);
+                this.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
                 // self.widget.buildRendering();
                 place = 'cowidget';
                 self.widget.placeAt(place, 'only');
