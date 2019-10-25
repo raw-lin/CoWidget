@@ -13,19 +13,31 @@
  * static get LOG() {
  * 			return cowidget.common.LogFactory.getLog(&lt;ClassName&gt;);
  *        }
- * 		
- * get LOG() {
- * 	return this.constructor.LOG;
- * }
  * </pre>
  */
 class LogFactory {
 	static getLog(/* class */clazz) {
+		clazz = clazz ? clazz:class Main {};
+		
 		let log = new cowidget.common.Log(clazz);
 		
-		if('object' === typeof clazz) {
-			clazz.prototype.LOG = log;
+		try{
+			if('object' === typeof clazz && 'undefined' === typeof clazz.prototype.LOG) {
+				Object.assign(clazz.prototype, {
+					LOG: log
+				});
+				
+				if('undefined' === typeof this._registed) {
+					Object.assign(this, {
+						_registed: {clazz: log}
+					});
+				}
+			}
+			
+		}catch(exception) {
+			
 		}
+		
 		
 		return log;
 	}

@@ -5,6 +5,11 @@
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
 class ClassLoader extends cowidget.ClassLoader {
+	
+	static get LOG() {
+		return cowidget.common.LogFactory.getLog(this);
+	}
+	
 	/**
      * This method searches for classes in the same manner as the {@link
      * #loadClass(String, boolean)} method. It is invoked by the Java virtual
@@ -24,6 +29,20 @@ class ClassLoader extends cowidget.ClassLoader {
      */
 	static fork(name, resolve) {
 		
+	}
+	
+	/**
+	 * TODO for chrome static filed
+	 */
+	static getClassProxyHandler() {
+    	let self = this;
+    	
+    	return {    	        	
+    		'get': function(obj, prop, receiver) {
+            	
+    			return obj[prop];
+            }
+    	}
 	}
 	
 	//static loadClass(name) {

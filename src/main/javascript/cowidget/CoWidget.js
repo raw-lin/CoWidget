@@ -36,15 +36,14 @@
 
     {
     	/* prepare Class for usage */
+    	class Util {
+    	}
     	
     	class _CoWidgetClass {
 	    	static assertSame(targetClass) {
 	    		console.debug('[_CoWidgetClass.assertSame] targetClass.name: ', (null === targetClass ? 'null':targetClass.name));
 	    		return null === targetClass ? false:(this === targetClass);
 	    	}
-    	}
-    	
-    	class Util {
     	}
     	
     	class UrlUtil {
@@ -213,12 +212,24 @@
     	    	
     	    	if('cowidget.ClassLoader' === name) {
 					retClass = (function() {return ClassLoader;})();
+					Object.assign(retClass, {
+						packageName: 'cowidget'
+					});
     	    	}else if('cowidget.NetXhr' === name) {
 					retClass = (function() {return NetXhr;})();
+					Object.assign(retClass, {
+						packageName: 'cowidget'
+					});
     	    	}else if('cowidget.UrlUtil' === name) {
 					retClass = (function() {return UrlUtil;})();
+					Object.assign(retClass, {
+						packageName: 'cowidget'
+					});
     	    	}else if('cowidget.Util' === name) {
 					retClass = (function() {return Util;})();
+					Object.assign(retClass, {
+						packageName: 'cowidget'
+					});
 				}else {
 					let prePackage = name.split('.', 1);
     	    		let baseHref = ClassLoader.packageMap[prePackage+''];
@@ -230,13 +241,22 @@
     						sync: false,
     						handleAs: 'classloader',
     						
-    						load: (data) => {
-    							retClass = data;
+    						load: (srcClass) => {
+    							console.debug('[ClassLoader.loadClass] srcClass.name: ', srcClass.name);
+    							console.debug('[ClassLoader.loadClass] srcClass.constructor.name: ', (srcClass.constructor ? srcClass.constructor.name:null));
+    							console.debug('[ClassLoader.loadClass] srcClass.packageName: ', srcClass.packageName);
+    							console.debug('[ClassLoader.loadClass] srcClass.constructor.packageName: ', (srcClass.constructor ? srcClass.constructor.packageName:null));
+							
+    							if(true || srcClazz instanceof cowidget.lang.ClassLoader) {
+    								retClass = srcClass;
+    							}else {
+    								retClass = new Proxy(srcClazz, cowidget.lang.ClassLoader.getClassProxyHandler());
+    							}
     						}
     				}
     				
     				NetXhr.xhr(xhrProps);
-    				console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
+    				//console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
     				// console.debug('[ClassLoader.loadClass] xhrProps.response:
 					// ' + xhrProps.response);
     				// retClass = NetXhr.eval(xhrProps.response);
@@ -295,15 +315,19 @@
     	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
                                 // match naming Class
     	                		let retClass = ClassLoader.loadClass(obj.packageName + '.' + prop);
-                                obj[prop] = retClass;
                                 
+    	                		/* extends to packageName */
                                 if(retClass) {
+//                                	if(retClass.constructor) {
+//										Object.assign(retClass.constructor, {
+//										    packageName: obj.packageName
+//										});
+//                                	}
+//                                	
+//                                	retClass.packageName = obj.packageName;
                                 	obj[prop] = retClass;
-									Object.assign(obj[prop], {
-									    packageName: obj.packageName
-									});
                                 }else {
-                                	console.error('[ClassLoader.proxyHandler.get] failure generate Class: ' + prop);
+                                	console.error('[ClassLoader.proxyHandler.get] failure generate Class: obj, prop: ', obj, prop);
                                 	//TODO throw new Error();
                                 }
                             } else {
@@ -325,6 +349,8 @@
                                 obj[prop] = new Proxy(packageObj, ClassLoader.getProxyHandler());
                             }
     	                }
+    	                
+    	                //console.debug('[ClassLoader.proxyHandler.get] obj[prop]: ', obj ? obj[prop]:null);
     	                
     	                return obj[prop];
     	            },
@@ -393,6 +419,10 @@
     
     /* start up */
     class CoWidget extends cowidget._base.CoWidgetImpl {
+    	static get LOG() {
+    		return cowidget.common.LogFactory.getLog(this);
+    	}
+    	
     	// static get defaultConfig() {
     		
     	// }
