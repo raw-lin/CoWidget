@@ -27,21 +27,26 @@
 		
 		let LOG = cowidget.common.LogFactory.getLog();
 		class TestLogger {
+			
 			static get LOG() {
 				return cowidget.common.LogFactory.getLog(this);
 			}
 			
-			test() {
-				console.debug('xxxxxxxx', this);
-				this.constructor.LOG.debug('test', this);
+			get LOG() {
+				return this.constructor.LOG;
 			}
+			
+			test() {
+				this.LOG.debug('test: ', this);
+			}
+			
 			static test() {
-				this.LOG.debug('static test', this);
+				this.LOG.debug('static test: ', this);
 			}
 		}
-		
-		new TestLogger().test();
+
 		TestLogger.test();
+		new TestLogger().test();
 		
 		//console.debug(new Error());
 		LOG.info('document write: ', new Date());
