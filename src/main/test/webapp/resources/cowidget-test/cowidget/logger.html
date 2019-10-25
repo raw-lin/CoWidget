@@ -25,34 +25,45 @@
 	<script type="text/javascript">
 		'use strict';
 		
-		let LOG = cowidget.common.LogFactory.getLog();
+		//let LOG = cowidget.common.LogFactory.getLog();
 		class TestLogger {
 			
 			static get LOG() {
 				return cowidget.common.LogFactory.getLog(this);
 			}
 			
-			get LOG() {
-				return this.constructor.LOG;
+			/**
+			 * for chrome error, firefox is ok.
+			 * TODO try fixed ClassLoader.getClassProxyHandler
+			 */
+// 			get LOG() {
+// 				return this.constructor.LOG;
+// 			}
+			
+			// Object prototype
+			test1() { 
+				TestLogger.LOG.debug('test: ', this);
 			}
 			
-			test() {
-				this.LOG.debug('test: ', this);
-			}
 			
-			static test() {
-				this.LOG.debug('static test: ', this);
+			//function constructor
+			static test2() {
+				TestLogger.LOG.debug('static test: ', this);
 			}
 		}
+		
+		console.debug(TestLogger);
+		console.debug(new TestLogger()); /* has prototype */
 
-		TestLogger.test();
-		new TestLogger().test();
+		//TestLogger.test2();
+		new TestLogger().test1();
+		//TestLogger.test2();
 		
 		//console.debug(new Error());
-		LOG.info('document write: ', new Date());
-		LOG.debug('document write: ', new Date());
-		LOG.warn('document write: ', new Date());
-		LOG.error('document write: ', new Date());
+// 		LOG.info('document write: ', new Date());
+// 		LOG.debug('document write: ', new Date());
+// 		LOG.warn('document write: ', new Date());
+// 		LOG.error('document write: ', new Date());
 	</script>
 </body>
 </html>

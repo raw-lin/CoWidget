@@ -16,24 +16,31 @@
  * </pre>
  */
 class LogFactory {
+	
 	static getLog(/* class */clazz) {
 		clazz = clazz ? clazz:class Main {};
 		
 		let log = new cowidget.common.Log(clazz);
 		
 		try{
-			if('object' === typeof clazz && 'undefined' === typeof clazz.prototype.LOG) {
-				Object.assign(clazz.prototype, {
-					LOG: log
-				});
-				
-				if('undefined' === typeof this._registed) {
-					Object.assign(this, {
-						_registed: {clazz: log}
+            
+			if(false){
+				if('object' === typeof clazz && 'undefined' === typeof clazz.prototype.LOG) {
+		            console.debug('[LogFactory.getLog] clazz: ', clazz);
+					Object.defineProperty(clazz.prototype, 'LOG', {
+						value: log,
+						writable: false
 					});
+					
+					if('undefined' === typeof this._registed) {
+						Object.defineProperty(this, '_registed', { 
+								clazz: log
+							});
+					}
 				}
 			}
-			
+
+            //console.debug('[LogFactory.getLog] clazz: ', clazz);
 		}catch(exception) {
 			
 		}

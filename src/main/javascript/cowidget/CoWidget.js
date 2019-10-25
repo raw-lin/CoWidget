@@ -249,12 +249,28 @@
     							console.debug('[ClassLoader.loadClass] srcClass.name: ', srcClass.name);
     							console.debug('[ClassLoader.loadClass] srcClass.constructor.name: ', (srcClass.constructor ? srcClass.constructor.name:null));
     							console.debug('[ClassLoader.loadClass] srcClass.packageName: ', srcClass.packageName);
-    							console.debug('[ClassLoader.loadClass] srcClass.constructor.packageName: ', (srcClass.constructor ? srcClass.constructor.packageName:null));
-							
-    							if(true || srcClazz instanceof cowidget.lang.ClassLoader) {
+    							//console.debug('[ClassLoader.loadClass] srcClass.constructor.packageName: ', (srcClass.constructor ? srcClass.constructor.packageName:null));
+    							console.debug('[ClassLoader.loadClass] srcClass PrototypeOf: ', Object.getPrototypeOf(srcClass));
+    							console.debug('[ClassLoader.loadClass] srcClass prototype: ', srcClass.prototype);
+    							console.debug('[ClassLoader.loadClass] srcClass: ', srcClass);
+    							
+//    							if(srcClass instanceof cowidget.lang.ClassLoader) {
+//    								retClass = srcClass;
+//    							}else 
+    							if ('cowidget.lang.ClassLoader' === name){
     								retClass = srcClass;
+    							}else if(false) {
+    								retClass = new Proxy(srcClass.prototype, cowidget.lang.ClassLoader.getPrototypeProxyHandler());
     							}else {
-    								retClass = new Proxy(srcClazz, cowidget.lang.ClassLoader.getClassProxyHandler());
+    								if(false && 'cowidget.common.Log' != name) {
+	    								// force LOG
+	    								let log = new cowidget.common.Log(srcClass);
+	    								Object.defineProperty(srcClass.prototype, 'LOG', {
+	    									value: log,
+	    									writable: false
+	    								});
+    								}
+    								retClass = srcClass; //new Proxy(srcClass.prototype, cowidget.lang.ClassLoader.getClassProxyHandler());
     							}
     						}
     				}
@@ -328,7 +344,13 @@
                                     		writable: false
                                     	});
                                     	
-                                    	obj[prop] = retClass;
+                                    	if (true || 'cowidget.lang.ClassLoader' === (obj.packageName + '.' + prop)) {
+                                    		obj[prop] = retClass;
+                                    	}else {
+                                    		obj[prop] = new Proxy(retClass, cowidget.lang.ClassLoader.getClassProxyHandler());
+                                    	}
+                                    	
+                                    	//obj[prop] = retClass;
                                 	}catch(exception) {
                                 		console.error('[ClassLoader.proxyHandler.get] exception: ', exception);
                                 	}finally {
@@ -366,6 +388,17 @@
     	        }
     	    }
     	    
+    	    static isClass(obj) {
+    	    	const isCtorClass = obj.constructor && obj.constructor.toString().substring(0, 5) === 'class';
+				if(obj.prototype === undefined) {
+				  return isCtorClass
+				}
+				const isPrototypeCtorClass = obj.prototype.constructor
+					&& obj.prototype.constructor.toString
+					&& obj.prototype.constructor.toString().substring(0, 5) === 'class';
+				return isCtorClass || isPrototypeCtorClass
+    	    }
+    	    
     	    /**
 			 * TODO
 			 */
@@ -386,10 +419,19 @@
 	    	});
 		console.debug('[CoWidget.factory] packageMap: ', packageMap);
     	
-    	Object.assign(ClassLoader, {
-        	baseHref: UrlUtil.getBaseHref(container.document),
-        	'container' : container,
-        	packageMap : packageMap
+		Object.defineProperty(ClassLoader, 'baseHref', {
+    		value: UrlUtil.getBaseHref(container.document),
+    		writable: false
+    	});
+		
+		Object.defineProperty(ClassLoader, 'container', {
+    		value: container,
+    		writable: false
+    	});
+		
+		Object.defineProperty(ClassLoader, 'packageMap', {
+    		value: packageMap,
+    		writable: true
     	});
 		
     	// let package lazy loading like java
@@ -461,10 +503,11 @@
             return self;
         };
     }
-
-    Object.assign(CoWidget, {
-    	'container' : container,
-    	'configure' : defaultConfig}); 
+    
+    Object.defineProperty(CoWidget, 'configure', {
+		value: defaultConfig,
+		writable: false
+	});
     
     cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidget work test: ', CoWidget.isWork());
     cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidget: ', CoWidget);
