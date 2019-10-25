@@ -327,6 +327,8 @@
                                     		value: obj.packageName,
                                     		writable: false
                                     	});
+                                    	
+                                    	obj[prop] = retClass;
                                 	}catch(exception) {
                                 		console.error('[ClassLoader.proxyHandler.get] exception: ', exception);
                                 	}finally {
