@@ -332,9 +332,6 @@
                                 	}finally {
                                 		
                                 	}
-
-                                	obj[prop] = retClass;
-                                	//obj[prop] = new Proxy(retClass, cowidget.lang.ClassLoader.getClassProxyHandler());
                                 }else {
                                 	console.error('[ClassLoader.proxyHandler.get] failure generate Class: obj, prop: ', obj, prop);
                                 	//TODO throw new Error();
