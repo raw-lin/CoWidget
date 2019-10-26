@@ -27,9 +27,8 @@
 		
 		//let LOG = cowidget.common.LogFactory.getLog();
 		class TestLogger {
-			
 			static get LOG() {
-				return cowidget.common.LogFactory.getLog(this);
+				return cowidget.common.LogFactory.getLog(TestLogger);
 			}
 			
 			/**
@@ -52,10 +51,10 @@
 			}
 		}
 		
-		console.debug(TestLogger);
-		console.debug(new TestLogger()); /* has prototype */
+// 		console.debug(TestLogger);
+// 		console.debug(new TestLogger()); /* has prototype */
 
-		//TestLogger.test2();
+		TestLogger.test2();
 		new TestLogger().test1();
 		//TestLogger.test2();
 		

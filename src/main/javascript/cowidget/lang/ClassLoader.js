@@ -9,6 +9,18 @@ class ClassLoader extends cowidget.ClassLoader {
 	static get LOG() {
 		return cowidget.common.LogFactory.getLog(this);
 	}
+    
+    /**
+	 * TODO
+	 */
+    mixinClass(target, ...source) { 
+    	//Traditional JavaScript Mixins
+    	for (var prop in source) {
+    	    if (source.hasOwnProperty(prop)) {
+    	      target[prop] = source[prop];
+    	    }
+    	}
+    }
 	
 	/**
      * This method searches for classes in the same manner as the {@link
@@ -38,21 +50,21 @@ class ClassLoader extends cowidget.ClassLoader {
     	let self = this;
     	
     	return {    	        	
-    		get: (obj, prop, receiver) => {
-    			if ('undefined' != typeof obj[prop]) {
-    				console.debug('[ClassLoader.getClassProxyHandler.get] obj: ' + (typeof obj));
-    				//console.debug('[ClassLoader.getClassProxyHandler.get] obj: ' + (typeof obj), obj);
-	                console.debug('[ClassLoader.getClassProxyHandler.get] obj isClass: ' + ClassLoader.isClass(obj));
-	                console.debug('[ClassLoader.getClassProxyHandler.get] prop: ' + (typeof prop), prop);
-	                console.debug('[ClassLoader.getClassProxyHandler.get] prop.toString: ' + prop.toString());
-            	}
-    			
-    			if('function' === typeof obj && 'getLog' === prop) {
-    				//obj[prop] = obj.prototype[prop];
-    			}
-    			
-    			return obj[prop];
-            }
+//    		get: (obj, prop, receiver) => {
+//    			if ('undefined' != typeof obj[prop]) {
+//    				console.debug('[ClassLoader.getClassProxyHandler.get] obj: ' + (typeof obj));
+//    				//console.debug('[ClassLoader.getClassProxyHandler.get] obj: ' + (typeof obj), obj);
+//	                console.debug('[ClassLoader.getClassProxyHandler.get] obj isClass: ' + ClassLoader.isClass(obj));
+//	                console.debug('[ClassLoader.getClassProxyHandler.get] prop: ' + (typeof prop), prop);
+//	                console.debug('[ClassLoader.getClassProxyHandler.get] prop.toString: ' + prop.toString());
+//            	}
+//    			
+//    			if('function' === typeof obj && 'getLog' === prop) {
+//    				//obj[prop] = obj.prototype[prop];
+//    			}
+//    			
+//    			return obj[prop];
+//            }
     	}
 	}
 	

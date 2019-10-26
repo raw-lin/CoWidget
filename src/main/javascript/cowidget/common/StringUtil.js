@@ -14,18 +14,17 @@
  */
 
 /**
- * <p>Operations on {@link string} that are
- * {@code null} safe.</p>
+ * <p>Operations on {@link string} that are {@code null} safe.</p>
  */
-class StringUtils {
+class StringUtil {
 	
 	static get LOG() {
-		return cowidget.common.LogFactory.getLog(this);
+		return cowidget.common.LogFactory.getLog(StringUtil);
 	}
 	
-	constructor(options) {
-		super();
-	}
+//	constructor(options) {
+//		super();
+//	}
 	
 	/**
 	 * The empty String
@@ -58,6 +57,10 @@ class StringUtils {
     	return ret;
     }
     
+    static isNotEmpty(str) {
+    	return StringUtil.isEmpty(str);
+    }
+    
     /**
      * Removes control characters (char <= 32) from both ends of this String, handling null by returning null.
      * @param {string} str - a string.
@@ -69,5 +72,32 @@ class StringUtils {
     	}
     	return str;
     }
+    
+
+	
+	/**
+	 * <p>Replaces each substring of the text String that matches the given regular expression
+	 * with the given replacement.</p>
+	 * 
+	 * regex like /\./gi.
+	 * 
+	 * @deprecated Moved to RegExUtils.
+	 */
+	static replaceAll(text, regexStr, replacement) {
+		// TODO replace . to \\.
+		
+		if (StringUtil.isNotEmpty(text)) {
+			regexStr = regexStr.replace(/\./gi, '\\.');
+			
+			let regex = new RegExp(regexStr, 'gi');
+//			StringUtil.LOG.debug('regexStr: ', regexStr);
+//			StringUtil.LOG.debug('regex: ', regex);
+//			StringUtil.LOG.debug('text: ', text);
+			
+			return text.replace(regex, replacement);
+		}else {
+			return text;
+		}
+	}
 	
 }

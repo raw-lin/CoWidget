@@ -13,6 +13,7 @@
  */
 (function(global, factory) {
 	'use strict';
+	
     if (false) {
         // TODO Error: multipleDefine for define
         typeof exports === 'object' && typeof module != 'undefined' ?
@@ -344,13 +345,7 @@
                                     		writable: false
                                     	});
                                     	
-                                    	if (true || 'cowidget.lang.ClassLoader' === (obj.packageName + '.' + prop)) {
-                                    		obj[prop] = retClass;
-                                    	}else {
-                                    		obj[prop] = new Proxy(retClass, cowidget.lang.ClassLoader.getClassProxyHandler());
-                                    	}
-                                    	
-                                    	//obj[prop] = retClass;
+                                    	obj[prop] = retClass;
                                 	}catch(exception) {
                                 		console.error('[ClassLoader.proxyHandler.get] exception: ', exception);
                                 	}finally {
@@ -397,18 +392,6 @@
 					&& obj.prototype.constructor.toString
 					&& obj.prototype.constructor.toString().substring(0, 5) === 'class';
 				return isCtorClass || isPrototypeCtorClass
-    	    }
-    	    
-    	    /**
-			 * TODO
-			 */
-    	    mixinClass(target, ...source) { 
-// //Traditional JavaScript Mixins
-    	    	for (var prop in source) {
-    	    	    if (source.hasOwnProperty(prop)) {
-    	    	      target[prop] = source[prop];
-    	    	    }
-    	    	  }
     	    }
     	}
 	    
@@ -469,7 +452,7 @@
     /* start up */
     class CoWidget extends cowidget._base.CoWidgetImpl {
     	static get LOG() {
-    		return cowidget.common.LogFactory.getLog(this);
+    		return cowidget.common.LogFactory.getLog(CoWidget);
     	}
     	
     	// static get defaultConfig() {
