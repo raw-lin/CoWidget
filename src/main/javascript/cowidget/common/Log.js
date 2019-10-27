@@ -12,20 +12,27 @@ class Log {
 	constructor(clazz) {
 		clazz = clazz ? clazz:class Main {};
 		this.clazz = clazz;
+		
+		//console.debug('typeof clazz: ' + typeof clazz);
+		if('string' === typeof clazz) {
+			this.prefixed = clazz;
+		}else {
+			if(this.clazz.packageName) {
+				this.prefixed = this.clazz.packageName + '.';
+			}
+			
+			if(this.clazz.prototype.constructor.name) {
+				this.prefixed = this.prefixed + this.clazz.prototype.constructor.name + '';
+			}
+		}
+		
 		this.loggerNode = document.getElementById('logger');
 	}
 	
-	getPrefix(args, logTag) {
-		let prefix = '';
-		let emptyString = '';
-		
-		if(this.clazz.packageName) {
-			prefix = prefix + this.clazz.packageName + '.';
-		}
-		prefix = prefix + this.clazz.prototype.constructor.name + '';
-		
-		prefix = 'CoWLogger - ' + (logTag ? logTag.padEnd(5, ' '):emptyString.padEnd(5, ' ')) + ' [' + prefix + ']';
-		return prefix;
+	getPrefixed(args, logTag) {
+		let prefixed = '';		
+		prefixed = 'CoWLogger - ' + (logTag ? logTag.padEnd(5, ' '):emptyString.padEnd(5, ' ')) + ' [' + this.prefixed + ']';
+		return prefixed;
 	}
 	
 	appendLoggerNode(args, logTag) {
@@ -54,7 +61,7 @@ class Log {
 	log() {
 		let args = Object.create(arguments);
 		
-		args[0] = this.getPrefix(args, 'INFO') + ' ' + args[0];
+		args[0] = this.getPrefixed(args, 'INFO') + ' ' + args[0];
 		console.log.apply(console, args);
 		
 		this.appendLoggerNode(args, 'INFO');
@@ -63,7 +70,7 @@ class Log {
 	info() {
 		let args = Object.create(arguments);
 		
-		args[0] = this.getPrefix(args, 'INFO') + ' ' + args[0];
+		args[0] = this.getPrefixed(args, 'INFO') + ' ' + args[0];
 		console.log.apply(console, args);
 		
 		this.appendLoggerNode(args, 'INFO');
@@ -72,7 +79,7 @@ class Log {
 	debug() {	
 		let args = Object.create(arguments);
 		
-		args[0] = this.getPrefix(args, 'DEBUG') + ' ' + args[0];
+		args[0] = this.getPrefixed(args, 'DEBUG') + ' ' + args[0];
 		console.debug.apply(console, args);
 		
 		this.appendLoggerNode(args, 'INFO');
@@ -81,7 +88,7 @@ class Log {
 	warn() {
 		let args = Object.create(arguments);
 		
-		args[0] = this.getPrefix(args, 'WARN') + ' ' + args[0];
+		args[0] = this.getPrefixed(args, 'WARN') + ' ' + args[0];
 		console.warn.apply(console, args);
 		
 		this.appendLoggerNode(args, 'INFO');
@@ -90,7 +97,7 @@ class Log {
 	error() {
 		let args = Object.create(arguments);
 		
-		args[0] = this.getPrefix(args, 'ERROR') + ' ' + args[0];
+		args[0] = this.getPrefixed(args, 'ERROR') + ' ' + args[0];
 		console.error.apply(console, args);
 		
 		this.appendLoggerNode(args, 'INFO');

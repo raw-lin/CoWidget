@@ -7,6 +7,10 @@
  * </pre>
  */
 class NetXhr extends cowidget.NetXhr {
+	static request(xhrArgs) {
+		
+	}
+	
 	static _xhrPromise( /* bar._base._XhrArgss */ xhrProps) {
 		
 		class _xhrPromise {

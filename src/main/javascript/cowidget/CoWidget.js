@@ -78,7 +78,7 @@
 
 		    }
 			
-			static get xhrProps() {
+			static get xhrArgs() {
 				return {
 					/* options: text|html|xml|json|classloader */
 					handleAs: 'text',
@@ -118,7 +118,7 @@
 			static xhr( /* bar._base._XhrArgss */ xhrProps) {				
 				let response = '';
 				
-				xhrProps = xhrProps ? xhrProps : Object.assign({}, NetXhr.xhrProps);
+				xhrProps = xhrProps ? xhrProps : Object.assign({}, NetXhr.xhrArgs);
 			        
 				if(false) {
 				// async function asyncCall(xhrProps) {
@@ -135,7 +135,6 @@
 			
 			static _xhr( /* NetXhr._xhrProps */ xhrProps) {
 		        let xhrReq = new XMLHttpRequest();
-	            // req.open('GET', '/ExampleWeb/mock/data/usecase.json?');
 		        xhrReq.open(xhrProps.method ? xhrProps.method : 'GET', xhrProps.url, xhrProps.sync);
 	            
 		        xhrReq.onload = (event) => {
@@ -459,16 +458,39 @@
     		
     	// }
     	
+    	constructorX(options) {
+			//super(options);
+		}
+
+        constructor(option) {
+        	super(option);
+        	
+//            let self = this;
+//            option = option ? option : {};
+//
+//            CoWidget.LOG.debug('[constructor] self: ', self);
+//            CoWidget.LOG.debug('[constructor] option: ', option);;
+//            
+//            // self.adapter = new Objecy();
+//            self.metaData = option ? option : {};
+//            self.metaData.uiType = CoWidget.configure.ui;
+//            self.omponents = [];
+//            self.widget = null;
+//            
+//            //self.model = option.model ? option.model:{};
+//            self.place = option.place ? option.place : 'coWidget';
+        };
+    	
     	placeAtFork(place) {
             var self = this;
-            console.debug('[CoWidget.placeAt] self: ', self);
+            console.debug('[placeAt] self: ', self);
             
             dojo.ready(0, function() {
             	
             	if (self.omponents.length > 0) {
             		place = 'coWidget';
             		self.omponents.forEach(function(element) {
-            			console.debug('[CoWidget.placeAt] element: ', element);
+            			console.debug('[placeAt] element: ', element);
             			element.placeAt();
             		});
             	}else {
@@ -476,7 +498,7 @@
 	                if (0 === place.indexOf('#')) {
 	                	place = place.replace('#', '');
 	                }
-	                console.debug('[CoWidget.placeAt] place: ' + place);
+	                console.debug('[placeAt] place: ' + place);
 	                // self.widget.buildRendering();
 	                self.widget.placeAt(place, 'only');
             	}
@@ -492,8 +514,8 @@
 		writable: false
 	});
     
-    cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidget work test: ', CoWidget.isWork());
-    cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidget: ', CoWidget);
+    cowidget.common.LogFactory.getLog().debug('[factory] CoWidget work test: ', CoWidget.isWork());
+    cowidget.common.LogFactory.getLog().debug('[factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));

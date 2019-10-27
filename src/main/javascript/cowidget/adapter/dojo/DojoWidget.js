@@ -4,81 +4,84 @@
  * This is an optimized version of CoWidget, built for deployment and not for development.
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
-define([ "dojo/_base/declare"
-			, "dojox/mvc/Templated"
-			//, "dijit/_WidgetsInTemplateMixin"
-			, "dijit/_WidgetBase"
-			, "dijit/_TemplatedMixin"
-			, "dojox/mvc/at"
-			, "dojox/mvc/getStateful"
-			, "dojo/Stateful"
-			, "dojox/mvc/ModelRefController"
-			, "dojo/parser"
-			, "dojo/_base/lang"
-			, "dojo/on"
-], function(declare, Templated, _WidgetBase, _TemplatedMixin, at, getStateful, Stateful, ModelRefController, parser, lang, on) {
+define([ 'dojo/_base/declare'
+			, 'dojo/parser'
+			, 'dijit/_WidgetBase'
+			, 'dijit/_TemplatedMixin'
+			
+			//, 'dojo/domReady!'
+], function(declare, parser, _WidgetBase, _TemplatedMixin) {
 	'use strict';
 
 	var DojoWidget = declare('cowidget.DojoWidget', [_WidgetBase, _TemplatedMixin], {
-		// ctrl: dojox.mvc.ModelRefController
-		//		The controller that the form widgets in the template refer to.
-		//ctrl: null,
-		//at: at,
 		
-		constructor: function(options){
-			let self = this;
-			self.at = at;
-			console.log('[DojoWidget.constructor] options: ', options);
-
-			//self.model = options.modelDate1;
-			//self.model = new Stateful(options.modelDate1);
-			self.model = getStateful({value: "Foo"});
+		LOG: cowidget.common.LogFactory.getLog('cowidget.DojoWidget'),
+		
+		constructor:  function(options) {
 			
-			self.ctrl = new ModelRefController({model: getStateful(options.modelDate)});
-			
-			console.log('[DojoWidget.constructor] self: ', self);
 		},
 		
 		postCreateAfter: function(model) {
 			let self = this;
-			console.log('[DojoWidget.postCreateAfter]');
+			self.LOG.debug('[postCreateAfter] self: ', self);
 			
 			//self.model = new Stateful(model);
 		},
 		
-		postCreate : function() {
+		getModel: function() {
 			let self = this;
-			//at();
-			console.log('[DojoWidget.postCreate] self: ', self);
-			console.log('[DojoWidget.postCreate] self.domNode: ', self.domNode);
 			
-			//dojo.require('dojox.mvc.getStateful');
-			//self.domNode.at = at;
-			//self.model = dojox.mvc.getStateful(self.modelDate1);
+			return self['model'];
+		},
+		
+		setModel: function(model) {
+			let self = this;
 			
-			//self.model = new Stateful(self.modelDate);
-			//self.model = new Stateful({model: self.modelDate});
-			//self.ctrl = new ModelRefController({model: model});
-			self.model = getStateful(self.model1);
-			//self.model = new ctrl(self.model);
-			console.log('[DojoWidget.postCreate] at: ', at('field01', 'value'));
+			model = model ? model:{};
+			
+			self['model'] = model;
+			
+			return self;
+		},
+		
+		rebuildRendering: function() {
+			let self = this;
+
+			self.LOG.debug('[rebuildRendering] self: ', self);
+			
+			self._rendered = false;
+			self.buildRendering();
+
+			self.postCreate();
+			self.placeAt('coWidget', 'only');
+		},
+		
+		placeAtt: function(reference, position) {
+			//super.placeAt(reference, position);
+			//return this.inherited('placeAt', arguments);
+			//_WidgetBase.placeAt(reference, position);
+		},
+		
+		postCreate: function() {
+			let self = this;
+			self.LOG.debug('[postCreate] self: ', self);
 			
 			{
 				// plugin ajax event
-				console.log('[DojoWidget.postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
+				self.LOG.debug('[DojoWidget.postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
 				let buttons = dojo.query('button[type="reset"]', self.domNode).on("click", function() {
 					alert('reset');
-					console.log('[DojoWidget.postCreate] self: ', self);
+					self.LOG.debug('[DojoWidget.postCreate] self: ', self);
 					// ajax submit
 				});
 
 				dojo.query('[type="submit"]', self.domNode).on("click", function(evt) {
 					dojo.stopEvent(evt);
 					
-					console.log('[DojoWidget.postCreate] button: ', this);
-					console.log('[DojoWidget.postCreate] self: ', self);
-					console.log('[DojoWidget.postCreate] self.model: ', self.model);
-					console.log('[DojoWidget.postCreate] button form: ', dojo.query('form', self.dom));
+					self.LOG.debug('[DojoWidget.postCreate] button: ', this);
+					self.LOG.debug('[DojoWidget.postCreate] self: ', self);
+					self.LOG.debug('[DojoWidget.postCreate] self.model: ', self.model);
+					self.LOG.debug('[DojoWidget.postCreate] button form: ', dojo.query('form', self.dom));
 
 					// plugin in form, href, button to ajax.
 
@@ -98,39 +101,14 @@ define([ "dojo/_base/declare"
 						form : formDom,
 						handleAs : 'json',
 						load : function(data) {
-							console.log('[DojoWidget.postCreate] xhrArgs data: ', data);
+							self.LOG.debug('[postCreate.load] xhrArgs data: ', data);
 							
 							// mock
-							let coWidgetOpts = data[buttonName][0];
-							console.log('[DojoWidget.postCreate] coWidgetOpts: ', coWidgetOpts);
-							
+							let coWidgetOpts = data[buttonName]['1'];
+							self.LOG.debug('[postCreate.load] coWidgetOpts: ', coWidgetOpts);
 
-							let model = new dojo.Stateful({
-				            	field01 : {
-				            		value: 'DojoWidget 1'
-				            		},
-				            	field02 : {
-				            		value: 'DojoWidget 2'
-				            	}});
-
-							console.debug('[DojoWidget.postCreate] self.model: ', self.model);
-							console.debug('[DojoWidget.postCreate] self.model.get: ', self.model.get('field01'));
-							//self.model.get('field01').value='xxx';
-							//self.model = dojox.mvc.getStateful(model);
-							self.model.set('field01', new dojo.Stateful({value: "Bar"}));
-							self.model.set('field01', dojox.mvc.getStateful({value: "Bar"}));
-							//self.ctrl.set("model", model);
-							//parse.parse();
-							//self.set('model', coWidgetOpts.model);
-							//self.postMixInProperties();
-							//new CoWidget(coWidgetOpts).placeAt();
-							
-							//self.startup();
-							
-							//self.ctrl.set('field01', new dojo.Stateful({value: "Bar"}));
-							//self.ctrl.set('field01', dojox.mvc.getStateful({value: "Bar"}));
-							//self.buildRendering();
-							parser.parse();
+							self.setModel(coWidgetOpts.model);							
+							self.rebuildRendering();
 						},
 						error : function(error) {
 							// We'll 404 in the demo, but that's okay. We don't have
@@ -148,7 +126,7 @@ define([ "dojo/_base/declare"
 				self.postCreateAfter();
 			}
 			
-			parser.parse();
+			parser.parse(self.domNode);
 		},
 		
 		none : null

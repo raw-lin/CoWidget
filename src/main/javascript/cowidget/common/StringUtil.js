@@ -86,18 +86,20 @@ class StringUtil {
 	static replaceAll(text, regexStr, replacement) {
 		// TODO replace . to \\.
 		
+		let ret = text;
+		
 		if (StringUtil.isNotEmpty(text)) {
-			regexStr = regexStr.replace(/\./gi, '\\.');
+			regexStr = regexStr.replace(/\./g, '\\.');
 			
-			let regex = new RegExp(regexStr, 'gi');
+			let regex = new RegExp(regexStr, 'g');
 //			StringUtil.LOG.debug('regexStr: ', regexStr);
 //			StringUtil.LOG.debug('regex: ', regex);
 //			StringUtil.LOG.debug('text: ', text);
 			
-			return text.replace(regex, replacement);
-		}else {
-			return text;
+			ret = text.replace(regex, replacement);
 		}
+		
+		return ret;
 	}
 	
 }
