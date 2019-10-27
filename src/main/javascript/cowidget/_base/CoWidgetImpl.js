@@ -122,10 +122,11 @@ class CoWidgetImpl {
             	CoWidgetImpl.LOG.debug('[_init] AdapterDojoWidget: ', AdapterDojoWidget);
             	
             	self.widget = new AdapterDojoWidget({
+            		baseHref: cowidget.common.UrlUtil.getBaseHref(),
 		            none: null
 		        });
             	
-            	CoWidgetImpl.LOG.debug('[_init] self.widget: ', self.widget);
+            	//CoWidgetImpl.LOG.debug('[_init] self.widget: ', self.widget);
             	
             	ready(() => {
             		CoWidgetImpl.LOG.debug('[_init] call ready');
@@ -167,9 +168,8 @@ class CoWidgetImpl {
             dojo.require([cowidgetViewNameUrl, "dojo/domReady!"], (AdapterDojoWidget) => {
             	CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] AdapterDojoWidget: ', AdapterDojoWidget);
             	
-            	self.widget = new AdapterDojoWidget({
-		            none: null
-		        });
+            	self.widget = AdapterDojoWidget;
+            	self.widget['baseHref'] = cowidget.common.UrlUtil.getBaseHref();
 
             	CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
             });

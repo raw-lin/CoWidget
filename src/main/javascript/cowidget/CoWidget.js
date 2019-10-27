@@ -49,25 +49,43 @@
     	
     	class UrlUtil {
     		
-    		static getCurrentScripUrl(/* document */ doc) {
+    		static getCurrentScrip(/* document */ doc) {
+    			doc = doc ? doc:wondow.document;
+    			
     			let jsScripts = doc.scripts;
     			
-    			let currentScriptUrl = jsScripts[jsScripts.length - 1];
-    			console.debug('[UrlUtil.getCurrentScripUrl] currentScriptUrl: ', currentScriptUrl);
+    			let currentScript = jsScripts[jsScripts.length - 1];
+    			console.debug('[UrlUtil.getCurrentScrip] currentScript: ', currentScript);
     			
-    	        return currentScriptUrl;
+    	        return currentScript;
     		}
     		
-    		static getBaseHref(/* document */ doc) {
-    			let currentScript = UrlUtil.getCurrentScripUrl(doc);
+    		static getBaseHref(container) {
+    			let baseHref = '';
+    			
+    			let pathArray = window.location.pathname.split('/');
+    			pathArray.forEach(function(item, index, array) {
+    				//console.log('[UrlUtil.getBaseHref] item, index):, ', item, index);
+    				if(1 === index) {
+    					baseHref = '/' + item;
+    				}
+				});
+    			console.debug('[UrlUtil.getBaseHref] baseHref: ', baseHref);
 
-    	        console.debug('[UrlUtil.getBaseHref] currentScript: ', currentScript);
+    	        return baseHref;
+    		}
+    		
+    		static getCurrentHref(/* document */ doc) {
+    			doc = doc ? doc:wondow.document;
+    			let currentScript = UrlUtil.getCurrentScrip(doc);
+
+    	        console.debug('[UrlUtil.getCurrentHref] currentScript: ', currentScript);
 
     	        let currentHref = currentScript && currentScript.src ? currentScript.src : './';
 
-    	        console.debug('[UrlUtil.getBaseHref] currentHref: ', currentHref);
+    	        console.debug('[UrlUtil.getCurrentHref] currentHref: ', currentHref);
     	        let currentBaseHref = currentHref ? currentHref.replace('/cowidget/CoWidget.js', '') : './';
-    	        console.debug('[UrlUtil.getBaseHref] currentBaseHref: ', currentBaseHref);
+    	        console.debug('[UrlUtil.getCurrentHref] currentBaseHref: ', currentBaseHref);
 
     	        return currentBaseHref;
     		}
@@ -397,12 +415,12 @@
 	    // Package Map
 	    let packageMap = userConfig.packages ? userConfig.packages:{};
 	    packageMap = Object.assign(packageMap, {
-	    		cowidget: UrlUtil.getBaseHref(container.document) + '/cowidget'
+	    		cowidget: UrlUtil.getCurrentHref(container.document) + '/cowidget'
 	    	});
 		console.debug('[CoWidget.factory] packageMap: ', packageMap);
     	
 		Object.defineProperty(ClassLoader, 'baseHref', {
-    		value: UrlUtil.getBaseHref(container.document),
+    		value: UrlUtil.getCurrentHref(container.document),
     		writable: false
     	});
 		
@@ -438,11 +456,11 @@
     // console.debug('[CoWidget.factory] container: ', container);
     console.debug('[CoWidget.factory] userConfig: ', userConfig);
 
-    console.debug('[CoWidget.factory] UrlUtil.getBaseHref(container.document): ', cowidget.common.UrlUtil.getBaseHref(container.document));
+    console.debug('[CoWidget.factory] UrlUtil.getCurrentHref(container.document): ', cowidget.common.UrlUtil.getCurrentHref(container.document));
     let defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
         place: '#cowidget',
-        baseHref: cowidget.common.UrlUtil.getBaseHref(container.document),
+        baseHref: cowidget.common.UrlUtil.getCurrentHref(container.document),
         isMock: true,
         'null': null
     }, userConfig);

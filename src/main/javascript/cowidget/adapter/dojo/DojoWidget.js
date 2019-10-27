@@ -17,7 +17,10 @@ define([ 'dojo/_base/declare'
 		
 		LOG: cowidget.common.LogFactory.getLog('cowidget.DojoWidget'),
 		
-		constructor:  function(options) {
+		constructor: function (options) {
+			options = options ? options:{};
+			let self = this;
+			self.LOG.debug('[constructor]');
 			
 		},
 		
