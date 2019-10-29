@@ -6,22 +6,57 @@
  */
 define([ 'dojo/_base/declare'
 			, 'dojo/parser'
+			, 'dojo/request/xhr'
+			, 'dojo/json'
 			, 'dijit/_WidgetBase'
 			, 'dijit/_TemplatedMixin'
 			
+			, 'dojox/mvc/at'
+			, 'dojox/mvc/StatefulModel'
+			, 'dojox/mvc/EditModelRefController'
+			, 'dojox/mvc/ModelRefController'
+			
 			//, 'dojo/domReady!'
-], function(declare, parser, _WidgetBase, _TemplatedMixin) {
+], function(declare, parser, xhr, JSON, _WidgetBase, _TemplatedMixin, at, StatefulModel, EditModelRefController, ModelRefController) {
 	'use strict';
 
-	var DojoWidget = declare('cowidget.DojoWidget', [_WidgetBase, _TemplatedMixin], {
+	let DojoWidget = declare('cowidget.DojoWidget', [_WidgetBase, _TemplatedMixin], {
 		
 		LOG: cowidget.common.LogFactory.getLog('cowidget.DojoWidget'),
 		
-		constructor: function (options) {
-			options = options ? options:{};
+		// ctrl: dojox.mvc.ModelRefController
+		//		The controller that the form widgets in the template refer to.
+		//ctrl: null,
+		_model: null, /*StatefulModel*/
+		
+		getModel: function() {
 			let self = this;
-			self.LOG.debug('[constructor]');
+			//self.LOG.debug('[getModel] self._model: ', self._model);
+			//return self._model ? self._model:new StatefulModel({data: self.modelData});
+			return self._model;
+		},
+		
+		setModel: function(model) {
+			let self = this;
 			
+			self._model = model;
+			
+			return model;
+		},
+		
+		constructor: function (options) {
+			let self = this;
+			options = options ? options:{};
+			self.LOG.debug('[constructor] DojoWidget');
+			
+			self._init(options);
+		},
+		
+		_init: function(options) {
+			let self = this;
+			options = options ? options:{};
+			
+			self.LOG.debug('[_init] options: ', options);
 		},
 		
 		postCreateAfter: function(model) {
@@ -29,22 +64,6 @@ define([ 'dojo/_base/declare'
 			self.LOG.debug('[postCreateAfter] self: ', self);
 			
 			//self.model = new Stateful(model);
-		},
-		
-		getModel: function() {
-			let self = this;
-			
-			return self['model'];
-		},
-		
-		setModel: function(model) {
-			let self = this;
-			
-			model = model ? model:{};
-			
-			self['model'] = model;
-			
-			return self;
 		},
 		
 		rebuildRendering: function() {
@@ -71,42 +90,57 @@ define([ 'dojo/_base/declare'
 			
 			{
 				// plugin ajax event
-				self.LOG.debug('[DojoWidget.postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
+				self.LOG.debug('[postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
 				let buttons = dojo.query('button[type="reset"]', self.domNode).on("click", function() {
 					alert('reset');
-					self.LOG.debug('[DojoWidget.postCreate] self: ', self);
+					self.LOG.debug('[postCreate] self: ', self);
 					// ajax submit
 				});
 
-				dojo.query('[type="submit"]', self.domNode).on("click", function(evt) {
+				dojo.query('[type="submit"]', self.domNode).on('click', function(evt) {
 					dojo.stopEvent(evt);
 					
-					self.LOG.debug('[DojoWidget.postCreate] button: ', this);
-					self.LOG.debug('[DojoWidget.postCreate] self: ', self);
-					self.LOG.debug('[DojoWidget.postCreate] self.model: ', self.model);
-					self.LOG.debug('[DojoWidget.postCreate] button form: ', dojo.query('form', self.dom));
-
+					self.LOG.debug('[postCreate] button: ', this);
+					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
+					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
+					self.LOG.debug('[postCreate] self.model: ', self.getModel());
+					self.LOG.debug('[postCreate] self.model.toPlainObject(): ', self.getModel().toPlainObject());
+					self.LOG.debug('[postCreate] self.ctrl: ', self.ctrl);
+					self.LOG.debug('[postCreate] button form: ', dojo.query('form', self.dom));
+					
 					// plugin in form, href, button to ajax.
 
 					let buttonName = dojo.attr(this, 'name');
 					alert('submit: ' + buttonName);
-					console.debug('[DojoWidget.postCreate] buttonName: ', buttonName);
+					console.debug('[postCreate] buttonName: ', buttonName);
 
 					let formDom = null;
 					dojo.query('form', self.dom).forEach(function(entry, i) {
 						formDom = entry
 					});
 					
-					let xhrContent = dojo.formToObject(formDom);
+					let postData = dojo.formToObject(formDom);
+					postData = self.getModel().toPlainObject();
+					postData = JSON.stringify(postData);
+					//postData = JSON.parse(jsonString);
+					console.debug('[postCreate.click] postData: ', postData);
 					
 					let xhrArgs = {
-						url : dojo.attr(formDom, 'action') + '?!' + buttonName,
-						form : formDom,
+						url : dojo.attr(formDom, 'action'),
+						method: 'POST',
+						query: '!' + buttonName,
+						data : postData,
+						preventCache: false,
+						//postData: postData,
+						//sync
+						headers: {
+							'Content-Type': 'application/json;charset=UTF-8'
+						},
 						handleAs : 'json',
-						load : function(data) {
+						loadX : function(data) {
 							self.LOG.debug('[postCreate.load] xhrArgs data: ', data);
 							
-							// mock
+							// mock service, choice user case
 							let coWidgetOpts = data[buttonName]['1'];
 							self.LOG.debug('[postCreate.load] coWidgetOpts: ', coWidgetOpts);
 
@@ -121,7 +155,25 @@ define([ 'dojo/_base/declare'
 						}
 					};
 					
-					dojo.xhrPost(xhrArgs);
+					let widget = self;
+					xhr(xhrArgs.url, xhrArgs).then(function(data){
+							// Do something with the handled data
+							widget.LOG.debug('[postCreate.then] xhrArgs data: ', data);
+							
+							// mock service, choice user case
+							let coWidgetOpts = data[buttonName]['1'];
+							widget.LOG.debug('[postCreate.then] coWidgetOpts: ', coWidgetOpts);
+	
+							model.set('data', coWidgetOpts.model);
+							//widget.getModel().set('data', coWidgetOpts.model);							
+							//widget.rebuildRendering();
+						}, function(err){
+							widget.LOG.error('[postCreate.then] coWidgetOpts: ', err);
+						}, function(evt){
+							widget.LOG.error('[postCreate.then] supports XHR2 coWidgetOpts: ', evt);
+							// Handle a progress event from the request if the
+							// browser supports XHR2
+						});
 				});
 			}
 			

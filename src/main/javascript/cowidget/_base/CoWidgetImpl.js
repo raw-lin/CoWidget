@@ -85,8 +85,12 @@ class CoWidgetImpl {
     	return cowidget.common.DomUtil.byId(id, doc);
     };
     
-    static create(){
+    static create(option){
+    	let retCoWidget = null;
     	
+    	retCoWidget = new CoWidgetImpl(option);
+    	
+    	return retCoWidget;
     };
     
     constructor(option) {
@@ -96,45 +100,97 @@ class CoWidgetImpl {
         // initial parameter
         self.metaData = option ? option : {};
         self.metaData.uiType = CoWidget.configure.ui;
-        self.omponents = [];
+        self.components = [];
         self.widget = null;
-        
-        self._init(option);
     }
 	
-	_init(option) {
+    _placeAt4Dojo(place, position) {
         let self = this;
         
-		let cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
+        self['placeReference'] = place;
+		self['placePosition'] = position ? position:'only';
         
-        CoWidgetImpl.LOG.debug('[_init] uiType cowidgetViewName: ' + self.metaData.uiType + ', ', cowidgetViewName);
+        let cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
+        
+		CoWidgetImpl.LOG.debug('[_placeAt4Dojo] self: ', self);
+		CoWidgetImpl.LOG.debug('[_placeAt4Dojo] uiType cowidgetViewName: ' + self.metaData.uiType + ', ', cowidgetViewName);
         if (cowidget.common.StringUtil.isNotEmpty(cowidgetViewName) && 'dojo' === self.metaData.uiType) {
             //dojo.require('dojo/_base/declare');
             //dojo.require(cowidgetViewName);
             
-            CoWidgetImpl.LOG.debug('[_init] cowidgetViewName: ', cowidgetViewName);
-            
             let cowidgetViewNameUrl = cowidget.common.StringUtil.replaceAll(cowidgetViewName, '.', '/');
             cowidgetViewNameUrl = cowidgetViewName;
-            CoWidgetImpl.LOG.debug('[_init] cowidgetViewNameUrl: ' + cowidgetViewNameUrl);
+            CoWidgetImpl.LOG.debug('[_placeAt4Dojo] cowidgetViewNameUrl: ' + cowidgetViewNameUrl);
             
+            let coWidget = self;
             require([cowidgetViewNameUrl, 'dojo/ready'], function (AdapterDojoWidget, ready) { // don't use dojo.require
-            	CoWidgetImpl.LOG.debug('[_init] AdapterDojoWidget: ', AdapterDojoWidget);
-            	
-            	self.widget = new AdapterDojoWidget({
+            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] AdapterDojoWidget begin');
+            	coWidget.widget = new AdapterDojoWidget({
             		baseHref: cowidget.common.UrlUtil.getBaseHref(),
 		            none: null
 		        });
             	
-            	//CoWidgetImpl.LOG.debug('[_init] self.widget: ', self.widget);
-            	
-            	ready(() => {
-            		CoWidgetImpl.LOG.debug('[_init] call ready');
-            		//self.widget.placeAt('coWidget');
+            	dojo.ready(0, () => {
+            		CoWidgetImpl.LOG.debug('[_placeAt4Dojo] call ready');
+            		coWidget.widget.placeAt(self.placeReference, self.placePosition);
             	});
+            	
+            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] AdapterDojoWidget end: ', self.widget);
             });
         }
+        
+        return self;
 	}
+
+    getMetaData() {
+        var self = this;
+        return self.metaData;
+    };
+
+    push(coWidget) {
+        var self = this;
+
+        CoWidgetImpl.LOG.debug('[CoWidgetImpl.push] coWidget: ', coWidget);
+        
+        self.components.push(coWidget);
+    };
+
+    placeAt(place, position) {
+    	position = position ? position:'only';
+        var self = this;
+        
+        self['placeReference'] = place;
+		self['placePosition'] = position;
+        
+        if ('dojo' === self.metaData.uiType) {
+        	self._placeAt4Dojo(place, position);
+        	dojo.ready(0, () => {
+            	
+        	});
+        }else {
+        	// ui5
+        	if (self.components.length > 0) {
+        		place = 'coWidget';
+        		self.components.forEach(function(element) {
+        			CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
+        			element.placeAt();
+        		});
+        	}else {
+                place = place ? place : self.place;
+                if (0 === place.indexOf('#')) {
+                	place = place.replace('#', '');
+                }
+                CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
+                // self.widget.buildRendering();
+                place = 'cowidget';
+                self.widget.placeAt(place, 'only');
+        	}
+        }
+        
+        return self;
+    };
+    
+    /* Skip */
 
     constructorX(option) {
         var self = this;
@@ -146,7 +202,7 @@ class CoWidgetImpl {
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};
         self.metaData.uiType = CoWidget.configure.ui;
-        self.omponents = [];
+        self.components = [];
         self.widget = null;
         
         //self.model = option.model ? option.model:{};
@@ -174,50 +230,6 @@ class CoWidgetImpl {
             	CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
             });
             	
-//            require([cowidgetViewName], (DojoWidget) => {
-//                CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] DojoWidget: ', DojoWidget);
-// 
-//                if (true /* dojo */ ) {
-//                    // success
-//                	//dojo.require('dojo.Stateful');
-//                	//dojo.require('dojox/mvc/ModelRefController');
-//                	self.widget = DojoWidget;
-////                    self.widget = new DojoWidget({
-////                    	modelDate: {
-////                        	field01 : {
-////                        		value: 'modelDate CoWidgetImpl 1'
-////                        		},
-////                        	field02 : {
-////                        		value: 'modelDate CoWidgetImpl 2'
-////                        	}},
-////                    	modelDate1: {
-////                        	field01 : 'model1 CoWidgetImpl 1',
-////                        	field02 : 'model1 CoWidgetImpl 2'
-////                        },
-////                        
-//////                        model: dojox.mvc.getStateful({
-//////                        	field01 : {
-//////                        		value: 'model3 CoWidgetImpl 1'
-//////                        		},
-//////                        	field02 : {
-//////                        		value: 'model3 CoWidgetImpl 2'
-//////                        	}}),
-////                        	
-//////                    	model4: dojox.mvc.getStateful({ model : {
-//////                        	field01 : {
-//////                        		value: 'model4 CoWidgetImpl 1'
-//////                        		},
-//////                        	field02 : {
-//////                        		value: 'model4 CoWidgetImpl 2'
-//////                        	}}}),
-////                        	
-////                        none: null
-////                    });
-//
-//                    CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);
-//                    //self.widget.postCreateAfter(self.model);
-//                }
-//            });
         }else if ('' !== cowidgetViewName && 'ui5' === self.metaData.uiType) {
             CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] cowidgetViewName: ' + self.metaData.ui + ',', cowidgetViewName);
         	self.widget = sap.ui.xmlview({
@@ -231,94 +243,5 @@ class CoWidgetImpl {
 			});
 			self.widget.setModel(oModel);
         }
-    };
-
-    getMetaData() {
-        var self = this;
-        return self.metaData;
-    };
-
-    push(coWidget) {
-        var self = this;
-
-        CoWidgetImpl.LOG.debug('[CoWidgetImpl.push] coWidget: ', coWidget);
-        
-        self.omponents.push(coWidget);
-    };
-
-    placeAt(place) {
-        var self = this;
-        CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] self: ', self);
-        
-//	        () => {
-//	        	if (self.omponents.length > 0) {
-//	        		place = 'coWidget';
-//	        		self.omponents.forEach(function(element) {
-//	        			CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
-//	        			element.placeAt();
-//	        		});
-//	        	}else {
-//	                place = place ? place : self.place;
-//	                if (0 === place.indexOf('#')) {
-//	                	place = place.replace('#', '');
-//	                }
-//	                CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
-//	                // self.widget.buildRendering();
-//	                place = 'cowidget';
-//	                self.widget.placeAt(place, 'only');
-//	        	}
-//	        }
-	        
-        if ('dojo' === self.metaData.uiType) {
-        	dojo.ready(0, () => {
-            	
-            	if (self.omponents.length > 0) {
-            		place = 'coWidget';
-            		self.omponents.forEach(function(element) {
-            			CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
-            			element.placeAt();
-            		});
-            	}else {
-                    place = place ? place : self.place;
-                    if (0 === place.indexOf('#')) {
-                    	place = place.replace('#', '');
-                    }
-                    CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
-                    // self.widget.buildRendering();
-                    place = 'coWidget';
-
-        			if(true || self.widget && self.widget.domNode) {
-        				self.widget['placeReference'] = place;
-        				self.widget['placePosition'] = 'only';
-        				
-        				self.widget.placeAt(self.widget.placeReference, self.widget.placePosition);
-        			}else{
-        				CoWidgetImpl.LOG.error('[CoWidgetImpl.placeAt] self.widget is not ready');
-        				CoWidgetImpl.LOG.error('[CoWidgetImpl.placeAt] self.widget: ', self.widget);
-        			}
-            	}
-                // plugin ajax method
-           });
-        }else {
-        	// ui5
-        	if (self.omponents.length > 0) {
-        		place = 'coWidget';
-        		self.omponents.forEach(function(element) {
-        			CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
-        			element.placeAt();
-        		});
-        	}else {
-                place = place ? place : self.place;
-                if (0 === place.indexOf('#')) {
-                	place = place.replace('#', '');
-                }
-                CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
-                // self.widget.buildRendering();
-                place = 'cowidget';
-                self.widget.placeAt(place, 'only');
-        	}
-        }
-        
-        return self;
     };
 }

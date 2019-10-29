@@ -13,7 +13,7 @@ class ClassLoader extends cowidget.ClassLoader {
     /**
 	 * TODO
 	 */
-    mixinClass(target, ...source) { 
+    mixin(target, ...source) { 
     	//Traditional JavaScript Mixins
     	for (var prop in source) {
     	    if (source.hasOwnProperty(prop)) {
