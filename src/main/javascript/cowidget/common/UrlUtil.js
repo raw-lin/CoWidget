@@ -9,5 +9,17 @@ class UrlUtil extends cowidget.UrlUtil {
     constructor(option) {
 
     }
+    
+    static isUrl(url) {
+    	let isUrl = false;
+    	
+    	try {
+    		new URL(url);
+    		return true;
+    	}catch(exception) {
+    		return false;
+    	}
+    	
+    }
 }
     

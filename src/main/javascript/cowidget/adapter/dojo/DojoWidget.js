@@ -9,32 +9,25 @@ define([ 'dojo/_base/declare'
 			, 'dijit/_WidgetBase'
 			, 'dijit/_TemplatedMixin'
 			
+			, 'dojox/mvc/at'
+			, "dojox/mvc/getStateful"
+			
 			//, 'dojo/domReady!'
-], function(declare, parser, _WidgetBase, _TemplatedMixin) {
+], function(declare, parser, _WidgetBase, _TemplatedMixin, at, getStateful) {
 	'use strict';
 
 	var DojoWidget = declare('cowidget.DojoWidget', [_WidgetBase, _TemplatedMixin], {
 		
 		LOG: cowidget.common.LogFactory.getLog('cowidget.DojoWidget'),
 		
-		constructor: function (options) {
-			options = options ? options:{};
-			let self = this;
-			self.LOG.debug('[constructor]');
-			
-		},
-		
-		postCreateAfter: function(model) {
-			let self = this;
-			self.LOG.debug('[postCreateAfter] self: ', self);
-			
-			//self.model = new Stateful(model);
-		},
+		// ctrl: dojox.mvc.ModelRefController
+		//		The controller that the form widgets in the template refer to.
+		ctrl: null,
 		
 		getModel: function() {
 			let self = this;
 			
-			return self['model'];
+			return self['model'] ? self['model']:{};
 		},
 		
 		setModel: function(model) {
@@ -45,6 +38,28 @@ define([ 'dojo/_base/declare'
 			self['model'] = model;
 			
 			return self;
+		},
+		
+		constructor: function (options) {
+			let self = this;
+			options = options ? options:{};
+			self.LOG.debug('[constructor] DojoWidget');
+			
+			self._init(options);
+		},
+		
+		_init: function(options) {
+			let self = this;
+			options = options ? options:{};
+			
+			self.LOG.debug('[_init] options: ', options);
+		},
+		
+		postCreateAfter: function(model) {
+			let self = this;
+			self.LOG.debug('[postCreateAfter] self: ', self);
+			
+			//self.model = new Stateful(model);
 		},
 		
 		rebuildRendering: function() {
@@ -78,11 +93,11 @@ define([ 'dojo/_base/declare'
 					// ajax submit
 				});
 
-				dojo.query('[type="submit"]', self.domNode).on("click", function(evt) {
+				dojo.query('[type="submit"]', self.domNode).on('click', function(evt) {
 					dojo.stopEvent(evt);
 					
 					self.LOG.debug('[DojoWidget.postCreate] button: ', this);
-					self.LOG.debug('[DojoWidget.postCreate] self: ', self);
+					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
 					self.LOG.debug('[DojoWidget.postCreate] self.model: ', self.model);
 					self.LOG.debug('[DojoWidget.postCreate] button form: ', dojo.query('form', self.dom));
 
@@ -90,23 +105,25 @@ define([ 'dojo/_base/declare'
 
 					let buttonName = dojo.attr(this, 'name');
 					alert('submit: ' + buttonName);
-					console.debug('[DojoWidget.postCreate] buttonName: ', buttonName);
+					console.debug('[postCreate] buttonName: ', buttonName);
 
 					let formDom = null;
 					dojo.query('form', self.dom).forEach(function(entry, i) {
 						formDom = entry
 					});
 					
-					let xhrContent = dojo.formToObject(formDom);
+					let postData = dojo.formToObject(formDom);
+					console.debug('[postCreate] xhrContent: ', postData);
 					
 					let xhrArgs = {
 						url : dojo.attr(formDom, 'action') + '?!' + buttonName,
 						form : formDom,
+						//postData: postData,
 						handleAs : 'json',
 						load : function(data) {
 							self.LOG.debug('[postCreate.load] xhrArgs data: ', data);
 							
-							// mock
+							// mock service, choice user case
 							let coWidgetOpts = data[buttonName]['1'];
 							self.LOG.debug('[postCreate.load] coWidgetOpts: ', coWidgetOpts);
 

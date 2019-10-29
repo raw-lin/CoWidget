@@ -475,10 +475,6 @@
     	// static get defaultConfig() {
     		
     	// }
-    	
-    	constructorX(options) {
-			//super(options);
-		}
 
         constructor(option) {
         	super(option);
