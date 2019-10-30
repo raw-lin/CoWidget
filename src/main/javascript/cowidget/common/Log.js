@@ -12,6 +12,7 @@ class Log {
 	constructor(clazz) {
 		clazz = clazz ? clazz:class Main {};
 		this.clazz = clazz;
+		this.prefixed = '';
 		
 		//console.debug('typeof clazz: ' + typeof clazz);
 		if('string' === typeof clazz) {

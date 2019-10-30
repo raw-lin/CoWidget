@@ -29,7 +29,17 @@ define([ 'dojo/_base/declare'
 		//		The controller that the form widgets in the template refer to.
 		//ctrl: null,
 		
+		/*
+		 * model = new StatefulModel({data: self.modelData});
+		 * self.setModel(model);
+		 */
 		_model: null, /*StatefulModel from chirdlen*/
+		getModel: function() {
+			let self = this;
+			self.LOG.debug('[getModel] self._model: ', self._model);
+			self.LOG.debug('[getModel] model: ', model);
+			return model;
+		},
 		setModel: function(model) {
 			let self = this;
 			
