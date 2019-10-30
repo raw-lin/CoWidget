@@ -6,6 +6,7 @@
  */
 define([ 'dojo/_base/declare'
 			, 'dojo/parser'
+			, 'dijit/registry'
 			, 'dojo/request/xhr'
 			, 'dojo/json'
 			, 'dijit/_WidgetBase'
@@ -17,7 +18,7 @@ define([ 'dojo/_base/declare'
 			, 'dojox/mvc/ModelRefController'
 			
 			//, 'dojo/domReady!'
-], function(declare, parser, xhr, JSON, _WidgetBase, _TemplatedMixin, at, StatefulModel, EditModelRefController, ModelRefController) {
+], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, at, StatefulModel, EditModelRefController, ModelRefController) {
 	'use strict';
 
 	let DojoWidget = declare('cowidget.DojoWidget', [_WidgetBase, _TemplatedMixin], {
@@ -27,19 +28,14 @@ define([ 'dojo/_base/declare'
 		// ctrl: dojox.mvc.ModelRefController
 		//		The controller that the form widgets in the template refer to.
 		//ctrl: null,
-		_model: null, /*StatefulModel*/
 		
-		getModel: function() {
-			let self = this;
-			//self.LOG.debug('[getModel] self._model: ', self._model);
-			//return self._model ? self._model:new StatefulModel({data: self.modelData});
-			return self._model;
-		},
-		
+		_model: null, /*StatefulModel from chirdlen*/
 		setModel: function(model) {
 			let self = this;
 			
-			self._model = model;
+			//Object.defineProperty(self, '_model', model);
+			Object.assign(self, { _model: model });
+			//self['_model'] = model;
 			
 			return model;
 		},
@@ -103,10 +99,10 @@ define([ 'dojo/_base/declare'
 					self.LOG.debug('[postCreate] button: ', this);
 					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
 					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
-					self.LOG.debug('[postCreate] self.model: ', self.getModel());
-					self.LOG.debug('[postCreate] self.model.toPlainObject(): ', self.getModel().toPlainObject());
-					self.LOG.debug('[postCreate] self.ctrl: ', self.ctrl);
-					self.LOG.debug('[postCreate] button form: ', dojo.query('form', self.dom));
+					self.LOG.debug('[postCreate] .model: ', model);
+					//self.LOG.debug('[postCreate] self.model.toPlainObject(): ', self.getModel().toPlainObject());
+					//self.LOG.debug('[postCreate] self.ctrl: ', self.ctrl);
+					//self.LOG.debug('[postCreate] button form: ', dojo.query('form', self.dom));
 					
 					// plugin in form, href, button to ajax.
 
@@ -136,41 +132,31 @@ define([ 'dojo/_base/declare'
 						headers: {
 							'Content-Type': 'application/json;charset=UTF-8'
 						},
-						handleAs : 'json',
-						loadX : function(data) {
-							self.LOG.debug('[postCreate.load] xhrArgs data: ', data);
-							
-							// mock service, choice user case
-							let coWidgetOpts = data[buttonName]['1'];
-							self.LOG.debug('[postCreate.load] coWidgetOpts: ', coWidgetOpts);
-
-							self.setModel(coWidgetOpts.model);							
-							self.rebuildRendering();
-						},
-						error : function(error) {
-							// We'll 404 in the demo, but that's okay. We don't have
-							// a 'postIt' service on the
-							// docs server.
-							// dojo.byId("response").innerHTML = "Form posted.";
-						}
+						handleAs : 'json'
 					};
 					
 					let widget = self;
-					xhr(xhrArgs.url, xhrArgs).then(function(data){
+					xhr(xhrArgs.url, xhrArgs).then((data) => {
 							// Do something with the handled data
 							widget.LOG.debug('[postCreate.then] xhrArgs data: ', data);
 							
 							// mock service, choice user case
 							let coWidgetOpts = data[buttonName]['1'];
 							widget.LOG.debug('[postCreate.then] coWidgetOpts: ', coWidgetOpts);
-	
-							model.set('data', coWidgetOpts.model);
-							//widget.getModel().set('data', coWidgetOpts.model);							
-							//widget.rebuildRendering();
-						}, function(err){
+							
+							if('function' === typeof self.getModel) {
+								self.getModel().set(coWidgetOpts.model);
+							}else {
+								widget.LOG.error('[postCreate.then] please implement getModel');
+								widget.LOG.error('[postCreate.then] please implement getModel');
+								widget.LOG.error('[postCreate.then] please implement getModel');
+								widget.LOG.error('[postCreate.then] please implement getModel');
+							}
+							
+						}, (err) => {
 							widget.LOG.error('[postCreate.then] coWidgetOpts: ', err);
-						}, function(evt){
-							widget.LOG.error('[postCreate.then] supports XHR2 coWidgetOpts: ', evt);
+						}, (evt) => {
+							//widget.LOG.error('[postCreate.then] supports XHR2 coWidgetOpts: ', evt);
 							// Handle a progress event from the request if the
 							// browser supports XHR2
 						});

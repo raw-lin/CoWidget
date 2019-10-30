@@ -254,8 +254,14 @@
                 	});
 				}else {
 					let prePackage = name.split('.', 1);
-    	    		let baseHref = ClassLoader.packageMap[prePackage+''];
-    	    		let targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
+					let baseHref = ClassLoader.packageMap[prePackage+''];
+					console.debug('[ClassLoader.loadClass] baseHref: ' + baseHref);
+					let targetUrl = '';
+					if(null != baseHref.match(/^http(s)?:\/\/.+/)) {
+						targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
+					}else {
+						targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
+					}
         	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
     				let xhrProps = {
