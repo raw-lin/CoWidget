@@ -123,9 +123,9 @@ class CoWidgetImpl {
             CoWidgetImpl.LOG.debug('[_placeAt4Dojo] cowidgetViewNameUrl: ' + cowidgetViewNameUrl);
             
             let coWidget = self;
-            require([cowidgetViewNameUrl, 'dojo/ready'], function (AdapterDojoWidget, ready) { // don't use dojo.require
-            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] AdapterDojoWidget begin');
-            	coWidget.widget = new AdapterDojoWidget({
+            require([cowidgetViewNameUrl, 'dojo/ready'], function (DojoWidgetAdapter, ready) { // don't use dojo.require
+            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] DojoWidgetAdapter begin');
+            	coWidget.widget = new DojoWidgetAdapter({
             		baseHref: cowidget.common.UrlUtil.getBaseHref(),
 		            none: null
 		        });
@@ -135,7 +135,7 @@ class CoWidgetImpl {
             		coWidget.widget.placeAt(self.placeReference, self.placePosition);
             	});
             	
-            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] AdapterDojoWidget end: ', self.widget);
+            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] DojoWidgetAdapter end: ', self.widget);
             });
         }
         
@@ -221,10 +221,10 @@ class CoWidgetImpl {
             CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] cowidgetViewNameUrl: ' + cowidgetViewNameUrl);
             dojo.require(cowidgetViewNameUrl);
             
-            dojo.require([cowidgetViewNameUrl, "dojo/domReady!"], (AdapterDojoWidget) => {
-            	CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] AdapterDojoWidget: ', AdapterDojoWidget);
+            dojo.require([cowidgetViewNameUrl, "dojo/domReady!"], (DojoWidgetAdapter) => {
+            	CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] DojoWidgetAdapter: ', DojoWidgetAdapter);
             	
-            	self.widget = AdapterDojoWidget;
+            	self.widget = DojoWidgetAdapter;
             	self.widget['baseHref'] = cowidget.common.UrlUtil.getBaseHref();
 
             	CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] self.widget: ', self.widget);

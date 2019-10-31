@@ -21,9 +21,9 @@ define([ 'dojo/_base/declare'
 ], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, at, StatefulModel, EditModelRefController, ModelRefController) {
 	'use strict';
 
-	let DojoWidget = declare('cowidget.DojoWidget', [_WidgetBase, _TemplatedMixin], {
+	var CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
 		
-		LOG: cowidget.common.LogFactory.getLog('cowidget.DojoWidget'),
+		LOG: cowidget.common.LogFactory.getLog('cowidgetUI5.CoWidgetContorller'),
 		
 		// ctrl: dojox.mvc.ModelRefController
 		//		The controller that the form widgets in the template refer to.
@@ -34,22 +34,7 @@ define([ 'dojo/_base/declare'
 		 * self.setModel(model);
 		 */
 		_model: null, /*StatefulModel from chirdlen*/
-		getModel: function() {
-			let self = this;
-			self.LOG.debug('[getModel] self._model: ', self._model);
-			self.LOG.debug('[getModel] model: ', model);
-			return model;
-		},
-		setModel: function(model) {
-			let self = this;
-			
-			//Object.defineProperty(self, '_model', model);
-			Object.assign(self, { _model: model });
-			//self['_model'] = model;
-			
-			return model;
-		},
-		
+
 		constructor: function (options) {
 			let self = this;
 			options = options ? options:{};
@@ -96,20 +81,30 @@ define([ 'dojo/_base/declare'
 			
 			{
 				// plugin ajax event
+				//press="onPress"
 				self.LOG.debug('[postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
-				let buttons = dojo.query('button[type="reset"]', self.domNode).on("click", function() {
+				let buttons = dojo.query('[type="reset"]', self.domNode).on('click', function() {
+					//dojo.stopEvent(evt);
 					alert('reset');
 					self.LOG.debug('[postCreate] self: ', self);
 					// ajax submit
 				});
 
-				dojo.query('[type="submit"]', self.domNode).on('click', function(evt) {
+				dojo.query('button', self.domNode).on('click', function(evt) {
+					let buttonName = dojo.attr(this, 'name');
+					let buttonType = dojo.attr(this, 'type');
+					alert('submit: ' + buttonName);
+					// ajax submit
+					dojo.stopEvent(evt);
+				});
+
+				dojo.query('button[type="submit"]', self.domNode).on('click', function(evt) {
 					dojo.stopEvent(evt);
 					
 					self.LOG.debug('[postCreate] button: ', this);
 					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
 					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
-					self.LOG.debug('[postCreate] .model: ', model);
+					self.LOG.debug('[postCreate] model: ', model);
 					//self.LOG.debug('[postCreate] self.model.toPlainObject(): ', self.getModel().toPlainObject());
 					//self.LOG.debug('[postCreate] self.ctrl: ', self.ctrl);
 					//self.LOG.debug('[postCreate] button form: ', dojo.query('form', self.dom));
@@ -117,7 +112,7 @@ define([ 'dojo/_base/declare'
 					// plugin in form, href, button to ajax.
 
 					let buttonName = dojo.attr(this, 'name');
-					alert('submit: ' + buttonName);
+					//alert('submit: ' + buttonName);
 					console.debug('[postCreate] buttonName: ', buttonName);
 
 					let formDom = null;
@@ -155,12 +150,13 @@ define([ 'dojo/_base/declare'
 							widget.LOG.debug('[postCreate.then] coWidgetOpts: ', coWidgetOpts);
 							
 							if('function' === typeof self.getModel) {
-								self.getModel().set(coWidgetOpts.model);
+
+								//model.reset();
+								//model.set({data: coWidgetOpts.model});
+								self.LOG.debug('[getModel] model: ', model);
+								//model.reset();
 							}else {
-								widget.LOG.error('[postCreate.then] please implement getModel');
-								widget.LOG.error('[postCreate.then] please implement getModel');
-								widget.LOG.error('[postCreate.then] please implement getModel');
-								widget.LOG.error('[postCreate.then] please implement getModel');
+								widget.LOG.error('[postCreate.then] please implement getModel and setModel');
 							}
 							
 						}, (err) => {
@@ -184,6 +180,6 @@ define([ 'dojo/_base/declare'
 
 	});
 	
-	console.debug('[DojoWidget] return.');
-	return DojoWidget;
+	console.debug('[CoWidgetContorller] return.');
+	return CoWidgetContorller;
 });
