@@ -28,7 +28,7 @@ class UI5Adapter extends CoWidget {
 //		UI5Adapter.LOG.debug('options: ', options);
 //		
 		Object.assign(that, options);
-//		UI5Adapter.LOG.debug('[constructor] this: ', this);
+		UI5Adapter.LOG.debug('[constructor] that: ', that);
 	}
 	
 	isInstanceOf(target, ViewClass) {

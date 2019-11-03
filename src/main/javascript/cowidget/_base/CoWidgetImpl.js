@@ -7,7 +7,7 @@
  */
 class CoWidgetImpl {
 	static get LOG() {
-		return cowidget.common.LogFactory.getLog(this);
+		return cowidget.common.LogFactory.getLog(CoWidgetImpl);
 	}
 	
 	static isWork(){
@@ -101,7 +101,7 @@ class CoWidgetImpl {
 	 */
     getMetaData() {
         var self = this;
-        return self.metaData;
+        return self.metaData ? self.metaData:{};
     };
 
     /**
@@ -110,14 +110,19 @@ class CoWidgetImpl {
     push(coWidget) {
         var self = this;
 
-        CoWidgetImpl.LOG.debug('[CoWidgetImpl.push] coWidget: ', coWidget);
+        CoWidgetImpl.LOG.debug('[push] coWidget: ', coWidget);
         
         self.components.push(coWidget);
     };
     
+    /**
+     * @private
+     */
     constructor(metaData) {
         let self = this;
-        metaData = metaData ? metaData : {};
+        metaData = metaData ? metaData:{};
+        
+        CoWidgetImpl.LOG.debug('[constructor] metaData: ', metaData);
         
         // initial parameter
         self.metaData = metaData ? metaData : {};
@@ -125,6 +130,8 @@ class CoWidgetImpl {
         self.components = [];
         
         self.widget = null;
+        
+        CoWidgetImpl.LOG.debug('[constructor] self: ', self);
     }
     
     /**
