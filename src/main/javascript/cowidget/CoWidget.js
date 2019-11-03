@@ -347,6 +347,7 @@
     	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
     	                        // return obj.toString();
     	                        return obj.prop;
+    	                        //return Reflect.get(target, propertyName, receiver);
     	                    };
     	                }else if ('symbol' === typeof prop) {
     	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
@@ -474,61 +475,9 @@
     
     /* start up */
     class CoWidget extends cowidget._base.CoWidgetImpl {
-    	static get LOG() {
-    		return cowidget.common.LogFactory.getLog(CoWidget);
-    	}
-    	
-    	// static get defaultConfig() {
-    		
-    	// }
-
-        constructor(option) {
-        	super(option);
-        	
-//            let self = this;
-//            option = option ? option : {};
-//
-//            CoWidget.LOG.debug('[constructor] self: ', self);
-//            CoWidget.LOG.debug('[constructor] option: ', option);;
-//            
-//            // self.adapter = new Objecy();
-//            self.metaData = option ? option : {};
-//            self.metaData.uiType = CoWidget.configure.ui;
-//            self.omponents = [];
-//            self.widget = null;
-//            
-//            //self.model = option.model ? option.model:{};
-//            self.place = option.place ? option.place : 'coWidget';
-        };
-    	
-    	placeAtFork(place) {
-            var self = this;
-            console.debug('[placeAt] self: ', self);
-            
-            dojo.ready(0, function() {
-            	
-            	if (self.omponents.length > 0) {
-            		place = 'coWidget';
-            		self.omponents.forEach(function(element) {
-            			console.debug('[placeAt] element: ', element);
-            			element.placeAt();
-            		});
-            	}else {
-	                place = place ? place : self.place;
-	                if (0 === place.indexOf('#')) {
-	                	place = place.replace('#', '');
-	                }
-	                console.debug('[placeAt] place: ' + place);
-	                // self.widget.buildRendering();
-	                self.widget.placeAt(place, 'only');
-            	}
-                // plugin ajax method
-            });
-            
-            return self;
-        };
     }
     
+    /* static field value */
     Object.defineProperty(CoWidget, 'configure', {
 		value: defaultConfig,
 		writable: false

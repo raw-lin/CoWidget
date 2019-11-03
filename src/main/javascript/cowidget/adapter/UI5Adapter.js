@@ -6,28 +6,28 @@
  * development.
  */
 
-class UI5Adapter {
+class UI5Adapter extends CoWidget {
 	static get LOG() {
 		return cowidget.common.LogFactory.getLog(UI5Adapter);
 	}
 	
 	/**
 	 * @constructor
-	 * @param (string) viewName
-	 * @param (XMLView) container
+	 * @param (string)
+	 *            viewName
+	 * @param (XMLView)
+	 *            container
 	 */
-	 constructor(/*viewName: string, container: View Object*/options) {
-		options = options ? options:{
-			viewName: null
-		};
-		UI5Adapter.LOG.debug('options: ', options);
-		
-		Object.assign(this, options);
-		UI5Adapter.LOG.debug('[constructor] this: ', this);
-	}
-	
-	static create(options) {
-		return new UI5Adapter(options);
+	 constructor(options) {
+		super(options);
+        let that = this;
+//		options = options ? options:{
+//			viewName: null
+//		};
+//		UI5Adapter.LOG.debug('options: ', options);
+//		
+//		Object.assign(this, options);
+//		UI5Adapter.LOG.debug('[constructor] this: ', this);
 	}
 	
 	isInstanceOf(target, ViewClass) {
@@ -69,7 +69,7 @@ class UI5Adapter {
 				if(container && 'function' === typeof container.byId) {
 					retView = container.byId(id);
 				}else {
-					//retView = sap.ui.getCore().byId(id);
+					// retView = sap.ui.getCore().byId(id);
 					retView = jQuery(document.getElementById(id));
 					
 					if(retView && 'function' === typeof retView.contents) {
@@ -79,14 +79,15 @@ class UI5Adapter {
 						if(retView.context.id) {
 							retView = retView.context;
 						}
-						//UI5Adapter.LOG.debug('[determineTarget] retView.contents(): ', retView.contents());
-//							retView.contents().forEach((element) => {
-//								if(null === retViewTmp) {
-//									retViewTmp = element;
-//								}
-//							});
+						// UI5Adapter.LOG.debug('[determineTarget]
+						// retView.contents(): ', retView.contents());
+// retView.contents().forEach((element) => {
+// if(null === retViewTmp) {
+// retViewTmp = element;
+// }
+// });
 						
-						//retView = retViewTmp;
+						// retView = retViewTmp;
 					}
 				}
 			}
@@ -110,7 +111,8 @@ class UI5Adapter {
 					retView = container.byId(id);
 				
 				UI5Adapter.LOG.debug('[determineTarget] oParent: ', (typeof oParent));
-					//UI5Adapter.LOG.debug('[determineTarget] retView: ', (typeof retView));
+					// UI5Adapter.LOG.debug('[determineTarget] retView: ',
+					// (typeof retView));
 					UI5Adapter.LOG.debug('[determineTarget] ViewClass: ', (typeof ViewClass));
 					
 					if(ViewClass) {
@@ -157,7 +159,7 @@ class UI5Adapter {
 				
 	}
 	
-	placeAt(rTarget, sPosition) {
+	_placeAt(rTarget, sPosition) {
 		sPosition = sPosition ? sPosition:'only';
 		let that = this;
 		
@@ -172,7 +174,7 @@ class UI5Adapter {
 		UI5Adapter.LOG.debug('[placeAt] create oXMLView.');
 		jQuery.sap.require('sap.ui.core.mvc.XMLView');
 		oXMLView = sap.ui.core.mvc.XMLView.create({
-			viewName: that.viewName,
+			viewName: that.metaData.viewName,
 			customData: {
 					Type: 'sap.ui.core.CustomData',
 						key:'modelData',
@@ -215,8 +217,8 @@ class UI5Adapter {
 					}else {
 						UI5Adapter.LOG.error('[placeAt.than] append oView to oTarget failure: ', result.oTarget);
 						
-						//Promise.reject('append oView to oTarget failure');
-						//throw new Error('append oView to oTarget failure');
+						// Promise.reject('append oView to oTarget failure');
+						// throw new Error('append oView to oTarget failure');
 					}
 					
 					return result;
@@ -228,19 +230,19 @@ class UI5Adapter {
 						result.oTarget.setBusy(false);
 					}
 				}).catch((error) => {
-					//try{
+					// try{
 						sap.ui.core.BusyIndicator.hide();
-					//}catch(exception) {
+					// }catch(exception) {
 						
-					//}
+					// }
 					UI5Adapter.LOG.error('[placeAt] error: ', error);
 				}).finally(() => {
 					UI5Adapter.LOG.debug('[placeAt] finally');
 					
-					/* setBusy*/
-					//if(oTarget && oTarget.setBusy) {
-						//oTarget.setBusy(true);
-					//}
+					/* setBusy */
+					// if(oTarget && oTarget.setBusy) {
+						// oTarget.setBusy(true);
+					// }
 				});
 			}else {
 				oXMLView.placeAt(oTarget.sId, sPosition);

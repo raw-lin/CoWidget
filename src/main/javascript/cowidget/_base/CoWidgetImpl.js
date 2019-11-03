@@ -15,14 +15,23 @@ class CoWidgetImpl {
 		return true;
     };
     
+    /**
+	 * TODO
+	 */
     static _init(userConfig, defaultConfig) {
         CoWidgetImpl.LOG.debug('[CoWidgetImpl._init] call');
     };
 
+    /**
+	 * TODO
+	 */
     static ready(priority, context, callback) {
         return cowidget.common.Util.ready(priority, context, callback);
     };
 
+    /**
+	 * TODO
+	 */
     static load(url) {
     	CoWidgetImpl.LOG.debug('[CoWidgetImpl.load] url: ', url);
     	
@@ -81,72 +90,23 @@ class CoWidgetImpl {
 	 */
     static byId(id, doc) {
     	// return dojo.byId(id, doc);
-    	//CoWidgetImpl.LOG.debug('[DomUtil.byId] cowidget.lang.ClassLoader.container.document: ', cowidget.lang.ClassLoader.container.document);
+    	// CoWidgetImpl.LOG.debug('[DomUtil.byId]
+		// cowidget.lang.ClassLoader.container.document: ',
+		// cowidget.lang.ClassLoader.container.document);
     	return cowidget.common.DomUtil.byId(id, doc);
     };
-    
-    static create(option){
-    	let retCoWidget = null;
-    	
-    	retCoWidget = new CoWidgetImpl(option);
-    	
-    	return retCoWidget;
-    };
-    
-    constructor(option) {
-        let self = this;
-        option = option ? option : {};
-        
-        // initial parameter
-        self.metaData = option ? option : {};
-        self.metaData.uiType = CoWidget.configure.ui;
-        self.components = [];
-        self.widget = null;
-    }
-	
-    _placeAt4Dojo(place, position) {
-        let self = this;
-        
-        self['placeReference'] = place;
-		self['placePosition'] = position ? position:'only';
-        
-        let cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
-        
-		CoWidgetImpl.LOG.debug('[_placeAt4Dojo] self: ', self);
-		CoWidgetImpl.LOG.debug('[_placeAt4Dojo] uiType cowidgetViewName: ' + self.metaData.uiType + ', ', cowidgetViewName);
-        if (cowidget.common.StringUtil.isNotEmpty(cowidgetViewName) && 'dojo' === self.metaData.uiType) {
-            //dojo.require('dojo/_base/declare');
-            //dojo.require(cowidgetViewName);
-            
-            let cowidgetViewNameUrl = cowidget.common.StringUtil.replaceAll(cowidgetViewName, '.', '/');
-            cowidgetViewNameUrl = cowidgetViewName;
-            CoWidgetImpl.LOG.debug('[_placeAt4Dojo] cowidgetViewNameUrl: ' + cowidgetViewNameUrl);
-            
-            let coWidget = self;
-            require([cowidgetViewNameUrl, 'dojo/ready'], function (DojoWidgetAdapter, ready) { // don't use dojo.require
-            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] DojoWidgetAdapter begin');
-            	coWidget.widget = new DojoWidgetAdapter({
-            		baseHref: cowidget.common.UrlUtil.getBaseHref(),
-		            none: null
-		        });
-            	
-            	dojo.ready(0, () => {
-            		CoWidgetImpl.LOG.debug('[_placeAt4Dojo] call ready');
-            		coWidget.widget.placeAt(self.placeReference, self.placePosition);
-            	});
-            	
-            	CoWidgetImpl.LOG.debug('[_placeAt4Dojo] DojoWidgetAdapter end: ', self.widget);
-            });
-        }
-        
-        return self;
-	}
 
+    /**
+	 * TODO
+	 */
     getMetaData() {
         var self = this;
         return self.metaData;
     };
 
+    /**
+	 * TODO
+	 */
     push(coWidget) {
         var self = this;
 
@@ -154,40 +114,48 @@ class CoWidgetImpl {
         
         self.components.push(coWidget);
     };
+    
+    constructor(metaData) {
+        let self = this;
+        metaData = metaData ? metaData : {};
+        
+        // initial parameter
+        self.metaData = metaData ? metaData : {};
+        self.metaData.uiType = CoWidget.configure.ui;
+        self.components = [];
+        
+        self.widget = null;
+    }
+    
+    /**
+	 * @param option:
+	 *            viewName, viewMethod, container, viewMethod is mapping to
+	 *            server token.
+	 */
+    static create(option){
+    	option = option ? option:{};
+        let self = this;
+    	let retCoWidget = null;
+    	
+    	CoWidgetImpl.LOG.debug('[create] call with option: ', option);
+    	
+    	if ('dojo' === CoWidget.configure.ui) {
+    		retCoWidget = new cowidget.adapter.DojoAdapter(option);
+    	}else if ('openui5' === CoWidget.configure.ui || 'ui5' === CoWidget.configure.ui) {
+    		retCoWidget = new cowidget.adapter.UI5Adapter(option);
+    	}
+    	
+    	return retCoWidget;
+    };
 
     placeAt(place, position) {
     	position = position ? position:'only';
         var self = this;
         
-        self['placeReference'] = place;
-		self['placePosition'] = position;
-        
-        if ('dojo' === self.metaData.uiType) {
-        	self._placeAt4Dojo(place, position);
-        	dojo.ready(0, () => {
-            	
-        	});
-        }else {
-        	// ui5
-        	if (self.components.length > 0) {
-        		place = 'coWidget';
-        		self.components.forEach(function(element) {
-        			CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] element: ', element);
-        			element.placeAt();
-        		});
-        	}else {
-                place = place ? place : self.place;
-                if (0 === place.indexOf('#')) {
-                	place = place.replace('#', '');
-                }
-                CoWidgetImpl.LOG.debug('[CoWidgetImpl.placeAt] place: ' + place);
-                // self.widget.buildRendering();
-                place = 'cowidget';
-                self.widget.placeAt(place, 'only');
-        	}
-        }
-        
-        return self;
+        self.placeReference = place;
+		self.placePosition = position;
+		
+		self._placeAt(place, position);
     };
     
     /* Skip */
@@ -205,14 +173,14 @@ class CoWidgetImpl {
         self.components = [];
         self.widget = null;
         
-        //self.model = option.model ? option.model:{};
+        // self.model = option.model ? option.model:{};
         self.place = option.place ? option.place : 'coWidget';
         var cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
         
         CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] uiType cowidgetViewName: ' + self.metaData.uiType + ', ', cowidgetViewName);
         if (cowidget.common.StringUtil.isNotEmpty(cowidgetViewName) && 'dojo' === self.metaData.uiType) {
-            //dojo.require('dojo/_base/declare');
-            //dojo.require(cowidgetViewName);
+            // dojo.require('dojo/_base/declare');
+            // dojo.require(cowidgetViewName);
             
             CoWidgetImpl.LOG.debug('[CoWidgetImpl.constructor] cowidgetViewName: ', cowidgetViewName);
             

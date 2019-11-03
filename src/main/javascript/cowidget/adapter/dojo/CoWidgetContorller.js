@@ -12,16 +12,17 @@ define([ 'dojo/_base/declare'
 			, 'dijit/_WidgetBase'
 			, 'dijit/_TemplatedMixin'
 			
-			, 'dojox/mvc/at'
+			//, 'dojox/mvc/at'
 			, 'dojox/mvc/StatefulModel'
 			, 'dojox/mvc/EditModelRefController'
 			, 'dojox/mvc/ModelRefController'
 			
-			//, 'dojo/domReady!'
-], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, at, StatefulModel, EditModelRefController, ModelRefController) {
-	'use strict';
-
-	var CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
+			, 'dojox/layout/FloatingPane'
+			, 'dojo/domReady!'
+], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
+	//'use strict'; /* important: dont need */
+	
+	let CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
 		
 		LOG: cowidget.common.LogFactory.getLog('cowidgetUI5.CoWidgetContorller'),
 		
@@ -39,44 +40,60 @@ define([ 'dojo/_base/declare'
 			let self = this;
 			options = options ? options:{};
 			self.LOG.debug('[constructor] DojoWidget');
-			
+
+			//self.LOG.debug('[constructor] self: ', self);
 			self._init(options);
 		},
 		
 		_init: function(options) {
 			let self = this;
-			options = options ? options:{};
+			self.LOG.debug('[_init] self: ', self);
 			
-			self.LOG.debug('[_init] options: ', options);
+			options = options ? options:{};
+			self.LOG.debug('[_init] options: ', options);			
+						
+			if(true && 'function' === typeof self.getModel) {
+				self.getModel();
+			}
+			
+			if(true && 'function' === typeof self.setModel && options.viewModel) {
+				Object.assign(self, {
+					model: options.viewModel
+				});
+				self.setModel(options.viewModel);
+			}
 		},
 		
 		postCreateAfter: function(model) {
 			let self = this;
 			self.LOG.debug('[postCreateAfter] self: ', self);
-			
+
 			//self.model = new Stateful(model);
 		},
 		
-		rebuildRendering: function() {
+		/**
+		 * dijit/_WidgetBase.placeAt, not work
+		 */
+		placeAtX: function(reference, position) {
 			let self = this;
-
-			self.LOG.debug('[rebuildRendering] self: ', self);
+			//self.LOG.debug('[placeAt] self: ', self);
+			self.LOG.debug('[placeAt] model: ', ('undefined' === typeof model ? 'undefined':model));
+						
+			let viewResult = null;
+			if('function' === typeof self.execute) {
+				viewResult = self.execute();
+			}else{
+				self.LOG.error(`[_init] please implement excute method.`);
+			}
 			
-			self._rendered = false;
-			self.buildRendering();
-
-			self.postCreate();
-			self.placeAt('coWidget', 'only');
-		},
-		
-		placeAtt: function(reference, position) {
-			//super.placeAt(reference, position);
-			//return this.inherited('placeAt', arguments);
-			//_WidgetBase.placeAt(reference, position);
+			let placeAtResult = this.inherited('placeAt', arguments); // must remark 'use strict'
+			self.LOG.debug('[placeAt] placeAtResult: ', placeAtResult);
 		},
 		
 		postCreate: function() {
 			let self = this;
+			this.inherited(arguments);
+			
 			self.LOG.debug('[postCreate] self: ', self);
 			
 			{
@@ -85,101 +102,160 @@ define([ 'dojo/_base/declare'
 				self.LOG.debug('[postCreate] dojo.query: ', dojo.query('button[type="reset"]', self.domNode));
 				let buttons = dojo.query('[type="reset"]', self.domNode).on('click', function() {
 					//dojo.stopEvent(evt);
-					alert('reset');
-					self.LOG.debug('[postCreate] self: ', self);
+					//alert('reset');
+					//self.LOG.debug('[postCreate] self: ', self);
 					// ajax submit
 				});
 
-				dojo.query('button', self.domNode).on('click', function(evt) {
-					let buttonName = dojo.attr(this, 'name');
-					let buttonType = dojo.attr(this, 'type');
-					alert('submit: ' + buttonName);
-					// ajax submit
-					dojo.stopEvent(evt);
-				});
-
-				dojo.query('button[type="submit"]', self.domNode).on('click', function(evt) {
-					dojo.stopEvent(evt);
-					
-					self.LOG.debug('[postCreate] button: ', this);
-					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
-					//self.LOG.debug('[DojoWidget.postCreate] self: ', self);
-					self.LOG.debug('[postCreate] model: ', model);
-					//self.LOG.debug('[postCreate] self.model.toPlainObject(): ', self.getModel().toPlainObject());
-					//self.LOG.debug('[postCreate] self.ctrl: ', self.ctrl);
-					//self.LOG.debug('[postCreate] button form: ', dojo.query('form', self.dom));
-					
-					// plugin in form, href, button to ajax.
-
-					let buttonName = dojo.attr(this, 'name');
-					//alert('submit: ' + buttonName);
-					console.debug('[postCreate] buttonName: ', buttonName);
-
-					let formDom = null;
-					dojo.query('form', self.dom).forEach(function(entry, i) {
-						formDom = entry
-					});
-					
-					let postData = dojo.formToObject(formDom);
-					postData = self.getModel().toPlainObject();
-					postData = JSON.stringify(postData);
-					//postData = JSON.parse(jsonString);
-					console.debug('[postCreate.click] postData: ', postData);
-					
-					let xhrArgs = {
-						url : dojo.attr(formDom, 'action'),
-						method: 'POST',
-						query: '!' + buttonName,
-						data : postData,
-						preventCache: false,
-						//postData: postData,
-						//sync
-						headers: {
-							'Content-Type': 'application/json;charset=UTF-8'
-						},
-						handleAs : 'json'
-					};
-					
-					let widget = self;
-					xhr(xhrArgs.url, xhrArgs).then((data) => {
-							// Do something with the handled data
-							widget.LOG.debug('[postCreate.then] xhrArgs data: ', data);
-							
-							// mock service, choice user case
-							let coWidgetOpts = data[buttonName]['1'];
-							widget.LOG.debug('[postCreate.then] coWidgetOpts: ', coWidgetOpts);
-							
-							if('function' === typeof self.getModel) {
-
-								//model.reset();
-								//model.set({data: coWidgetOpts.model});
-								self.LOG.debug('[getModel] model: ', model);
-								//model.reset();
-							}else {
-								widget.LOG.error('[postCreate.then] please implement getModel and setModel');
-							}
-							
-						}, (err) => {
-							widget.LOG.error('[postCreate.then] coWidgetOpts: ', err);
-						}, (evt) => {
-							//widget.LOG.error('[postCreate.then] supports XHR2 coWidgetOpts: ', evt);
-							// Handle a progress event from the request if the
-							// browser supports XHR2
-						});
-				});
+				// plugin in form, href, button to ajax.
+				self._pluginAjax();
 			}
 			
-			if(self.postCreateAfter){
+			if('function' === typeof self.postCreateAfter){
 				self.postCreateAfter();
 			}
 			
-			parser.parse(self.domNode);
+			//parser.parse(self.domNode);
+		},
+		
+		
+		/**
+		 * @private
+		 */
+		_pluginAjax: function() {
+			let self = this;
+			
+			dojo.query('button[type="submit"]', self.domNode).on('click', function(evt) {
+				let selfDomNode = this;
+				dojo.stopEvent(evt);
+
+				self.LOG.debug('[_pluginAjax.click] self: ', self);
+
+				let buttonName = dojo.attr(selfDomNode, 'name');
+				//alert('submit: ' + buttonName);
+				self.LOG.debug('[_pluginAjax.click] buttonName: ', buttonName);
+				
+				//if(self.hasOwnProperty(buttonName)) {
+				if(self[buttonName]) {
+					let retViewMethod = Reflect.apply(self[buttonName], self, []);//self.apply(self, buttonName, arguments);
+					
+					self.LOG.debug('[_pluginAjax.click] retViewMethod: ', retViewMethod);
+				}
+
+				let formDom = null;
+				dojo.query('form', self.dom).forEach(function(entry, i) {
+					formDom = entry
+				});
+				
+				//self.getModel().commit();
+				//self.LOG.debug('[_pluginAjax] self.getModel(): ', self.getModel().valueOf());
+				//self.getModel().commit();
+				//let postData = dojo.formToObject(formDom);
+				//postData = self.getModel().toPlainObject();
+				let postData = JSON.stringify(self.getModel()); //OK
+				//postData = JSON.parse(jsonString);
+														
+				let queryMethod = 'method:' + buttonName; // for struts2
+				let viewUrl = formDom ? dojo.attr(formDom, 'action'):'#';
+				viewUrl = self.viewMotion ? self.viewMotion:'#';
+				
+				self.LOG.debug(`[postCreate.click] viewMethod, viewUrl, postData: ${queryMethod}, ${viewUrl}, `, postData);
+				let xhrArgs = {
+					url : viewUrl,
+					method: 'POST',
+					query: `!${queryMethod}`, // for struts2
+					data : postData,
+					preventCache: false,
+					//async
+					headers: {
+						'Content-Type': 'application/json;charset=UTF-8'
+					},
+					handleAs : 'json'
+				};
+				
+				self.LOG.debug('[_pluginAjax.click] xhrArgs: ', xhrArgs);
+				
+				let widget = self;
+				xhr(xhrArgs.url, xhrArgs).then((data) => {
+						// Do something with the handled data
+						widget.LOG.debug('[_pluginAjax.xhr.then] xhrArgs data: ', data);
+						
+						// mock service, choice user case
+						let caseId = 1;
+						let coWidgetOpts = data[queryMethod][caseId+''];
+						widget.LOG.debug('[_pluginAjax.xhr.then] coWidgetOpts: ', coWidgetOpts);
+						
+						if(true){
+							if(coWidgetOpts.message) {
+								if(coWidgetOpts.message.error) {
+									/* join error*/
+									for (let [key, value] of Object.entries(coWidgetOpts.message.error)) {
+										if(Array.isArray(value)) {
+											alert(value.join('\n'));
+										}
+										
+									}
+									
+								}
+							}
+						}
+						
+						if('function' === typeof self.getModel) {
+							self.LOG.debug('[_pluginAjax.xhr.then] self.modelData: ', self.modelData);
+							self.LOG.debug('[_pluginAjax.xhr.then] model: ', model);
+						}else {
+							widget.LOG.warn('[_pluginAjax.xhr.then] please implement getModel');
+						}
+						
+						if('function' === typeof self.getModel) {
+							self.setModel(coWidgetOpts.model);
+						}else {
+							widget.LOG.warn('[_pluginAjax.xhr.then] please implement setModel');
+						}
+						
+						let coWidgetView = CoWidget.create({
+							//container : document,
+							viewName : coWidgetOpts.viewName,
+							viewModel : coWidgetOpts.viewModel ? coWidgetOpts.viewModel:{}
+						});
+						
+						coWidgetView.placeAt(coWidgetOpts.viewPlace);
+						
+					}, (err) => {
+						widget.LOG.error('[_pluginAjax.xhr.err] err: ', err);
+					}, (evt) => {
+						widget.LOG.debug('[_pluginAjax.xhr.evt] evt: ', evt);
+					});
+			});
+		},
+		
+		/**
+		 * @abstract
+		 */
+		getModel: function(){
+			let self = this;
+			self.LOG.warn(`[getModel] call.`);
+		},
+		
+		/**
+		 * @abstract
+		 */
+		setModel: function(){
+			let self = this;
+			self.LOG.warn(`[setModel] call.`);
+		},
+		
+		/**
+		 * @abstract
+		 */
+		execute: function(){
+			let self = this;
+			self.LOG.debug(`[execute] call.`);
 		},
 		
 		none : null
 
 	});
 	
-	console.debug('[CoWidgetContorller] return.');
 	return CoWidgetContorller;
 });
