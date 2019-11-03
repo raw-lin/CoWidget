@@ -21,12 +21,13 @@ class UI5Adapter extends CoWidget {
 	 constructor(options) {
 		super(options);
         let that = this;
+        
 //		options = options ? options:{
 //			viewName: null
 //		};
 //		UI5Adapter.LOG.debug('options: ', options);
 //		
-//		Object.assign(this, options);
+		Object.assign(that, options);
 //		UI5Adapter.LOG.debug('[constructor] this: ', this);
 	}
 	
@@ -50,7 +51,8 @@ class UI5Adapter extends CoWidget {
 		/* determineTarget */
 		let that = this;
 		let retView = null;
-		
+
+		UI5Adapter.LOG.debug(`[determineTarget] id: ${id}`);
 		if(true) {
 			
 			if(ViewClass) {
@@ -192,7 +194,7 @@ class UI5Adapter extends CoWidget {
 					let oTarget = null;
 					
 					if(true === that.isInstanceOf(oView, sap.m.Page)) {
-						console.debug('[placeAt] oView is sap.m.Page');
+						UI5Adapter.LOG.debug('[placeAt] oView is sap.m.Page');
 						// let oTarget to be App
 						oTarget = that.determineTarget(rTarget, that.container, sap.m.Page);
 						
@@ -204,17 +206,24 @@ class UI5Adapter extends CoWidget {
 						oTarget = that.determineTarget(rTarget, that.container);
 					}
 					
-					return { oView: oView, oTarget, oTarget};
+					if(null === oTarget) {
+						oTarget = rTarget;
+					}
+					
+					return { oView: oView, oTarget: oTarget};
 				}).then((result) => {
 					/* append oView to oTarget */
-					UI5Adapter.LOG.debug('[placeAt.than] append oView to oTarget: ', result.oTarget);
+					UI5Adapter.LOG.debug('[placeAt.then] append oView to oTarget: ', result.oTarget);
 					if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.App)){
 						result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
 					}else if(result.oTarget && 'string' === typeof result.oTarget.sId){
 						result.oView.placeAt(result.oTarget.sId, sPosition);
 					}else if(result.oTarget && 'string' === typeof result.oTarget.id){
 						result.oView.placeAt(result.oTarget.id, sPosition);
+					}else if(result.oTarget && 'string' === typeof result.oTarget){
+						result.oView.placeAt(result.oTarget, sPosition);
 					}else {
+						
 						UI5Adapter.LOG.error('[placeAt.than] append oView to oTarget failure: ', result.oTarget);
 						
 						// Promise.reject('append oView to oTarget failure');
