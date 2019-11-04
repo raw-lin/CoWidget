@@ -5,7 +5,7 @@
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
 define([ 'dojo/_base/declare'
-			, 'dojo/parser'
+			//, 'dojo/parser'
 			, 'dijit/registry'
 			, 'dojo/request/xhr'
 			, 'dojo/json'
@@ -18,8 +18,8 @@ define([ 'dojo/_base/declare'
 			, 'dojox/mvc/ModelRefController'
 			
 			, 'dojox/layout/FloatingPane'
-			, 'dojo/domReady!'
-], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
+			//, 'dojo/domReady!'
+], function(declare, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
 	//'use strict'; /* important: dont need */
 	
 	let CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
@@ -35,6 +35,21 @@ define([ 'dojo/_base/declare'
 		 * self.setModel(model);
 		 */
 		_model: null, /*StatefulModel from chirdlen*/
+		
+		_messages: [],
+		putMessage: function(message) {
+			_messages.push(message);
+		},
+		
+		_errors: [],
+		
+		putError: function(error) {
+			_errors.push(error);
+		},
+		
+		hasErrors: function() {
+			return false;
+		},
 
 		constructor: function (options) {
 			let self = this;
@@ -50,18 +65,21 @@ define([ 'dojo/_base/declare'
 			self.LOG.debug('[_init] self: ', self);
 			
 			options = options ? options:{};
-			self.LOG.debug('[_init] options: ', options);			
-						
-			if(true && 'function' === typeof self.getModel) {
-				self.getModel();
-			}
+			self.LOG.debug('[_init] options: ', options);	
 			
 			if(true && 'function' === typeof self.setModel && options.viewModel) {
 				Object.assign(self, {
 					model: options.viewModel
 				});
-				self.setModel(options.viewModel);
-			}
+				
+				//self.setModel(options.viewModel);
+				self.setModel(new StatefulModel({data: {}}));
+				
+				if(true && 'function' === typeof self.getModel) {
+					self.getModel().set(options.viewModel ? options.viewModel:{});
+					self.getModel().set({data: (options.viewModel ? options.viewModel:{})});
+				}
+			} 
 		},
 		
 		postCreateAfter: function(model) {
@@ -116,6 +134,10 @@ define([ 'dojo/_base/declare'
 			}
 			
 			//parser.parse(self.domNode);
+		},
+		
+		createView: function(mOption) {
+			return CoWidget.create(mOption);
 		},
 		
 		
@@ -232,17 +254,26 @@ define([ 'dojo/_base/declare'
 		/**
 		 * @abstract
 		 */
-		getModel: function(){
+		getModel: function () {
 			let self = this;
-			self.LOG.warn(`[getModel] call.`);
+
+			if ('undefined' === typeof model || 'undefined' === typeof model.set) {
+				self.LOG.debug(`[getModel] model is undefined`);
+				model = new StatefulModel({data: {}});
+				// model = getStateful({});
+			}
+			
+			self.LOG.debug(`[getModel] model: `, model);
+
+			return model;
 		},
 		
 		/**
 		 * @abstract
 		 */
-		setModel: function(){
+		setModel: function(_model){
 			let self = this;
-			self.LOG.warn(`[setModel] call.`);
+			self.LOG.warn(`[setModel] call _model: `, _model);
 		},
 		
 		/**

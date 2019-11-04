@@ -19,7 +19,7 @@ class DojoAdapter extends CoWidget {
 	_placeAt(place, position) {
         let self = this;
         
-        self['placeReference'] = place;
+        self['placeReference'] = place ? place:self.metaData.viewPlace;
 		self['placePosition'] = position ? position:'only';
         
         let cowidgetViewName = self.metaData.viewName ? self.metaData.viewName : '';
