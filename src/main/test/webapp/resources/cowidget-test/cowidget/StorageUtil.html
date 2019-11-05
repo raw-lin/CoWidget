@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<title>StorageUtil</title>
+
+<script type="text/javascript">
+	'use strict';
+	var coWidgetConfig = {
+		isDebug : true,
+		packages : {
+			'mock': '/ExampleWeb/mock/cowidget/mock'
+		}
+	};
+</script>
+<script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script>
+
+<body class="api">
+	<div id="logger"><code></code></div>
+	
+	<script type="text/javascript">
+		'use strict';
+		
+		let LOG = mock.LogFactory.getLog();
+		
+		let StorageUtil = mock.StorageUtil;
+		
+		LOG.debug('StorageUtil: ' +  StorageUtil);
+		LOG.debug('StorageUtil: ' +  StorageUtil.isLive());
+		
+	</script>
+</body>
+</html>

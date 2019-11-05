@@ -28,44 +28,145 @@ class Log {
 		}
 		
 		this.loggerNode = document.getElementById('logger');
+		
+		this.withDebug = false;
 	}
+	
 	
 	getPrefixed(args, logTag) {
 		let prefixed = '';		
 		prefixed = 'CoWLogger - ' + (logTag ? logTag.padEnd(5, ' '):emptyString.padEnd(5, ' ')) + ' [' + this.prefixed + ']';
+		
 		return prefixed;
 	}
 	
 	appendLoggerNode(args, logTag) {
 		let txt = '';
 		if(this.loggerNode) {
-
-			args.forEach((currentValue, index, array) => {
-				try{
-					if ('object' === typeof currentValue) {
-						// error: cyclic object value
-						txt = txt + (index+'o. ') +  (JSON && JSON.stringify ? JSON.stringify(currentValue, undefined, 2) : currentValue);
-					}else if ('string' === typeof currentValue) {
-						txt = txt + (index+'s. ') + currentValue;
-					} else {
+			//console.debug('[appendLoggerNode] args: ', args);
+			if(false && Array.isArray(args)) {
+				args.forEach((currentValue, index, array) => {
+					try{
+						if ('object' === typeof currentValue) {
+							// error: cyclic object value
+							txt = txt + (index+'o. ') +  (JSON && JSON.stringify ? JSON.stringify(currentValue, undefined, 2) : currentValue);
+						}else if ('string' === typeof currentValue) {
+							txt = txt + (index+'s. ') + currentValue;
+						} else {
+							txt = txt + (index+'x. ') + currentValue;
+						}
+					}catch(exception) {
+						console.error('[cowidget.common.Log][appendLoggerNode] currentValue: ' + index + ': ', currentValue);
+						console.error('[cowidget.common.Log][appendLoggerNode] exception: ', exception);
+					}
+				});
+			}else if(false && Array.isArray(args)) {
+				console.debug('[Log Tester] args is array');
+				args.forEach((currentValue, index, array) => {
+					try{
 						txt = txt + (index+'x. ') + currentValue;
+					}catch(exception) {
+						txt = txt + ' failure';
+						console.error('[cowidget.common.Log][appendLoggerNode] currentValue: ' + index + ': ', currentValue);
+						console.error('[cowidget.common.Log][appendLoggerNode] exception: ', exception);
+					}
+				});
+			}else if(false) {
+				if ('object' === typeof args) {
+					txt = JSON.stringify(args);
+				}else if ('object' === typeof args[0]) {
+					txt = SON.stringify(args[0]);			
+				}else {
+					txt = args[0];
+				}
+				
+				if(args[1]) {
+					txt = txt + args[1];
+				}
+				
+			}			
+
+			if(this.withDebug) {
+				console.debug('[Log.appendLoggerNode] args: ', args);
+				console.debug('[Log.appendLoggerNode] typeof args: ', typeof args);
+				console.debug('[Log.appendLoggerNode] typeof Array.isArray(args): ', Array.isArray(args));
+			}
+			
+			for (let arg of args) {
+				try{
+					if(this.withDebug) {
+						console.debug('[Log.appendLoggerNode] typeof arg: ', typeof arg);
+					}
+					
+					if ('undefined' === typeof arg) {
+						txt = txt + 'undefined';
+					}else if ('string' === typeof arg) {
+						txt = txt + arg;
+					}else {						
+						let argTxt = JSON.stringify(arg, undefined, 2);
+						
+						if(this.withDebug) {
+							console.debug('[Log.appendLoggerNode] arg: ', arg);
+							console.debug('[Log.appendLoggerNode] argTxt: ', argTxt);
+						}
+						
+						if(this.loggerNode.tagName.match(/textarea/i)) {
+							if(this.withDebug) {
+								console.debug('[Log.appendLoggerNode] loggerNode is TEXTAREA: ', this.loggerNode.tagName);
+							}
+						}else {
+							argTxt = argTxt.replace(/\\r\\n/g, '<br/>');
+							argTxt = argTxt.replace(/\\t/g, '        ');
+							argTxt = argTxt.replace(/\\"/g, '"');
+							
+							
+							argTxt = argTxt;
+						}
+						
+						txt = txt + argTxt;
 					}
 				}catch(exception) {
-					console.error('[cowidget.common.Log] currentValue: ' + index + ': ', currentValue);
-					console.error('[cowidget.common.Log] exception: ', exception);
+					txt = txt + ' failure';
+					console.error('[cowidget.common.Log][appendLoggerNode] arg: ', arg);
+					console.error('[cowidget.common.Log][appendLoggerNode] exception: ', exception);
 				}
-			});
+			}
 			
-			this.loggerNode.innerHTML = this.loggerNode.innerHTML + '<br />' + txt ;
+			if(this.withDebug) {
+				console.debug('[Log.appendLoggerNode] this.loggerNode: ', this.loggerNode.tagName);
+			}
+			
+			if(this.loggerNode.tagName.match(/textarea/i)) {
+				this.loggerNode.value = this.loggerNode.value + '\r\n' + txt;
+			}else {
+				this.loggerNode.innerHTML = this.loggerNode.innerHTML + '<br/>' + txt ;
+			}
 		}
 	}
 	
 	log(logTag, args) {
 		logTag = logTag ? logTag:'INFO';
+		args = args ? args:arguments;
 		
-		args = args ? args:Object.create(arguments);
+		if('string' === typeof args[0]) {
+			args[0] = this.getPrefixed(args, logTag) + ' ' + args[0];
+		}else{
+			let argTxt = this.getPrefixed(args, logTag) + ' ' + args[0];
+			
+			args[0] = argTxt + JSON.stringify(args[0], undefined, 2);
+		}
 		
-		args[0] = this.getPrefixed(args, logTag) + ' ' + args[0];
+		
+		if(this.withDebug) {
+			console.debug('[Log.log] args: ', args);
+		}
+		let argObj = args;
+		
+		//if(Array.isArray(args)) {
+		//	argObj = args ? Array.from(args):Array.from(arguments);
+		//}else {
+		//	
+		//}
 		
 		if('INFO' === logTag) {
 			console.log.apply(console, args);
@@ -79,46 +180,39 @@ class Log {
 			console.log.apply(console, args);
 		}
 		
-		this.appendLoggerNode(args, logTag);
+		this.appendLoggerNode(argObj, logTag);
 	}
 	
 	info() {
-		let args = Object.create(arguments);
+		let args = arguments;
 		this.log('INFO', args);
-		
-//		args[0] = this.getPrefixed(args, 'INFO') + ' ' + args[0];
-//		console.log.apply(console, args);
-//		
-//		this.appendLoggerNode(args, 'INFO');
 	}
 	
 	debug() {
-		let args = Object.create(arguments);
+		if(this.withDebug) {
+			if(Array.isArray(arguments)) {
+				console.debug('[Log.debug] Object.create(arguments): ', Object.create(arguments));
+			}else {
+				console.debug('[Log.debug] arguments: ', arguments);
+			}
+		}
+				
+		let args = arguments;
+		if(this.withDebug) {
+			console.debug('[Log.debug] args: ', args);
+		}
+	
+		
 		this.log('DEBUG', args);
-		
-		//args[0] = this.getPrefixed(args, 'DEBUG') + ' ' + args[0];
-		//console.debug.apply(console, args);
-		
-		//this.appendLoggerNode(args, 'DEBUG');
 	}
 	
 	warn() {
-		let args = Object.create(arguments);
+		let args = arguments;
 		this.log('WARN', args);
-		
-//		args[0] = this.getPrefixed(args, 'WARN') + ' ' + args[0];
-//		console.warn.apply(console, args);
-//		
-//		this.appendLoggerNode(args, 'WARN');
 	}
 	
 	error() {
-		let args = Object.create(arguments);
+		let args = arguments;
 		this.log('ERROR', args);
-		
-//		args[0] = this.getPrefixed(args, 'ERROR') + ' ' + args[0];
-//		console.error.apply(console, args);
-//		
-//		this.appendLoggerNode(args, 'ERROR');
 	}
 }

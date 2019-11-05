@@ -6,6 +6,9 @@
  * development.
  */
 class _Singleton {
+	static get LOG() {
+		return mock.LogFactory.getLog(_Singleton);
+	}
 
 	/**
 	 * TODO
@@ -25,12 +28,17 @@ class _Singleton {
 	 * TODO
 	 */
 	static getInstance() {
-		if('undefined' === typeof _Singleton.instance){
-			Object.assign(_Singleton, {
-				instance : new _Singleton()
-			});
+		
+		if('undefined' === typeof _Singleton._instance) {
+			Object.defineProperty(_Singleton, '_instance', {
+					value: new _Singleton(),
+					writable: false
+				});
 		}
-		return _Singleton.instance;
+		
+		// MockService.LOG.debug('[getInstance] MockService._instance: ',
+		// MockService._instance);
+		return _Singleton._instance;
 	}
 	
 	/**
@@ -39,6 +47,8 @@ class _Singleton {
 	fork() {
 		console.log('[_Singleton.fork] fork');
 		console.log('[_Singleton.fork] count: ', this.count);
+		
+		this.count = this.count + 1;
         
         return 'I am _Singleton';
     }

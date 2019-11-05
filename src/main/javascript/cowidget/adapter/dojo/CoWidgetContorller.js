@@ -65,7 +65,7 @@ define([ 'dojo/_base/declare'
 			self.LOG.debug('[_init] self: ', self);
 			
 			options = options ? options:{};
-			self.LOG.debug('[_init] options: ', options);	
+			self.LOG.debug('[_init] options: ', options);
 			
 			if(true && 'function' === typeof self.setModel && options.viewModel) {
 				Object.assign(self, {

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+<title>Example</title>
+<body class="api">
+	<div>...........</div>
+	<script type="text/javascript">
+	
+	class Fly {
+		constructor(options) {
+			Object.assign(this, {options: options});
+		}
+	}
+	
+	class xPromise{
+		
+		constructor(options) {
+			this._init(options);
+		}
+		
+		async _init(options) {
+			
+			var AsyncFunction = Object.getPrototypeOf(async function(){
+				
+			}).constructor;
+			
+			let promise = new Promise( (resolve, reject) => {				
+				let timeout = Math.floor(Math.random() * Math.floor(5000));
+				console.log('timeout: ', timeout);
+				setTimeout(function () {
+			    	console.log('resolve: setTimeout xxxxx: ', options);
+
+					let fly = new Fly(options);
+					
+				      resolve(fly);
+				      //reject('Error');
+				    }, timeout);
+			}).then((value) => {
+				  console.log('then: ' + value);
+				  return value;
+			}).catch(function (error) {
+				  console.log(error);
+			}).finally((result) => {
+				console.debug('finally: ', result);
+			});
+			
+			Object.assign(this, {promise: promise});
+			
+			let retPromise = await Promise.resolve(this.promise);
+			console.log('_init: ', retPromise);
+			Object.assign(this, {fly: retPromise});
+		}
+		
+		async placeAt() {
+			try {
+				let retPromise = await Promise.resolve(this.promise);
+				console.log('placeAt: ', this.fly);
+			}catch(exception){
+				console.error('exception: ', exception);
+			}
+			
+			return this;
+		}
+		
+		fork() {
+			
+			try {
+				//await Promise.resolve(this.promise);
+				console.log('fork: ', this.fly);
+			}catch(exception){
+				console.error('exception: ', exception);
+			}
+			
+			return this;
+		}
+	}
+		
+	new xPromise({fork: 'A'}).placeAt();
+	let b = new xPromise({fork: 'B'});
+	let c = new xPromise({fork: 'C'});
+	
+	c.placeAt();
+	b.placeAt();
+	
+	try {
+		// not work
+		//c.placeAt().fork();
+		console.log('c.placeAt();', c.placeAt());
+	}catch(exception){
+		console.error('exception: ', exception);
+	}
+	
+	console.log('top: ', c);
+	console.log('top: ', b);
+	console.log('end')
+	</script>
+</body>
+</html>
