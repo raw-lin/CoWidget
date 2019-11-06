@@ -139,8 +139,17 @@ class CoWidgetImpl {
 	 *            viewName, viewMethod, container, viewMethod is mapping to
 	 *            server token.
 	 */
-    static create(option){
+    static create(option, container){
     	option = option ? option:{};
+    	container = container ? container:document;
+    	option.container = option.container ? option.container:container;
+    	
+    	if('undefined' === typeof option.container) {
+    		Object.assign(option, {
+    			container: container
+    		});
+    	}
+    	
         let self = this;
     	let retCoWidget = null;
     	
@@ -156,8 +165,9 @@ class CoWidgetImpl {
     };
 
     placeAt(place, position) {
-    	position = position ? position:'only';
         var self = this;
+    	place = place ? place:self.place;
+    	position = position ? position:'only';
         
         self.placeReference = place;
 		self.placePosition = position;

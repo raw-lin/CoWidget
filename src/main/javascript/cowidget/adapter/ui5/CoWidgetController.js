@@ -1,14 +1,14 @@
-/*
- * CoWidget (c) Copyright 2019 RawYa HOME. Licensed under the Apache License, Version >=2.0 - see LICENSE.
- * 
- * This is an optimized version of CoWidget, built for deployment and not for development.
- * To get sources and documentation, please visit: http://cowidget.rawya.net
- */
-
-sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast', 'sap/m/MessageBox' ], function(Controller, JSONModel, MessageToast, MessageBox) {
+sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/base/Metadata', 'sap/m/MessageToast', 'sap/m/MessageBox' ],
+		function(Controller, JSONModel, Metadata, MessageToast, MessageBox) {
 	'use strict';
 
 	let handler = {
+		construct: function(target, args) {
+		      var obj = Object.create(base.prototype);
+		      this.apply(target, obj, args);
+		      return obj;
+		    },
+			    
 		get : function(obj, prop) {
 			console.log(`[get] obj: ${obj}`);
 			console.log(`[get] prop: ${prop}`);
@@ -33,33 +33,51 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 	 * <code>
 	 */
 	let CoWidgetController = Controller.extend('cowidgetUI5/CoWidgetController', {
-		LOG : cowidget.common.LogFactory.getLog('cowidgetUI5.CoWidgetController'),
-
-		constructor : function() {
+		LOG : cowidget.common.LogFactory.getLog('cowidgetUI5/CoWidgetController'),
+		
+		calledCount: 0,
+		
+		newInstance: function(mOptions) {
 			let that = this;
-			that.LOG.debug('[constructor] call CoWidgetController: ', that);
+			that.LOG.debug('[netInstance] call CoWidgetController: ', mOptions);
 			
-			return null;
+			return that;
+		},
+
+		constructor : function(mOptions) {
+			let that = this;
+			
+			that.LOG.debug('[constructor] call CoWidgetController: ', that);
+			that.LOG.debug('[constructor] Object.getPrototypeOf: ', Object.getPrototypeOf(Object.getPrototypeOf(that)));
+			that.LOG.debug('[constructor] Object.getPrototypeOf: ', Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(that))));
+			
+			that.calledCount = that.calledCount + 1;
+			that.LOG.debug(`[constructor] that.calledCount: ${that.calledCount}`);
+			
+			that._init(mOptions);
+		},
+		
+		/**
+		 * @private
+		 */
+		_init(mOptions) {
+			let that = this;
+			that.LOG.debug('[_init] call');
+		},
+		
+		fireEvent: function(sEventId, oParameters, bAllowPreventDefault, bEnableEventBubbling) {
+			let that = this;
+			that.LOG.debug('[fireEvent] call: ', that);
+			
+			//that[[Prototype]].fireEvent();
+			//Object.getPrototypeOf(Object.getPrototypeOf(that))
+		},		
+		
+		createView: function(options, container) {
+			return CoWidget.create(options, container);
 		}
 
 	});
-	
-	CoWidgetController.extendx = function(options) {
-		let that = this;
-		
-		return new Proxy(Controller.extend('cowidgetUI5/CoWidgetController', {
-			LOG : cowidget.common.LogFactory.getLog('cowidgetUI5.CoWidgetController'),
 
-			constructor : function() {
-				let that = this;
-				that.LOG.debug('[constructor] call CoWidgetController: ', that);
-			}
-
-		}), handler);
-	}
-
-	// let new Proxy(target, handler);
-
-	// return CoWidgetController;
 	return CoWidgetController;
 });

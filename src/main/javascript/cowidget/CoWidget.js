@@ -471,7 +471,6 @@
         isMock: true,
         'null': null
     }, userConfig);
-    cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidgetConfig: ', defaultConfig);
     
     /* start up */
     class CoWidget extends cowidget._base.CoWidgetImpl {
@@ -483,8 +482,9 @@
 		writable: false
 	});
     
-    cowidget.common.LogFactory.getLog().debug('[factory] CoWidget work test: ', CoWidget.isWork());
-    cowidget.common.LogFactory.getLog().debug('[factory] CoWidget: ', CoWidget);
+ 	//cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidgetConfig: ', defaultConfig);
+	//cowidget.common.LogFactory.getLog().debug('[factory] CoWidget work test: ', CoWidget.isWork());
+	//cowidget.common.LogFactory.getLog().debug('[factory] CoWidget: ', CoWidget);
 
     return CoWidget;
 })));

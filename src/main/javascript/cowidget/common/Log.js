@@ -10,20 +10,36 @@
 class Log {
 
 	constructor(clazz) {
-		clazz = clazz ? clazz:class Main {};
-		this.clazz = clazz;
-		this.prefixed = '';
+		let self = this;
 		
-		//console.debug('typeof clazz: ' + typeof clazz);
-		if('string' === typeof clazz) {
+		console.debug('[constructor] typeof clazz', typeof clazz);
+		if('undefined' === typeof clazz){
+			this.prefixed = 'Main';
+		}else if('string' === typeof clazz) {
 			this.prefixed = clazz;
 		}else {
-			if(this.clazz.packageName) {
-				this.prefixed = this.clazz.packageName + '.';
+			if(clazz.packageName) {
+				this.prefixed = clazz.packageName + '.';
 			}
 			
-			if(this.clazz.prototype.constructor.name) {
-				this.prefixed = this.prefixed + this.clazz.prototype.constructor.name + '';
+			if(clazz.prototype.constructor.name) {
+				this.prefixed = this.prefixed + clazz.prototype.constructor.name + '';
+			}
+		}
+		
+		this.debugLevel = 'INFO';
+		
+		if('Main' === this.prefixed || 'cowidget.commonLogFactory' === this.prefixed) {
+			this.debugLevel = 'DEBUG';
+		}
+		
+		if(CoWidget.configure && CoWidget.configure.logger) {
+			if('string' === typeof CoWidget.configure.logger.root || 'DEBUG' === CoWidget.configure.logger.root) {
+				this.debugLevel = CoWidget.configure.logger.root;
+			}
+			
+			if(CoWidget.configure.logger[this.prefixed]) {
+				this.debugLevel = CoWidget.configure.logger[this.prefixed];
 			}
 		}
 		
@@ -32,6 +48,19 @@ class Log {
 		this.withDebug = false;
 	}
 	
+	/**
+	 * @parent isDebug boolean
+	 */
+	setDebug(isDebug) {
+		this.withDebug = isDebug;
+		
+		return this;
+	}
+	
+	open() {
+		
+		return this;
+	}
 	
 	getPrefixed(args, logTag) {
 		let prefixed = '';		
@@ -43,7 +72,7 @@ class Log {
 	appendLoggerNode(args, logTag) {
 		let txt = '';
 		if(this.loggerNode) {
-			//console.debug('[appendLoggerNode] args: ', args);
+			// console.debug('[appendLoggerNode] args: ', args);
 			if(false && Array.isArray(args)) {
 				args.forEach((currentValue, index, array) => {
 					try{
@@ -87,38 +116,39 @@ class Log {
 			}			
 
 			if(this.withDebug) {
-				console.debug('[Log.appendLoggerNode] args: ', args);
-				console.debug('[Log.appendLoggerNode] typeof args: ', typeof args);
-				console.debug('[Log.appendLoggerNode] typeof Array.isArray(args): ', Array.isArray(args));
+				console.debug('[cowidget.common.Log][appendLoggerNode] args: ', args);
+				console.debug('[cowidget.common.Log][appendLoggerNode] typeof args: ', typeof args);
+				console.debug('[cowidget.common.Log][appendLoggerNode] typeof Array.isArray(args): ', Array.isArray(args));
 			}
 			
 			for (let arg of args) {
 				try{
 					if(this.withDebug) {
-						console.debug('[Log.appendLoggerNode] typeof arg: ', typeof arg);
+						console.debug('[cowidget.common.Log][appendLoggerNode] typeof arg: ', typeof arg);
 					}
 					
 					if ('undefined' === typeof arg) {
 						txt = txt + 'undefined';
 					}else if ('string' === typeof arg) {
 						txt = txt + arg;
+					}else if ('function' === typeof arg && 'function' === typeof arg.toString) {
+						txt = txt + arg.toString();
 					}else {						
 						let argTxt = JSON.stringify(arg, undefined, 2);
 						
 						if(this.withDebug) {
-							console.debug('[Log.appendLoggerNode] arg: ', arg);
-							console.debug('[Log.appendLoggerNode] argTxt: ', argTxt);
+							console.debug('[cowidget.common.Log][appendLoggerNode] arg: ', arg);
+							console.debug('[cowidget.common.Log][appendLoggerNode] argTxt: ', argTxt);
 						}
 						
 						if(this.loggerNode.tagName.match(/textarea/i)) {
 							if(this.withDebug) {
-								console.debug('[Log.appendLoggerNode] loggerNode is TEXTAREA: ', this.loggerNode.tagName);
+								console.debug('[cowidget.common.Log][appendLoggerNode] loggerNode is TEXTAREA: ', this.loggerNode.tagName);
 							}
-						}else {
+						}else if(argTxt){
 							argTxt = argTxt.replace(/\\r\\n/g, '<br/>');
 							argTxt = argTxt.replace(/\\t/g, '        ');
 							argTxt = argTxt.replace(/\\"/g, '"');
-							
 							
 							argTxt = argTxt;
 						}
@@ -133,13 +163,13 @@ class Log {
 			}
 			
 			if(this.withDebug) {
-				console.debug('[Log.appendLoggerNode] this.loggerNode: ', this.loggerNode.tagName);
+				console.debug('[cowidget.common.Log][appendLoggerNode] this.loggerNode: ', this.loggerNode.tagName);
 			}
 			
 			if(this.loggerNode.tagName.match(/textarea/i)) {
 				this.loggerNode.value = this.loggerNode.value + '\r\n' + txt;
 			}else {
-				this.loggerNode.innerHTML = this.loggerNode.innerHTML + '<br/>' + txt ;
+				this.loggerNode.innerHTML = this.loggerNode.innerHTML + '<code>' + txt + '<br/></code>';
 			}
 		}
 	}
@@ -148,39 +178,50 @@ class Log {
 		logTag = logTag ? logTag:'INFO';
 		args = args ? args:arguments;
 		
-		if('string' === typeof args[0]) {
+		if(null === args[0]) {
 			args[0] = this.getPrefixed(args, logTag) + ' ' + args[0];
-		}else{
-			let argTxt = this.getPrefixed(args, logTag) + ' ' + args[0];
-			
-			args[0] = argTxt + JSON.stringify(args[0], undefined, 2);
+		}else if('undefined' === typeof args[0]) {
+			args[0] = this.getPrefixed(args, logTag) + ' ';
+			args.length = 1;
+		}else if('string' === typeof args[0]) {
+			args[0] = this.getPrefixed(args, logTag) + ' ' + args[0];
+		}else if('function' === typeof args[0].toString) {
+			args[0] = this.getPrefixed(args, logTag) + ' ' + args[0].toString();
 		}
-		
 		
 		if(this.withDebug) {
 			console.debug('[Log.log] args: ', args);
 		}
 		let argObj = args;
 		
-		//if(Array.isArray(args)) {
-		//	argObj = args ? Array.from(args):Array.from(arguments);
-		//}else {
+		// if(Array.isArray(args)) {
+		// argObj = args ? Array.from(args):Array.from(arguments);
+		// }else {
 		//	
-		//}
+		// }
 		
-		if('INFO' === logTag) {
+		if('INFO' === logTag && 'INFO' === this.debugLevel) {
 			console.log.apply(console, args);
-		}else if('DEBUG' === logTag) {
+		}else if('DEBUG' === logTag && 'DEBUG' === this.debugLevel) {
 			console.debug.apply(console, args);
-		}else if('WARN' === logTag) {
+		}else if('WARN' === logTag && 'DEBUG' === this.debugLevel) {
 			console.warn.apply(console, args);
-		}else if('ERROR' === logTag) {
+		}else if('ERROR' === logTag && 'DEBUG' === this.debugLevel) {
 			console.error.apply(console, args);
 		}else {
 			console.log.apply(console, args);
 		}
 		
-		this.appendLoggerNode(argObj, logTag);
+		if('INFO' === logTag && 'INFO' === this.debugLevel) {
+			this.appendLoggerNode(argObj, logTag);
+		}else if('DEBUG' === logTag && 'DEBUG' === this.debugLevel) {
+			this.appendLoggerNode(argObj, logTag);
+		}else if('WARN' === logTag && 'DEBUG' === this.debugLevel) {
+			this.appendLoggerNode(argObj, logTag);
+		}else if('ERROR' === logTag && 'DEBUG' === this.debugLevel) {
+			this.appendLoggerNode(argObj, logTag);
+		}
+		
 	}
 	
 	info() {
