@@ -168,33 +168,33 @@ class UI5Adapter extends CoWidget {
 		let oXMLView = null;
 		
 		if(true) {				
-			UI5Adapter.LOG.debug('[placeAt] that: ', that);
-			UI5Adapter.LOG.debug('[placeAt] that.container: ', that.container);
-			UI5Adapter.LOG.debug('[placeAt] rTarget: ', rTarget);
+			UI5Adapter.LOG.debug('[_placeAt] that: ', that);
+			UI5Adapter.LOG.debug('[_placeAt] that.container: ', that.container);
+			UI5Adapter.LOG.debug('[_placeAt] rTarget: ', rTarget);
 		}
 		
-		UI5Adapter.LOG.debug('[placeAt] create oXMLView.');
+		UI5Adapter.LOG.debug('[_placeAt] create oXMLView.');
 		jQuery.sap.require('sap.ui.core.mvc.XMLView');
 		oXMLView = sap.ui.core.mvc.XMLView.create({
 			viewName: that.metaData.viewName,
 			customData: {
 					Type: 'sap.ui.core.CustomData',
 						key:'modelData',
-						value: that.modelData
+						value: that.viewModel
 					}
 		});
 		
 		{
 			if(oXMLView && oXMLView instanceof Promise) {
-				UI5Adapter.LOG.debug('[placeAt] Promise process');
+				UI5Adapter.LOG.debug('[_placeAt] Promise process');
 			
 				oXMLView.then((oView) => {
 					/* check oView and oTarget */
-					UI5Adapter.LOG.debug('[placeAt.than] check oView and oTarget');
+					UI5Adapter.LOG.debug('[_placeAt.then] check oView and oTarget');
 					let oTarget = null;
 					
 					if(true === that.isInstanceOf(oView, sap.m.Page)) {
-						UI5Adapter.LOG.debug('[placeAt] oView is sap.m.Page');
+						UI5Adapter.LOG.debug('[_placeAt.then] oView is sap.m.Page');
 						// let oTarget to be App
 						oTarget = that.determineTarget(rTarget, that.container, sap.m.Page);
 						
@@ -232,8 +232,8 @@ class UI5Adapter extends CoWidget {
 					
 					return result;
 				}).then((result) => {
-					UI5Adapter.LOG.debug('[placeAt] oView: ', result.oView);
-					UI5Adapter.LOG.debug('[placeAt] oTarget: ', result.oTarget);
+					UI5Adapter.LOG.debug('[_placeAt] oView: ', result.oView);
+					UI5Adapter.LOG.debug('[_placeAt] oTarget: ', result.oTarget);
 					
 					if(result.oTarget && result.oTarget.setBusy) {
 						result.oTarget.setBusy(false);
@@ -244,9 +244,9 @@ class UI5Adapter extends CoWidget {
 					// }catch(exception) {
 						
 					// }
-					UI5Adapter.LOG.error('[placeAt] error: ', error);
+					UI5Adapter.LOG.error('[_placeAt] error: ', error);
 				}).finally(() => {
-					UI5Adapter.LOG.debug('[placeAt] finally');
+					UI5Adapter.LOG.debug('[_placeAt] finally');
 					
 					/* setBusy */
 					// if(oTarget && oTarget.setBusy) {

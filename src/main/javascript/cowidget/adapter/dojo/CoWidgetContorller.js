@@ -5,7 +5,7 @@
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
 define([ 'dojo/_base/declare'
-			//, 'dojo/parser'
+			, 'dojo/parser'
 			, 'dijit/registry'
 			, 'dojo/request/xhr'
 			, 'dojo/json'
@@ -19,7 +19,7 @@ define([ 'dojo/_base/declare'
 			
 			, 'dojox/layout/FloatingPane'
 			//, 'dojo/domReady!'
-], function(declare, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
+], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
 	//'use strict'; /* important: dont need */
 	
 	let CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
@@ -54,7 +54,7 @@ define([ 'dojo/_base/declare'
 		constructor: function (options) {
 			let self = this;
 			options = options ? options:{};
-			self.LOG.debug('[constructor] DojoWidget');
+			self.LOG.debug('[constructor] CoWidgetContorller');
 
 			//self.LOG.debug('[constructor] self: ', self);
 			self._init(options);
@@ -69,7 +69,7 @@ define([ 'dojo/_base/declare'
 			
 			if(true && 'function' === typeof self.setModel && options.viewModel) {
 				Object.assign(self, {
-					model: options.viewModel
+					viewModel: options.viewModel
 				});
 				
 				//self.setModel(options.viewModel);
@@ -87,25 +87,6 @@ define([ 'dojo/_base/declare'
 			self.LOG.debug('[postCreateAfter] self: ', self);
 
 			//self.model = new Stateful(model);
-		},
-		
-		/**
-		 * dijit/_WidgetBase.placeAt, not work
-		 */
-		placeAtX: function(reference, position) {
-			let self = this;
-			//self.LOG.debug('[placeAt] self: ', self);
-			self.LOG.debug('[placeAt] model: ', ('undefined' === typeof model ? 'undefined':model));
-						
-			let viewResult = null;
-			if('function' === typeof self.execute) {
-				viewResult = self.execute();
-			}else{
-				self.LOG.error(`[_init] please implement excute method.`);
-			}
-			
-			let placeAtResult = this.inherited('placeAt', arguments); // must remark 'use strict'
-			self.LOG.debug('[placeAt] placeAtResult: ', placeAtResult);
 		},
 		
 		postCreate: function() {
@@ -132,12 +113,10 @@ define([ 'dojo/_base/declare'
 			if('function' === typeof self.postCreateAfter){
 				self.postCreateAfter();
 			}
-			
-			//parser.parse(self.domNode);
 		},
 		
-		createView: function(mOption) {
-			return CoWidget.create(mOption);
+		createView: function(mOption, comtainer) {
+			return CoWidget.create(mOption, comtainer);
 		},
 		
 		
@@ -146,6 +125,8 @@ define([ 'dojo/_base/declare'
 		 */
 		_pluginAjax: function() {
 			let self = this;
+			
+			let withMock = true;
 			
 			dojo.query('button[type="submit"]', self.domNode).on('click', function(evt) {
 				let selfDomNode = this;
@@ -201,6 +182,7 @@ define([ 'dojo/_base/declare'
 				xhr(xhrArgs.url, xhrArgs).then((data) => {
 						// Do something with the handled data
 						widget.LOG.debug('[_pluginAjax.xhr.then] xhrArgs data: ', data);
+						widget.LOG.debug('[_pluginAjax.xhr.then] queryMethod: ', queryMethod);
 						
 						// mock service, choice user case
 						let caseId = 1;
@@ -238,11 +220,12 @@ define([ 'dojo/_base/declare'
 						let coWidgetView = CoWidget.create({
 							//container : document,
 							viewName : coWidgetOpts.viewName,
+							viewPlace : coWidgetOpts.viewPlace ? coWidgetOpts.viewPlace:null,
 							viewModel : coWidgetOpts.viewModel ? coWidgetOpts.viewModel:{}
-						});
+						}, self.domNode);
 						
 						coWidgetView.placeAt(coWidgetOpts.viewPlace);
-						
+
 					}, (err) => {
 						widget.LOG.error('[_pluginAjax.xhr.err] err: ', err);
 					}, (evt) => {

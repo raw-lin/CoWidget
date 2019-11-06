@@ -28,52 +28,65 @@
  * 	}
  * </pre>
  */
-class LogFactory {
-	
-	static getMainClass() {
-		return class {
-			
-		}
-	}
-	
+class LogFactory {	
 	/**
 	 * Convenience method to return a named logger, without the application having to care about factories.
 	 * 
-	 * * @param {class}	 Class from which a log name will be derived
+	 * * @param {class}	 Class from which a log name will be derived.
 	 */
 	static getLog(clazz) {
-		clazz = clazz ? clazz:LogFactory.getMainClass();
 		
-		try{
+//		if('undefined' === typeof clazz){
+//			
+//		}else if('string' === typeof clazz){
+//		}else {
+//			
+//		}
+//		//clazz = clazz ? clazz:LogFactory;
+//		clazz = clazz ? clazz:(() => {
+//			return class Main {
+//			}
+//		})();
+		
+//		try{
+//			
+//			if('undefined' === typeof this._registed) {
+//				Object.defineProperty(this, '_registed', { 
+//						clazz: log
+//					});
+//			}
+//
+//            console.debug('[LogFactory.getLog] clazz: ', clazz);
+//		}catch(exception) {
+//			console.error('[LogFactory.getLog] exception: ', exception);
+//		}
+		
+		let logger = null;
+		try{            
+//			if('undefined' === typeof clazz._LOG_ || !(clazz['_LOG_'])) {				
+//				Object.defineProperty(clazz, '_LOG_', {
+//					value: new cowidget.common.Log(clazz),
+//					writable: false
+//				});
+//			}
+//			
+//			if(clazz._LOG_) {
+//				
+//			}else{
+//				Object.defineProperty(clazz, '_LOG_', {
+//					value: new cowidget.common.Log(clazz),
+//					writable: false
+//				});
+//			}
 			
-			if('undefined' === typeof this._registed) {
-				Object.defineProperty(this, '_registed', { 
-						clazz: log
-					});
-			}
-
-            //console.debug('[LogFactory.getLog] clazz: ', clazz);
+//			logger = clazz._LOG_;
 		}catch(exception) {
-			
+			console.error('[LogFactory.getLog] clazzx: ', clazz);
+			console.error('[LogFactory.getLog] exception: ', exception);
+			logger = new cowidget.common.Log(clazz);
 		}
 		
-		let log = new cowidget.common.Log(clazz);
-		
-		try{
-            
-			if(false){
-				if('object' === typeof clazz && 'undefined' === typeof clazz.prototype.LOG) {
-		            //console.debug('[LogFactory.getLog] clazz: ', clazz);
-					Object.defineProperty(clazz.prototype, 'LOG', {
-						value: log,
-						writable: false
-					});
-				}
-			}
-		}catch(exception) {
-			
-		}
-		
-		return log;
+		//return logger;
+		return new cowidget.common.Log(clazz);
 	}
 }

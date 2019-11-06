@@ -115,6 +115,7 @@ class NetXhr {
 	
 	getResult() {
 		let self = this;
+		
 		return self.result ? self.result:null;
 	}
 	
@@ -144,7 +145,7 @@ class NetXhr {
 			Object.assign(netXhr, {xhrPromise: xhrPromise});
 		}
 		
-		return netXhr;
+		return netXhr.xhrPromise;
 	}
 	
 	getPromiseResult() {

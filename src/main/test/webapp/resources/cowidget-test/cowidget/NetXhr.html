@@ -10,25 +10,32 @@
 	var coWidgetConfig = {
 		isDebug : true,
 		packages : {
-			'mock' : '/ExampleWeb/mock/cowidget/mock'
+			mock : './mock/cowidget/mock'
 		}
 	};
 </script>
 <script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script>
 <body class="api">
-	<code id="logger" style="tab-size: 2">
-	</code>
+
+	<h1>NetXhr Test</h1>
+
+	<div id="logger" style="width: 100%; height: 300px; ">
+	</div>
 
 	<script type="text/javascript">
 		'use strict';
 
 		if (true) {
-			cowidget.common.Log = mock.Log;
-			cowidget.common.LogFactory = mock.LogFactory;
-			cowidget.common.NetXhr = mock.NetXhr;
+			cowidget.common;
+			mock.common;
+			
+			
+			cowidget.common.LogFactory = mock.common.LogFactory;
+			cowidget.common.Log = mock.common.Log;
+			
+			cowidget.common.NetXhr = mock.common.NetXhr;
 
-			cowidget.service;
-			cowidget.service.MockService = mock.MockService;
+			//cowidget.service.MockService = mock.common.MockService;
 		}
 
 		let LOG = cowidget.common.LogFactory.getLog();
@@ -40,14 +47,22 @@
 		}
 
 		LOG.debug('xhrArgs: ', xhrArgs);
-		
-		if(false) {
-			LOG.debug('Promise result: ', cowidget.common.NetXhr.requestPromise(xhrArgs).getPromiseResult());
+
+		if (true) {
+			let netXhrResult = null;
+			cowidget.common.NetXhr.requestPromise(xhrArgs).then(async (result) => {
+				LOG.debug('Promise result: ', result);
+				
+				netXhrResult = await result;
+				LOG.debug('Promise netXhrResult: ', netXhrResult);
+			});			
 		}
 
-		if(true) { 
+		if (false) {
 			LOG.debug('result: ', cowidget.common.NetXhr.request(xhrArgs).getResult());
 		}
+		
+		LOG.debug('---------------------------------------------------------');
 	</script>
 </body>
 </html>

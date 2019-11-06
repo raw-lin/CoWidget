@@ -6,7 +6,7 @@
  */
 class UrlUtil extends cowidget.UrlUtil {
 	static get LOG() {
-		return mock.LogFactory.getLog(UrlUtil);
+		return cowidget.common.LogFactory.getLog(UrlUtil);
 	}
 	
     constructor(option) {

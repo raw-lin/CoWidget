@@ -48,7 +48,7 @@ class DojoAdapter extends CoWidget {
  	            	DojoAdapter.LOG.debug('[_placeAt] coWidget.widget: ', coWidget.widget);
  	            	
  	            	dojo.ready(0, () => {
- 	            		DojoAdapter.LOG.debug('[_placeAt] call ready');
+ 	            		DojoAdapter.LOG.debug(`[_placeAt] call ready: placeReference, placePosition: ${self.placeReference}, ${self.placePosition}`);
  	            		coWidget.widget.placeAt(self.placeReference, self.placePosition);
  	            	});
  	            	
