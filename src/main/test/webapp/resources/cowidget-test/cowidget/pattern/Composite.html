@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Example</title>
+<body class="api">
+	<div>...........</div>
+	<script type="text/javascript">
+		
+		class Composite {
+			constructor(options) {
+				options = options ? options:{name:'Composite'};
+				this.name = options.name;
+			}
+			
+			placeAt() {
+				let that = this;
+
+				if(Array.isArray(that.composites)) {
+					that.composites.forEach(function(element) {
+						console.debug('[.placeAt] element: ', element);
+					});
+				}else {
+					console.debug('[.placeAt] this: ', this);
+				}
+			}
+			
+			add(/*Composite*/ child) {
+				let that = this;
+				if('undefined' == typeof that.composites) {
+					that.composites = [];
+					
+					that.composites.push(that);
+				}
+				that.composites.push(child);
+			}
+		}
+		
+		let composite = new Composite({name: 'A'});
+		composite.add(new Composite({name: 'B'}));
+		composite.add(new Composite({name: 'C'}));
+		composite.placeAt();
+		
+	</script>
+</body>
+</html>

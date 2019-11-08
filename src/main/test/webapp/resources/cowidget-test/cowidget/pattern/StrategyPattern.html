@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Example</title>
+<body class="api">
+	<div>...........</div>
+	<script type="text/javascript">
+		
+		class StrategyPattern {
+			static get LOG() {
+				return cowidget.common.LogFactory.getLog(StrategyPattern);
+			}
+			
+			create() {
+				StrategyPattern.debug('[create]');
+			}
+			
+			placeAt() {
+				StrategyPattern.debug('[placeAt]');
+			}
+		}
+		
+		class StrategyA extends StrategyPattern {
+			constructor(options) {
+				options = options ? options:{name:'StrategyA'};
+				this.name = options.name;
+			}
+			
+			create() {
+				StrategyPattern.debug('[create]');
+			}
+			
+			placeAt() {
+				StrategyPattern.debug('[placeAt]');
+			}
+		}
+		
+
+		
+		class StrategyB extends StrategyPattern {
+			constructor(options) {
+				options = options ? options:{name:'StrategyA'};
+				this.name = options.name;
+			}
+			
+			create() {
+				StrategyPattern.debug('[create]');
+			}
+			
+			placeAt() {
+				StrategyPattern.debug('[placeAt]');
+			}
+		}
+		
+	</script>
+</body>
+</html>
