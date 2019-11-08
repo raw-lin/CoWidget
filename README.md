@@ -26,7 +26,7 @@
 
 - Adapter pattern.
 
-> Demo: <a hre="http://res.rawya.net/cowidget-test/cowidget/">http://res.rawya.net/cowidget-test/cowidget/</a>
+> Test: <a hre="http://res.rawya.net/cowidget-test/cowidget/">http://res.rawya.net/cowidget-test/cowidget/</a>
 
 
 ## 計劃整合UI:
@@ -34,7 +34,7 @@
 - Prue DHTML5 fragment: XML.
 
 
-## 計劃架構:
+## 計劃架構 - Plan:
 - JacaScript Framework, run on cloud application.
 - Mock by json with plan screen flow: CoWork.
 - Token by json and xml with Application Server.

@@ -27,7 +27,7 @@ code:before {
 
 <script type="text/javascript">
 	'use strict';
-	var coWidgetConfig = {
+	let coWidgetConfig = {
 		logger: {
 			'root': 'DEBUG',
 			'Main': 'DEBUG',
@@ -59,8 +59,9 @@ code:before {
 			cowidget.common.Log = debug.common.Log;
 		}
 
-		cowidget.common.LogFactory.getLog().debug('test');
-		cowidget.common.LogFactory.getLog('Main').debug('test');
+		cowidget.common.LogFactory.getLog('Main').debug('test: cowidget.common.LogFactory.getLog(\'Main\')');
+		
+		cowidget.common.LogFactory.getLog().debug('test: cowidget.common.LogFactory.getLog().debug(\'test\')');
 		
 		let LOG = cowidget.common.LogFactory.getLog();
 

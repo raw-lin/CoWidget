@@ -12,7 +12,7 @@ class Log {
 	constructor(clazz) {
 		let self = this;
 		
-		console.debug('[constructor] typeof clazz', typeof clazz);
+		console.debug('[constructor] typeof clazz: ', typeof clazz);
 		if('undefined' === typeof clazz){
 			this.prefixed = 'Main';
 		}else if('string' === typeof clazz) {

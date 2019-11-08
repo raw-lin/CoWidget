@@ -2,18 +2,24 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="-1" />
+
+<title>Async Function</title>
 
 <title>ClassExtends</title>
 
 <script type="text/javascript">
 	'use strict';
-	var coWidgetConfig = {
-		isDebug : true,
+	let coWidgetConfig = {
 		packages : {
 			mock: './mock/cowidget/mock'
+		},
+		logger: {
+			'root': 'DEBUG'
 		}
-		
 	};
 </script>
 <script type="text/javascript"
@@ -21,7 +27,8 @@
 	
 <body class="api">
 	<h1>ClassExtends Test</h1>
-	<textarea id="logger" style="margin: auto; width: 100%; height: 300px;"></textarea>
+	<pre id="logger"
+		style="margin: auto; width: 100%; height: 300px; overflow: scroll; border: 1px #080808 solid;"></pre>
 
 	<script type="text/javascript">
 		'use strict';
@@ -38,7 +45,7 @@
 		
 		/**
 		*/
-		function assignStaticField(staticField) {
+		const assignStaticField = (staticField) => {
 			class StaticFieldClass {
 				
 			}
