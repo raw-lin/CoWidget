@@ -2,122 +2,40 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="-1" />
 
-<title>Example</title>
+<title>DateFormatUtil</title>
 
 <script type="text/javascript">
 	'use strict';
-	var coWidgetConfig = {
-		isDebug : true
+	let coWidgetConfig = {
+			logger : {
+				'root' : 'DEBUG'
+			}
 	};
 </script>
 <script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script>
 
 <body class="api">
-	<div id="logger"><code></code></div>
+	<h1>DateFormatUtil Test</h1>
+	
+	<pre id="logger" style="margin: auto; width: 100%; height: 300px; overflow: scroll; border: 1px #080808 solid;"></pre>
+	
 	<script type="text/javascript">
 		'use strict';
 		
 		let LOG = cowidget.common.LogFactory.getLog();
 		
-		class T {
-			
-		}
 		
-		/**
-		 * <p>Date and time formatting utilities and constants.</p>
-		 *
-		 * @since 1.0
-		 */
-		class DateFormatUtil {
-			static get LOG() {
-				return cowidget.common.LogFactory.getLog(DateFormatUtil);
-			}
-			
-			constructor(/*viewName: string, container: View Object*/options) {
-				new Error('failure constructor');
-			}
-			
-			static perpare(oDate) {
-				let ret = {
-						fullYear : 0,
-						month:0,
-						day:0
-				};
 				
-				ret.fullYear = (oDate.getFullYear() + '').padStart(4, '0');
-				ret.month = (oDate.getMonth() + '').padStart(2, '0');
-				ret.day = (oDate.getDay() + '').padStart(2, '0');
-				
-				return ret;
-			}
-			
-			/**
-			 * <p>Formats a date into a specific pattern.yyyy MM dd HH:mm:ssZZ</p>
-			 *
-			 * @param oDate  the Date Object, not null
-			 * @param pattern  the pattern to use to format the date, not null
-			 * @return the formatted date
-			 * @since 1.0
-			 */
-			static format(oDate, pattern) {
-				pattern = pattern ? pattern:'yyyy/MM/dd';
-				let formatTxt = null;
-				
-				DateFormatUtil.LOG.debug('oDate: ', oDate);
-				DateFormatUtil.LOG.debug('pattern: ', pattern);
-				
-				DateFormatUtil.LOG.debug('oDate: ', oDate.getFullYear());
-				DateFormatUtil.LOG.debug('oDate: ', oDate.getMonth());
-				DateFormatUtil.LOG.debug('oDate: ', oDate.getDay());
-				
-				let fullYear = (oDate.getFullYear() + '').padStart(4, '0');
-				let month = (oDate.getMonth() + '').padStart(2, '0');
-				let day = (oDate.getDay() + '').padStart(2, '0');
-				
-				let hour = (oDate.getHours() + '').padStart(2, '0');
-				let minute = (oDate.getMinutes() + '').padStart(2, '0');
-				let second = (oDate.getSeconds() + '').padStart(2, '0');
-				let millisecond = (oDate.getMilliseconds() + '').padStart(3, '0');
-				
-				let formatTT = pattern.replace('yyyy', '${fullYear}');
-				formatTT = formatTT.replace('MM', '${month}');
-				formatTT = formatTT.replace('dd', '${day}');
-				formatTT = formatTT.replace('HH', '${hour}');
-				formatTT = formatTT.replace('mm', '${second}');
-				formatTT = formatTT.replace('ss', '${millisecond}');
-				//formatTT = formatTT.replace('ZZ', '${millisecond}');
-				
-				if('undefined' === typeof pattern) {
-					formatTxt = `${fullYear}/${month}/${day}`;
-				}else if('yyyy-MM-dd' === pattern){
-					formatTxt =  `${fullYear}-${month}-${day}`;
-				}else if('yyyy/MM/dd' === pattern){
-					formatTxt =  `${fullYear}/${month}/${day}`;
-				}else if('yyyy.MM.dd' === pattern){
-					formatTxt =  `${fullYear}.${month}.${day}`;
-				}else if('yyyyMMdd' === pattern){
-					formatTxt =  `${fullYear}${month}${day}`;
-				}else{
-					formatTxt = `${fullYear}/${month}/${day}`;
-				}
-				
-				DateFormatUtil.LOG.debug('[format] formatTT: ', formatTT);
-				
-				formatTxt = eval('`' + formatTT + '`');
-				formatTxt = (new Function('fullYear', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'return `' + formatTT + '`;'))
-									(fullYear, month, day, hour, minute, second, millisecond);
-				
-				return formatTxt;
-			}
-		}
-				
-		LOG.debug('DateUtil unit test');
-		LOG.debug('DateUtil unit test: ', DateFormatUtil.format(new Date(), 'yyyy-MM-dd'));
-		LOG.debug('DateUtil unit test: ', DateFormatUtil.format(new Date(), 'yyyy/MM/dd'));
-		LOG.debug('DateUtil unit test: ', DateFormatUtil.format(new Date(), 'yyyy.MM.dd'));
-		LOG.debug('DateUtil unit test: ', DateFormatUtil.format(new Date(), 'yyyyMMdd'));
-		LOG.debug('DateUtil unit test: ', DateFormatUtil.format(new Date()));
+		LOG.debug('DateUtil unit test yyyy-MM-dd: ', cowidget.common.DateFormatUtil.format(new Date(), 'yyyy-MM-dd'));
+		LOG.debug('DateUtil unit test yyyy/MM/dd: ', cowidget.common.DateFormatUtil.format(new Date(), 'yyyy/MM/dd'));
+		LOG.debug('DateUtil unit test yyyy.MM.dd: ', cowidget.common.DateFormatUtil.format(new Date(), 'yyyy.MM.dd'));
+		LOG.debug('DateUtil unit test yyyyMMdd: ', cowidget.common.DateFormatUtil.format(new Date(), 'yyyyMMdd'));
+		LOG.debug('DateUtil unit test: ', cowidget.common.DateFormatUtil.format(new Date()));
 		
 	</script>
 </body>
