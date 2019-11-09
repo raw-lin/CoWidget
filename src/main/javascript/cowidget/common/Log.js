@@ -34,7 +34,7 @@ class Log {
 		}
 		
 		if(CoWidget.configure && CoWidget.configure.logger) {
-			if('string' === typeof CoWidget.configure.logger.root || 'DEBUG' === CoWidget.configure.logger.root) {
+			if('string' === typeof CoWidget.configure.logger.root && 'DEBUG' === CoWidget.configure.logger.root) {
 				this.debugLevel = CoWidget.configure.logger.root;
 			}
 			
@@ -69,10 +69,10 @@ class Log {
 		return prefixed;
 	}
 	
-	appendLoggerNode(args, logTag) {
+	renderLoggerNode(args, logTag) {
 		let txt = '';
 		if(this.loggerNode) {
-			// console.debug('[appendLoggerNode] args: ', args);
+			// console.debug('[renderLoggerNode] args: ', args);
 			if(false && Array.isArray(args)) {
 				args.forEach((currentValue, index, array) => {
 					try{
@@ -85,8 +85,8 @@ class Log {
 							txt = txt + (index+'x. ') + currentValue;
 						}
 					}catch(exception) {
-						console.error('[cowidget.common.Log][appendLoggerNode] currentValue: ' + index + ': ', currentValue);
-						console.error('[cowidget.common.Log][appendLoggerNode] exception: ', exception);
+						console.error('[cowidget.common.Log][renderLoggerNode] currentValue: ' + index + ': ', currentValue);
+						console.error('[cowidget.common.Log][renderLoggerNode] exception: ', exception);
 					}
 				});
 			}else if(false && Array.isArray(args)) {
@@ -96,8 +96,8 @@ class Log {
 						txt = txt + (index+'x. ') + currentValue;
 					}catch(exception) {
 						txt = txt + ' failure';
-						console.error('[cowidget.common.Log][appendLoggerNode] currentValue: ' + index + ': ', currentValue);
-						console.error('[cowidget.common.Log][appendLoggerNode] exception: ', exception);
+						console.error('[cowidget.common.Log][renderLoggerNode] currentValue: ' + index + ': ', currentValue);
+						console.error('[cowidget.common.Log][renderLoggerNode] exception: ', exception);
 					}
 				});
 			}else if(false) {
@@ -116,59 +116,60 @@ class Log {
 			}			
 
 			if(this.withDebug) {
-				console.debug('[cowidget.common.Log][appendLoggerNode] args: ', args);
-				console.debug('[cowidget.common.Log][appendLoggerNode] typeof args: ', typeof args);
-				console.debug('[cowidget.common.Log][appendLoggerNode] typeof Array.isArray(args): ', Array.isArray(args));
+				console.debug('[cowidget.common.Log][renderLoggerNode] args: ', args);
+				console.debug('[cowidget.common.Log][renderLoggerNode] typeof args: ', typeof args);
+				console.debug('[cowidget.common.Log][renderLoggerNode] typeof Array.isArray(args): ', Array.isArray(args));
 			}
 			
 			for (let arg of args) {
 				try{
 					if(this.withDebug) {
-						console.debug('[cowidget.common.Log][appendLoggerNode] typeof arg: ', typeof arg);
+						console.debug('[cowidget.common.Log][renderLoggerNode] typeof arg: ', typeof arg);
 					}
 					
 					if ('undefined' === typeof arg) {
 						txt = txt + 'undefined';
 					}else if ('string' === typeof arg) {
-						txt = txt + arg;
+						let argTxt = arg;
+						
+						txt = txt + argTxt;
 					}else if ('function' === typeof arg && 'function' === typeof arg.toString) {
-						txt = txt + arg.toString();
+						let argTxt = arg.toString();
+						
+						txt = txt + argTxt;
 					}else {						
 						let argTxt = JSON.stringify(arg, undefined, 2);
 						
 						if(this.withDebug) {
-							console.debug('[cowidget.common.Log][appendLoggerNode] arg: ', arg);
-							console.debug('[cowidget.common.Log][appendLoggerNode] argTxt: ', argTxt);
-						}
-						
-						if(this.loggerNode.tagName.match(/textarea/i)) {
-							if(this.withDebug) {
-								console.debug('[cowidget.common.Log][appendLoggerNode] loggerNode is TEXTAREA: ', this.loggerNode.tagName);
-							}
-						}else if(argTxt){
-							argTxt = argTxt.replace(/\\r\\n/g, '<br/>');
-							argTxt = argTxt.replace(/\\t/g, '        ');
-							argTxt = argTxt.replace(/\\"/g, '"');
-							
-							argTxt = argTxt;
+							console.debug('[cowidget.common.Log][renderLoggerNode] arg: ', arg);
+							console.debug('[cowidget.common.Log][renderLoggerNode] argTxt: ', argTxt);
 						}
 						
 						txt = txt + argTxt;
 					}
 				}catch(exception) {
 					txt = txt + ' failure';
-					console.error('[cowidget.common.Log][appendLoggerNode] arg: ', arg);
-					console.error('[cowidget.common.Log][appendLoggerNode] exception: ', exception);
+					console.error('[cowidget.common.Log][renderLoggerNode] arg: ', arg);
+					console.error('[cowidget.common.Log][renderLoggerNode] exception: ', exception);
 				}
 			}
 			
 			if(this.withDebug) {
-				console.debug('[cowidget.common.Log][appendLoggerNode] this.loggerNode: ', this.loggerNode.tagName);
+				console.debug('[cowidget.common.Log][renderLoggerNode] this.loggerNode: ', this.loggerNode.tagName);
 			}
 			
 			if(this.loggerNode.tagName.match(/textarea/i)) {
+				if(this.withDebug) {
+					console.debug('[cowidget.common.Log][renderLoggerNode] loggerNode is TEXTAREA: ', this.loggerNode.tagName);
+				}
+				
 				this.loggerNode.value = this.loggerNode.value + '\r\n' + txt;
 			}else {
+				txt = txt.replace(/\\r\\n/g, '<br/>');
+				txt = txt.replace(/\\n/g, '<br/>');
+				txt = txt.replace(/\\t/g, '        ');
+				txt = txt.replace(/\\"/g, '"');
+				
 				this.loggerNode.innerHTML = this.loggerNode.innerHTML + '<code>' + txt + '<br/></code>';
 			}
 		}
@@ -213,13 +214,13 @@ class Log {
 		}
 		
 		if('INFO' === logTag && 'INFO' === this.debugLevel) {
-			this.appendLoggerNode(argObj, logTag);
+			this.renderLoggerNode(argObj, logTag);
 		}else if('DEBUG' === logTag && 'DEBUG' === this.debugLevel) {
-			this.appendLoggerNode(argObj, logTag);
+			this.renderLoggerNode(argObj, logTag);
 		}else if('WARN' === logTag && 'DEBUG' === this.debugLevel) {
-			this.appendLoggerNode(argObj, logTag);
+			this.renderLoggerNode(argObj, logTag);
 		}else if('ERROR' === logTag && 'DEBUG' === this.debugLevel) {
-			this.appendLoggerNode(argObj, logTag);
+			this.renderLoggerNode(argObj, logTag);
 		}
 		
 	}
