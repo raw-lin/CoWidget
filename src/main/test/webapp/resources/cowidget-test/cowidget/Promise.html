@@ -8,10 +8,12 @@
 <script type="text/javascript">
 	'use strict';
 	var coWidgetConfig = {
-		isDebug : true,
-		packages : {
-			'mock' : '/ExampleWeb/mock/cowidget/mock'
-		}
+			logger : {
+				'root' : 'DEBUG'
+			},
+			packages : {
+				debug : './debug'
+			}
 	};
 </script>
 <script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script>
@@ -22,12 +24,12 @@
 		'use strict';
 
 		if (false) {
-			cowidget.common.Log = mock.Log;
-			cowidget.common.LogFactory = mock.LogFactory;
-			cowidget.common.NetXhr = mock.NetXhr;
+			cowidget.common.Log = debug.common.Log;
+			cowidget.common.LogFactory = debug.common.LogFactory;
+			cowidget.common.NetXhr = debug.common.NetXhr;
 
 			cowidget.service;
-			cowidget.service.MockService = mock.MockService;
+			cowidget.service.MockService = mock.service.MockService;
 		}
 
 		// Resolving a thenable object
