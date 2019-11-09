@@ -19,13 +19,17 @@
         typeof exports === 'object' && typeof module != 'undefined' ?
             module.exports = factory() : typeof define === 'function' && define.amd ?
             define(factory) : (global.CoWidget = factory(global, coWidgetConfig));
-    } else if (false) {} else {
-        var coWidgetConfig = global.coWidgetConfig ? global.coWidgetConfig : {};
+    } else if (false) {
+    	
+    } else {
+        let coWidgetConf = global.coWidgetConfig ? global.coWidgetConfig : (coWidgetConfig ? coWidgetConfig:{});
+        console.debug('[Universal JS module loader] coWidgetConf: ', coWidgetConf);
+        
         global.CoWidget = global.CoWidget ? global.CoWidget : factory(global, coWidgetConfig);
 
-        Object.assign(global.CoWidget, {
-        	'coWidgetConfig' : coWidgetConfig
-        });
+        //Object.assign(global.CoWidget, {
+        	//'coWidgetConfig' : coWidgetConf
+        //});
         console.debug('[Universal JS module loader] global.CoWidget: ', global.CoWidget ? 'success' : 'failure');
     }
 
@@ -466,9 +470,7 @@
     console.debug('[CoWidget.factory] UrlUtil.getCurrentHref(container.document): ', cowidget.common.UrlUtil.getCurrentHref(container.document));
     let defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
-        place: '#cowidget',
         baseHref: cowidget.common.UrlUtil.getCurrentHref(container.document),
-        isMock: true,
         'null': null
     }, userConfig);
     

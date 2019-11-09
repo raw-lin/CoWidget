@@ -7,15 +7,13 @@
 <meta http-equiv="pragma" content="no-cache" />
 <meta http-equiv="expires" content="-1" />
 
-<title>Async Function</title>
-
 <title>ClassExtends</title>
 
 <script type="text/javascript">
 	'use strict';
 	let coWidgetConfig = {
 		packages : {
-			mock: './mock/cowidget/mock'
+			debug : './debug'
 		},
 		logger: {
 			'root': 'DEBUG'
@@ -23,11 +21,13 @@
 	};
 </script>
 <script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
-	
+
+</head>
+
 <body class="api">
 	<h1>ClassExtends Test</h1>
-	<pre id="logger"
-		style="margin: auto; width: 100%; height: 300px; overflow: scroll; border: 1px #080808 solid;"></pre>
+
+	<pre id="logger" style="margin: auto; width: 100%; height: 300px; overflow: scroll; border: 1px #080808 solid;"></pre>
 
 	<script type="text/javascript">
 		'use strict';
@@ -41,7 +41,8 @@
 		}
 		
 		let LOG = cowidget.common.LogFactory.getLog('ClassExtends.html');
-		
+
+		LOG.debug('---------------------------------------------------------');
 		/**
 		*/
 		const assignStaticField = (staticField) => {
