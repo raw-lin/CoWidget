@@ -43,9 +43,8 @@
 			cowidget.service.MockService = debug.service.MockService;
 		}
 		
-		let LOG = cowidget.common.LogFactory.getLog();		
-				
-		//LOG.debug('MockService: ' +  cowidget.common.MockService);
+		let LOG = cowidget.common.LogFactory.getLog();
+
 		LOG.debug('MockService: ' +  cowidget.service.MockService.isLoaded());
 		
 		let mockService = cowidget.service.MockService.getInstance(); 
