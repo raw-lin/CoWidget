@@ -28,65 +28,111 @@
  * 	}
  * </pre>
  */
-class LogFactory {	
+class LogFactory {
+	
+	
+	/**
+	 * @private
+	 */
+	static get LOG() {		
+		if('undefined' === typeof LogFactory.__LOG) {
+			Object.defineProperty(LogFactory, '__LOG', {
+					value: new cowidget.common.Log(cowidget.common.LogFactory),
+					writable: false
+				});
+		}
+		
+		return LogFactory.__LOG;
+	}
+	
+	/**
+	 * @private
+	 */
+	static _getEmpty() {
+		if('undefined' === typeof LogFactory.__EMPTY) {
+			class Empty {
+				static get LOG() {
+					return LogFactory.getLog(Empty);
+				}
+			}
+			
+			Object.defineProperty(LogFactory, '__EMPTY', {
+					value: Empty,
+					writable: false
+				});
+		}
+		
+		return LogFactory.__EMPTY;
+	}
+	
+	/**
+	 * @private
+	 */
+	static _getRegistered() {
+		if('undefined' === typeof LogFactory.__LOG_REG) {
+			Object.defineProperty(LogFactory, '__LOG_REG', {
+					value: new Map(),
+					writable: true
+				});
+		}
+		
+		return LogFactory.__LOG_REG;
+	}
+	
+	/**
+	 * @private
+	 */
+	static _setLog(name, /*Log*/log) {
+		//LogFactory.LOG.debug('[_setLog] _setLog name: ', name);
+		LogFactory._getRegistered().set(name, log);
+		return log;
+	}
+	
+	/**
+	 * @private
+	 */
+	static _getLog(name) {
+		//LogFactory.LOG.debug('[_getLog] _getLog name: ', name);
+		return LogFactory._getRegistered().get(name);
+	}
+	
 	/**
 	 * Convenience method to return a named logger, without the application having to care about factories.
 	 * 
 	 * * @param {class}	 Class from which a log name will be derived.
 	 */
 	static getLog(clazz) {
+		let logger;
 		
-//		if('undefined' === typeof clazz){
-//			
-//		}else if('string' === typeof clazz){
-//		}else {
-//			
-//		}
-//		//clazz = clazz ? clazz:LogFactory;
-//		clazz = clazz ? clazz:(() => {
-//			return class Main {
-//			}
-//		})();
-		
-//		try{
-//			
-//			if('undefined' === typeof this._registed) {
-//				Object.defineProperty(this, '_registed', { 
-//						clazz: log
-//					});
-//			}
-//
-//            console.debug('[LogFactory.getLog] clazz: ', clazz);
-//		}catch(exception) {
-//			console.error('[LogFactory.getLog] exception: ', exception);
-//		}
-		
-		let logger = null;
-		try{            
-//			if('undefined' === typeof clazz._LOG_ || !(clazz['_LOG_'])) {				
-//				Object.defineProperty(clazz, '_LOG_', {
-//					value: new cowidget.common.Log(clazz),
-//					writable: false
-//				});
-//			}
-//			
-//			if(clazz._LOG_) {
-//				
-//			}else{
-//				Object.defineProperty(clazz, '_LOG_', {
-//					value: new cowidget.common.Log(clazz),
-//					writable: false
-//				});
-//			}
-			
-//			logger = clazz._LOG_;
-		}catch(exception) {
-			console.error('[LogFactory.getLog] clazzx: ', clazz);
-			console.error('[LogFactory.getLog] exception: ', exception);
-			logger = new cowidget.common.Log(clazz);
+		//LogFactory.LOG.debug('[getLog] typeof clazz: ', typeof clazz);
+		if('function' === typeof clazz){
+			logger = clazz.__LOG ? clazz.__LOG:null;
+		}else if('string' === typeof clazz || 'object' === typeof clazz) {
+			logger = LogFactory._getLog(clazz);
+		}else {
+			//logger = LogFactory._getLog('EMPTY');
+			logger = LogFactory._getEmpty().LOG;
 		}
 		
-		//return logger;
-		return new cowidget.common.Log(clazz);
+		if(null === logger || 'undefined' === typeof logger) {
+			if('function' === typeof clazz){
+				Object.defineProperty(clazz, '__LOG', {
+					value: new cowidget.common.Log(clazz),
+					writable: false
+				});
+				
+				logger = clazz.__LOG;
+			}else if('string' === typeof clazz || 'object' === typeof clazz) {
+				logger = LogFactory._setLog(clazz, new cowidget.common.Log(clazz));
+				//logger = LogFactory._getLog(clazz);
+			}else {
+				logger = LogFactory._setLog('EMPTY', new cowidget.common.Log(LogFactory._getEmpty()));				
+				//logger = LogFactory._getLog(clazz);
+			}
+		}
+		
+		//LogFactory.LOG.debug('[LogFactory.getLog] logger: ', logger);
+		//logger = LogFactory.LOG;
+		return logger;
 	}
 }

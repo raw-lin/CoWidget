@@ -32,6 +32,10 @@ class ClassUtil {
 		return StaticFieldClass;
     }
     
+    
+    /**
+     * NOT Work
+     */
     static mixinClass(targetClass, ...mixins) {		
 		let retClass;
 		

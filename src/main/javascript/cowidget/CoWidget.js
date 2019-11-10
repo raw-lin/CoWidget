@@ -25,11 +25,11 @@
         let coWidgetConf = global.coWidgetConfig ? global.coWidgetConfig : (coWidgetConfig ? coWidgetConfig:{});
         console.debug('[Universal JS module loader] coWidgetConf: ', coWidgetConf);
         
-        global.CoWidget = global.CoWidget ? global.CoWidget : factory(global, coWidgetConfig);
+        global.CoWidget = global.CoWidget ? global.CoWidget : factory(global, coWidgetConf);
 
-        //Object.assign(global.CoWidget, {
-        	//'coWidgetConfig' : coWidgetConf
-        //});
+        // Object.assign(global.CoWidget, {
+        	// 'coWidgetConfig' : coWidgetConf
+        // });
         console.debug('[Universal JS module loader] global.CoWidget: ', global.CoWidget ? 'success' : 'failure');
     }
 
@@ -69,7 +69,8 @@
     			
     			let pathArray = window.location.pathname.split('/');
     			pathArray.forEach(function(item, index, array) {
-    				//console.log('[UrlUtil.getBaseHref] item, index):, ', item, index);
+    				// console.log('[UrlUtil.getBaseHref] item, index):, ',
+					// item, index);
     				if(1 === index) {
     					baseHref = '/' + item;
     				}
@@ -211,10 +212,7 @@
 			}
 		}
     	
-	    class ClassLoader extends _CoWidgetClass {
-// static get log() {
-// return LogFactory.getLog(ClassLoader);
-// }
+	    class ClassLoader {
     	    
     	    constructor(options) {
     	    	console.error('[ClassLoader.constructor] not work');
@@ -233,13 +231,13 @@
     	    	console.debug('[ClassLoader.loadClass] name: ' + name);
     	    	
     	    	if('cowidget.ClassLoader' === name) {
-					retClass = (function() {return ClassLoader;})();
+					retClass = (() => {return ClassLoader;})();
 					Object.defineProperty(retClass, 'packageName', {
                 		value: 'cowidget',
                 		writable: false
                 	});
     	    	}else if('cowidget.NetXhr' === name) {
-					retClass = (function() {return NetXhr;})();	
+					retClass = (function() {return NetXhr;})();
 					Object.defineProperty(retClass, 'packageName', {
                 		value: 'cowidget',
                 		writable: false
@@ -277,14 +275,17 @@
     							console.debug('[ClassLoader.loadClass] srcClass.name: ', srcClass.name);
     							console.debug('[ClassLoader.loadClass] srcClass.constructor.name: ', (srcClass.constructor ? srcClass.constructor.name:null));
     							console.debug('[ClassLoader.loadClass] srcClass.packageName: ', srcClass.packageName);
-    							//console.debug('[ClassLoader.loadClass] srcClass.constructor.packageName: ', (srcClass.constructor ? srcClass.constructor.packageName:null));
+    							// console.debug('[ClassLoader.loadClass]
+								// srcClass.constructor.packageName: ',
+								// (srcClass.constructor ?
+								// srcClass.constructor.packageName:null));
     							console.debug('[ClassLoader.loadClass] srcClass PrototypeOf: ', Object.getPrototypeOf(srcClass));
     							console.debug('[ClassLoader.loadClass] srcClass prototype: ', srcClass.prototype);
     							console.debug('[ClassLoader.loadClass] srcClass: ', srcClass);
     							
-//    							if(srcClass instanceof cowidget.lang.ClassLoader) {
-//    								retClass = srcClass;
-//    							}else 
+// if(srcClass instanceof cowidget.lang.ClassLoader) {
+// retClass = srcClass;
+// }else
     							if ('cowidget.lang.ClassLoader' === name){
     								retClass = srcClass;
     							}else if(false) {
@@ -298,13 +299,16 @@
 	    									writable: false
 	    								});
     								}
-    								retClass = srcClass; //new Proxy(srcClass.prototype, cowidget.lang.ClassLoader.getClassProxyHandler());
+    								retClass = srcClass; // new
+															// Proxy(srcClass.prototype,
+															// cowidget.lang.ClassLoader.getClassProxyHandler());
     							}
     						}
     				}
     				
     				NetXhr.xhr(xhrProps);
-    				//console.debug('[ClassLoader.loadClass] xhrProps: ', xhrProps);
+    				// console.debug('[ClassLoader.loadClass] xhrProps: ',
+					// xhrProps);
     				// console.debug('[ClassLoader.loadClass] xhrProps.response:
 					// ' + xhrProps.response);
     				// retClass = NetXhr.eval(xhrProps.response);
@@ -351,7 +355,8 @@
     	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
     	                        // return obj.toString();
     	                        return obj.prop;
-    	                        //return Reflect.get(target, propertyName, receiver);
+    	                        // return Reflect.get(target, propertyName,
+								// receiver);
     	                    };
     	                }else if ('symbol' === typeof prop) {
     	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
@@ -381,7 +386,7 @@
                                 	}
                                 }else {
                                 	console.error('[ClassLoader.proxyHandler.get] failure generate Class: obj, prop: ', obj, prop);
-                                	//TODO throw new Error();
+                                	// TODO throw new Error();
                                 }
                             } else {
                                 // match naming Package
@@ -402,7 +407,8 @@
                             }
     	                }
     	                
-    	                //console.debug('[ClassLoader.proxyHandler.get] obj[prop]: ', obj ? obj[prop]:null);
+    	                // console.debug('[ClassLoader.proxyHandler.get]
+						// obj[prop]: ', obj ? obj[prop]:null);
     	                
     	                return obj[prop];
     	            },
@@ -455,12 +461,12 @@
             }, ClassLoader.getProxyHandler());
     	});
        
-//    	packageMap.forEach((value, key, map) => {
-//    		console.log(key);
-//    		container[key] = container[key] ? container[key] : new Proxy({
-//                packageName: key,
-//            }, ClassLoader.getProxyHandler());
-//  		});
+// packageMap.forEach((value, key, map) => {
+// console.log(key);
+// container[key] = container[key] ? container[key] : new Proxy({
+// packageName: key,
+// }, ClassLoader.getProxyHandler());
+// });
     };
     
     /* start plugin */
@@ -484,9 +490,12 @@
 		writable: false
 	});
     
- 	//cowidget.common.LogFactory.getLog().debug('[CoWidget.factory] CoWidgetConfig: ', defaultConfig);
-	//cowidget.common.LogFactory.getLog().debug('[factory] CoWidget work test: ', CoWidget.isWork());
-	//cowidget.common.LogFactory.getLog().debug('[factory] CoWidget: ', CoWidget);
+ 	// cowidget.common.LogFactory.getLog().debug('[CoWidget.factory]
+	// CoWidgetConfig: ', defaultConfig);
+	// cowidget.common.LogFactory.getLog().debug('[factory] CoWidget work test:
+	// ', CoWidget.isWork());
+	// cowidget.common.LogFactory.getLog().debug('[factory] CoWidget: ',
+	// CoWidget);
 
     return CoWidget;
 })));

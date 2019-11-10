@@ -9,27 +9,6 @@
 
 <title>Logger Tester</title>
 
-<style type="text/css">
-pre {
-	counter-reset: line;
-}
-
-code {
-	counter-increment: line;
-}
-
-code:before {
-	content: counter(line);
-}
-
-user-select:
-
-code:before {
-	-webkit-user-select: none;
-}
-</style>
-
-
 <link rel="stylesheet" type="text/css" href="../../cowidget/themes/CoWidget.css" />
 
 <script type="text/javascript">
@@ -68,15 +47,16 @@ code:before {
 			cowidget.common.Log = debug.common.Log;
 		}
 
-		cowidget.common.LogFactory.getLog('Main').debug('test: cowidget.common.LogFactory.getLog(\'Main\')');
+		cowidget.common.LogFactory.getLog().debug('empty: cowidget.common.LogFactory.getLog().debug(\'empty\')');
 		
-		cowidget.common.LogFactory.getLog().debug('test: cowidget.common.LogFactory.getLog().debug(\'test\')');
+		cowidget.common.LogFactory.getLog('Main').debug('Main: cowidget.common.LogFactory.getLog(\'Main\')');
+		
+		cowidget.common.LogFactory.getLog({}).debug('{}: cowidget.common.LogFactory.getLog().debug(\'{}\')');
 		
 		let LOG = cowidget.common.LogFactory.getLog();
 
 		LOG.info('CoWidget.configure.logger: ' + CoWidget.configure.logger);
 		
-
 		LOG.debug(null);
 		
 		LOG.debug('CoWidget.configure: ', CoWidget.configure);

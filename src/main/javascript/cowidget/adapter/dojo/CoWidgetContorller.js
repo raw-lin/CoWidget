@@ -24,7 +24,7 @@ define([ 'dojo/_base/declare'
 	
 	let CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
 		
-		LOG: cowidget.common.LogFactory.getLog('cowidgetUI5.CoWidgetContorller'),
+		LOG: cowidget.common.LogFactory.getLog('cowidgetDojo.CoWidgetContorller'),
 		
 		// ctrl: dojox.mvc.ModelRefController
 		//		The controller that the form widgets in the template refer to.
@@ -131,6 +131,8 @@ define([ 'dojo/_base/declare'
 			dojo.query('button[type="submit"]', self.domNode).on('click', function(evt) {
 				let selfDomNode = this;
 				dojo.stopEvent(evt);
+				
+				alert('show loading....');
 
 				self.LOG.debug('[_pluginAjax.click] self: ', self);
 

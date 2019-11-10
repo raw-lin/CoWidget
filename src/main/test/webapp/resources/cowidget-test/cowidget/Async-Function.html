@@ -27,7 +27,7 @@
 
 	<script type="text/javascript">
 	'use strict';
-	let LOG = cowidget.common.LogFactory.getLog();
+	let LOG = cowidget.common.LogFactory.getLog('Main');
 	
 	class Fly {
 		constructor(options) {
@@ -108,7 +108,7 @@
 	try {
 		// not work
 		//c.placeAt().fork();
-		LOG.debug('c.placeAt();', c.placeAt());
+		LOG.debug('c.placeAt: ', c.placeAt());
 	}catch(exception){
 		LOG.error('exception: ', exception);
 	}

@@ -8,44 +8,48 @@
  * </pre>
  */
 class Log {
-
+	
 	constructor(clazz) {
 		let self = this;
 		
-		console.debug('[constructor] typeof clazz: ', typeof clazz);
-		if('undefined' === typeof clazz){
-			this.prefixed = 'Main';
-		}else if('string' === typeof clazz) {
-			this.prefixed = clazz;
-		}else {
+		console.debug('[Log.constructor] typeof clazz: ', typeof clazz);
+		
+		self.prefixed = '';
+		if('function' === typeof clazz){
 			if(clazz.packageName) {
-				this.prefixed = clazz.packageName + '.';
+				self.prefixed = clazz.packageName + '.';
 			}
 			
 			if(clazz.prototype.constructor.name) {
-				this.prefixed = this.prefixed + clazz.prototype.constructor.name + '';
+				self.prefixed = self.prefixed + clazz.prototype.constructor.name + '';
 			}
+		}else if('string' === typeof clazz) {
+			self.prefixed = clazz;
+		}else if('object' === typeof clazz) {
+			self.prefixed = clazz;
+		}else {
+			self.prefixed = 'cowidget.common.Log';
 		}
 		
-		this.debugLevel = 'INFO';
+		self.logLevel = 'INFO';
 		
-		if('Main' === this.prefixed || 'cowidget.commonLogFactory' === this.prefixed) {
-			this.debugLevel = 'DEBUG';
+		if('Main' === self.prefixed || 'cowidget.common.Log' === self.prefixed) {
+			self.logLevel = 'DEBUG';
 		}
 		
 		if(CoWidget.configure && CoWidget.configure.logger) {
-			if('string' === typeof CoWidget.configure.logger.root && 'DEBUG' === CoWidget.configure.logger.root) {
-				this.debugLevel = CoWidget.configure.logger.root;
+			if('string' === typeof CoWidget.configure.logger.root) {
+				self.logLevel = CoWidget.configure.logger.root;
 			}
 			
-			if(CoWidget.configure.logger[this.prefixed]) {
-				this.debugLevel = CoWidget.configure.logger[this.prefixed];
+			if(CoWidget.configure.logger[self.prefixed]) {
+				self.logLevel = CoWidget.configure.logger[self.prefixed];
 			}
 		}
 		
-		this.loggerNode = document.getElementById('logger');
+		self.loggerNode = document.getElementById('logger');
 		
-		this.withDebug = false;
+		self.withDebug = false;
 	}
 	
 	/**
@@ -201,25 +205,25 @@ class Log {
 		//	
 		// }
 		
-		if('INFO' === logTag && 'INFO' === this.debugLevel) {
+		if('INFO' === logTag && 'INFO' === this.logLevel) {
 			console.log.apply(console, args);
-		}else if('DEBUG' === logTag && 'DEBUG' === this.debugLevel) {
+		}else if('DEBUG' === logTag && 'DEBUG' === this.logLevel) {
 			console.debug.apply(console, args);
-		}else if('WARN' === logTag && 'DEBUG' === this.debugLevel) {
+		}else if('WARN' === logTag && 'DEBUG' === this.logLevel) {
 			console.warn.apply(console, args);
-		}else if('ERROR' === logTag && 'DEBUG' === this.debugLevel) {
+		}else if('ERROR' === logTag && 'DEBUG' === this.logLevel) {
 			console.error.apply(console, args);
 		}else {
 			console.log.apply(console, args);
 		}
 		
-		if('INFO' === logTag && 'INFO' === this.debugLevel) {
+		if('INFO' === logTag && 'INFO' === this.logLevel) {
 			this.renderLoggerNode(argObj, logTag);
-		}else if('DEBUG' === logTag && 'DEBUG' === this.debugLevel) {
+		}else if('DEBUG' === logTag && 'DEBUG' === this.logLevel) {
 			this.renderLoggerNode(argObj, logTag);
-		}else if('WARN' === logTag && 'DEBUG' === this.debugLevel) {
+		}else if('WARN' === logTag && 'DEBUG' === this.logLevel) {
 			this.renderLoggerNode(argObj, logTag);
-		}else if('ERROR' === logTag && 'DEBUG' === this.debugLevel) {
+		}else if('ERROR' === logTag && 'DEBUG' === this.logLevel) {
 			this.renderLoggerNode(argObj, logTag);
 		}
 		

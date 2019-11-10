@@ -43,7 +43,7 @@ class _Base {
 	 * @param {number}
 	 *            y - The y value.
 	 */
-	constructor(/**/options) {
+	constructor(...props) {
         let self = this;
         options = options ? options : {};
 

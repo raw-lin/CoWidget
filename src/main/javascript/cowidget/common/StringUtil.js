@@ -14,7 +14,9 @@
  */
 
 /**
- * <p>Operations on {@link string} that are {@code null} safe.</p>
+ * <p>
+ * Operations on {@link string} that are {@code null} safe.
+ * </p>
  */
 class StringUtil {
 	
@@ -22,9 +24,9 @@ class StringUtil {
 		return cowidget.common.LogFactory.getLog(StringUtil);
 	}
 	
-//	constructor(options) {
-//		super();
-//	}
+// constructor(options) {
+// super();
+// }
 	
 	/**
 	 * The empty String
@@ -41,18 +43,28 @@ class StringUtil {
 	}
 	
 	/**
-     * Checks if a CharSequence is empty ("") or null.
-     * @param {string} str - a string.
-     * @return {@code true} if the str is empty or null
-     */
+	 * Checks if a CharSequence is empty ("") or null.
+	 * 
+	 * @param {string}
+	 *            str - a string.
+	 * @return {@code true} if the str is empty or null
+	 */
     static isEmpty(str) {
     	let ret = false;
-    	var regEx = /^$/;
+    	let regEx = /^$/;
     	
-    	if (str && !str.match(regEx)) {
+    	// StringUtil.LOG.debug('[isEmpty] str: ', str);
+    	
+    	str = StringUtil.trim(str);
+    	
+    	if (null == str) {
+        	ret = true;
+    	}else if ('undefined' === typeof str) {
+        	ret = true;
+    	}else if ('string' === typeof str && !str.match(regEx)) {
         	ret = true;
     	}else {
-    		ret = true;
+    		ret = false;
     	}
     	return ret;
     }
@@ -62,10 +74,13 @@ class StringUtil {
     }
     
     /**
-     * Removes control characters (char <= 32) from both ends of this String, handling null by returning null.
-     * @param {string} str - a string.
-     * @return {string} the trimmed string, null if null String input.
-     */
+	 * Removes control characters (char <= 32) from both ends of this String,
+	 * handling null by returning null.
+	 * 
+	 * @param {string}
+	 *            str - a string.
+	 * @return {string} the trimmed string, null if null String input.
+	 */
     static trim(str) {
     	if (str) {
     		str = str.replace(/^\s+|\s+$/g, '')
@@ -76,8 +91,10 @@ class StringUtil {
 
 	
 	/**
-	 * <p>Replaces each substring of the text String that matches the given regular expression
-	 * with the given replacement.</p>
+	 * <p>
+	 * Replaces each substring of the text String that matches the given regular
+	 * expression with the given replacement.
+	 * </p>
 	 * 
 	 * regex like /\./gi.
 	 * 
@@ -92,9 +109,9 @@ class StringUtil {
 			regexStr = regexStr.replace(/\./g, '\\.');
 			
 			let regex = new RegExp(regexStr, 'g');
-//			StringUtil.LOG.debug('regexStr: ', regexStr);
-//			StringUtil.LOG.debug('regex: ', regex);
-//			StringUtil.LOG.debug('text: ', text);
+// StringUtil.LOG.debug('regexStr: ', regexStr);
+// StringUtil.LOG.debug('regex: ', regex);
+// StringUtil.LOG.debug('text: ', text);
 			
 			ret = text.replace(regex, replacement);
 		}

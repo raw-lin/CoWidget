@@ -7,13 +7,13 @@
  */
 class _Singleton {
 	static get LOG() {
-		return mock.LogFactory.getLog(_Singleton);
+		return cowidget.common.LogFactory.getLog(_Singleton);
 	}
 
 	/**
 	 * TODO
 	 */
-	constructor(/**/options) {
+	constructor(options) {
         let self = this;
         options = options ? options : {};
 
@@ -21,7 +21,7 @@ class _Singleton {
         
         self.count = 1;
         
-        console.log('[_Singleton.constructor] self: ', self);
+        _Singleton.LOG.debug('[_Singleton.constructor] self: ', self);
     }
 	
 	/**
@@ -45,8 +45,8 @@ class _Singleton {
 	 * TODO
 	 */
 	fork() {
-		console.log('[_Singleton.fork] fork');
-		console.log('[_Singleton.fork] count: ', this.count);
+		_Singleton.LOG.debug('[_Singleton.fork] fork');
+		_Singleton.LOG.debug('[_Singleton.fork] count: ', this.count);
 		
 		this.count = this.count + 1;
         
