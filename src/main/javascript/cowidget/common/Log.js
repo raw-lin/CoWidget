@@ -14,6 +14,15 @@ class Log {
 		
 		console.debug('[Log.constructor] typeof clazz: ', typeof clazz);
 		
+		
+		
+		self.withDebug = false;
+		
+		self._init(clazz);
+	}
+	
+	_init(clazz) {
+		let self = this;
 		self.prefixed = '';
 		if('function' === typeof clazz){
 			if(clazz.packageName) {
@@ -48,8 +57,6 @@ class Log {
 		}
 		
 		self.loggerNode = document.getElementById('logger');
-		
-		self.withDebug = false;
 	}
 	
 	/**
@@ -62,7 +69,6 @@ class Log {
 	}
 	
 	open() {
-		
 		return this;
 	}
 	

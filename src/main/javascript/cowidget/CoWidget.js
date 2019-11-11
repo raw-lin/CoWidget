@@ -365,7 +365,7 @@
     	                        // return obj.toString();
     	                        return obj.prop;
     	                    };
-    	                }else if (typeof obj[prop] === 'undefined') {
+    	                }else if ('undefined' === typeof obj[prop]) {
     	                	if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
                                 // match naming Class
     	                		let retClass = ClassLoader.loadClass(obj.packageName + '.' + prop);
@@ -455,7 +455,6 @@
     	Object.keys(packageMap).forEach(function(key, index, array) {
     		console.debug('[CoWidget.factory] key: ', key);
     		
-    		console.log(key);
     		container[key] = container[key] ? container[key] : new Proxy({
                 packageName: key,
             }, ClassLoader.getProxyHandler());

@@ -37,14 +37,15 @@
 			var descriptor = Object.getOwnPropertyDescriptor(base.prototype,
 					'constructor');
 			base.prototype = Object.create(sup.prototype);
-			var handler = {
+			const handler = {
 				construct : function(target, args) {
-					LOG.debug('target: ', target);
-					var obj = Object.create(base.prototype);
+					LOG.debug('[construct] target: ', target);
+					const obj = Object.create(base.prototype);
 					this.apply(target, obj, args);
 					return obj;
 				},
 				apply : function(target, that, args) {
+					LOG.debug('[apply] target, that, args: ', target, that, args);
 					sup.apply(that, args);
 					base.apply(that, args);
 				}
@@ -56,20 +57,20 @@
 			return proxy;
 		}
 
-		var Person = function(name) {
+		const Person = function(name) {
 			this.name = name;
 		};
 
-		var Boy = extend(Person, function(name, age) {
+		const Fork = extend(Person, function(name, age) {
 			this.age = age;
 		});
 
-		Boy.prototype.sex = 'M';
+		Fork.prototype.sex = 'M';
 
-		var Peter = new Boy('Peter', 13);
-		console.log(Peter.sex); // "M"
-		console.log(Peter.name); // "Peter"
-		console.log(Peter.age); // 13
+		var fork = new Fork('Fork', 13);
+		LOG.debug('fork.sex: ', Fork.sex); // "M"
+		LOG.debug('fork.name: ', Fork.name); // "Peter"
+		LOG.debug('fork.age: ', Fork.age); // 13
 	</script>
 </body>
 </html>

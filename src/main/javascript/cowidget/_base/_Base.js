@@ -45,10 +45,10 @@ class _Base {
 	 */
 	constructor(...props) {
         let self = this;
-        options = options ? options : {};
+        //options = options ? options : {};
 
-        console.log('[_Base.constructor] self: ', self);
-        console.log('[_Base.constructor] options: ', options);
+        //console.log('[_Base.constructor] self: ', self);
+        //console.log('[_Base.constructor] options: ', options);
 
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};
