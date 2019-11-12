@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="expires" content="-1" />
+
+<title>ProxyClass</title>
+
+<script type="text/javascript">
+	'use strict';
+	let coWidgetConfig = {
+			logger : {
+				'root' : 'DEBUG'
+			}
+	};
+</script>
+<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
+</head>
+
+<body>
+	<h1>ProxyClass</h1>
+
+	<pre id="logger" style="margin: auto; width: 100%; height: 300px; overflow: scroll; border: 1px #080808 solid;"></pre>
+
+	<script type="text/javascript">
+		'use strict';
+		
+		let LOG = cowidget.common.LogFactory.getLog();
+		
+		class ClassLoader {
+			
+			static getProxyHandler() {
+				return {
+					construct : function(target, args) {
+						console.debug('[getProxyHandler.construct] target: ', target);
+						const obj = Object.create(target.prototype);
+						//target.apply(target, 'construct', args);
+						return new Proxy(obj, ClassLoader.getProxyHandler());
+					},
+					get: function(obj, prop, receiver) {
+						console.debug('[getProxyHandler.get] prop: ', prop);
+						if ('undefined' === typeof obj[prop]) {
+							console.debug('[getProxyHandler.get] obj, prop: ', obj, prop);
+							console.debug('[getProxyHandler.get] typeof obj: ', typeof obj);
+							//console.debug('[getProxyHandler.get] receiver: ', receiver); // dont use
+						}
+						
+						if ('function' === typeof obj) {
+							if ('undefined' === typeof obj[prop]) {
+								
+								if (prop.match(/[\-]{0,1}[A-Z]{1,1}/)) {
+									// match naming Class
+									let packageName = obj.packageName;
+									obj[prop] = class extends (()=>{
+										class FieldClass {
+											
+										}
+										
+										let staticFields = {
+												packageName: {
+													value: packageName,
+													writable: true
+												},
+												className: {
+													value: packageName + '.' + prop,
+													writable: true
+												}
+										}
+										
+										// defined static field				
+										for(let staticFieldName in staticFields) {
+											Object.defineProperty(FieldClass, staticFieldName, staticFields[staticFieldName]);
+										}
+										
+										return FieldClass;
+									})() {
+										
+										/**
+										 * static method
+										 */
+										static isLoad() {
+											console.debug('[isLoad] done.');
+											
+											return 'done';
+										}
+										
+										/**
+										 * classs method
+										 */
+										isLoad() {
+											console.debug('[isLoad] done.');
+											
+											return 'done';
+										}
+									};
+									
+									obj[prop] = new Proxy(obj[prop], ClassLoader.getProxyHandler());
+									
+								}else{
+									// match naming Package
+									obj[prop] = new Proxy(class extends (()=>{
+										class FieldClass {
+											
+										}
+										
+										let staticFields = {
+												packageName: {
+													value: prop + '',
+													writable: true
+												}
+										}
+										
+										// defined static field				
+										for(let staticFieldName in staticFields) {
+											Object.defineProperty(FieldClass, staticFieldName, staticFields[staticFieldName]);
+										}
+										
+										return FieldClass;
+									})() {
+									}, ClassLoader.getProxyHandler());
+								}
+							}
+						}
+						
+						return obj[prop];
+					},
+					
+					apply : function(target, thisArg, argumentList) {
+						console.debug('[getProxyHandler.apply] argumentList: ', argumentList);
+						return target(argumentList);
+					}
+				}
+			}
+		}
+		
+		let cow = new Proxy(()=>{
+			return class {
+				static packageName() {
+					return 'cow'
+				}
+			}
+		}, ClassLoader.getProxyHandler('cow'));
+		
+		LOG.debug('cow.debug: ', cow.debug);
+		LOG.debug('cow.debug.packageName: ', cow.debug.packageName);
+		LOG.debug('---------------------------------------------------------');
+		
+		LOG.debug(`cow.debug.Fork metaData: ${cow.debug.Fork.packageName}, ${cow.debug.Fork.className}`);
+		LOG.debug('---------------------------------------------------------');
+		
+		//LOG.debug('cow.debug.Fork isLoad: ', new cow.debug.Fork().isLoad);
+		LOG.debug('cow.debug.Fork static method isLoad: ', cow.debug.Fork.isLoad());
+		LOG.debug('cow.debug.Fork class method isLoad: ', new cow.debug.Fork().isLoad());
+		LOG.debug('---------------------------------------------------------');
+	</script>
+</body>
+</html>
