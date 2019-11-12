@@ -12,14 +12,14 @@ define([ 'dojo/_base/declare'
 			, 'dijit/_WidgetBase'
 			, 'dijit/_TemplatedMixin'
 			
-			//, 'dojox/mvc/at'
+			, 'dojox/mvc'
 			, 'dojox/mvc/StatefulModel'
 			, 'dojox/mvc/EditModelRefController'
 			, 'dojox/mvc/ModelRefController'
 			
 			, 'dojox/layout/FloatingPane'
 			//, 'dojo/domReady!'
-], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
+], function(declare, parser, registry, xhr, JSON, _WidgetBase, _TemplatedMixin, mvc, StatefulModel, EditModelRefController, ModelRefController, FloatingPane) {
 	//'use strict'; /* important: dont need */
 	
 	let CoWidgetContorller = declare("cowidgetDojo.CoWidgetContorller", [_WidgetBase, _TemplatedMixin], {
@@ -73,7 +73,9 @@ define([ 'dojo/_base/declare'
 				});
 				
 				//self.setModel(options.viewModel);
-				self.setModel(new StatefulModel({data: {}}));
+				//self.setModel(new StatefulModel({data: {}}));
+				
+				self.LOG.warn(`[setModel] self.get('model'): `, self.get('model'));
 				
 				if(true && 'function' === typeof self.getModel) {
 					self.getModel().set(options.viewModel ? options.viewModel:{});
@@ -141,51 +143,53 @@ define([ 'dojo/_base/declare'
 				self.LOG.debug('[_pluginAjax.click] buttonName: ', buttonName);
 				
 				//if(self.hasOwnProperty(buttonName)) {
+				let withXhrReq = true;
 				if(self[buttonName]) {
-					let retViewMethod = Reflect.apply(self[buttonName], self, []);//self.apply(self, buttonName, arguments);
+					withXhrReq = Reflect.apply(self[buttonName], self, []);//self.apply(self, buttonName, arguments);
 					
-					self.LOG.debug('[_pluginAjax.click] retViewMethod: ', retViewMethod);
+					self.LOG.debug('[_pluginAjax.click] withXhrReq: ', withXhrReq);
 				}
-
-				let formDom = null;
-				dojo.query('form', self.dom).forEach(function(entry, i) {
-					formDom = entry
-				});
 				
-				//self.getModel().commit();
-				//self.LOG.debug('[_pluginAjax] self.getModel(): ', self.getModel().valueOf());
-				//self.getModel().commit();
-				//let postData = dojo.formToObject(formDom);
-				//postData = self.getModel().toPlainObject();
-				let postData = JSON.stringify(self.getModel()); //OK
-				//postData = JSON.parse(jsonString);
-														
-				let queryMethod = 'method:' + buttonName; // for struts2
-				let viewUrl = formDom ? dojo.attr(formDom, 'action'):'#';
-				viewUrl = self.viewMotion ? self.viewMotion:'#';
-				
-				self.LOG.debug(`[postCreate.click] viewMethod, viewUrl, postData: ${queryMethod}, ${viewUrl}, `, postData);
-				let xhrArgs = {
-					url : viewUrl,
-					method: 'POST',
-					query: `!${queryMethod}`, // for struts2
-					data : postData,
-					preventCache: false,
-					//async
-					headers: {
-						'Content-Type': 'application/json;charset=UTF-8'
-					},
-					handleAs : 'json'
-				};
-				
-				self.LOG.debug('[_pluginAjax.click] xhrArgs: ', xhrArgs);
-				
-				let widget = self;
-				xhr(xhrArgs.url, xhrArgs).then((data) => {
+				if (withXhrReq) {
+					let formDom = null;
+					dojo.query('form', self.dom).forEach(function(entry, i) {
+						formDom = entry
+					});
+					
+					let postData = JSON.stringify(self.getModel()); //OK
+					//postData = JSON.parse(jsonString);
+															
+					let queryMethod = 'method:' + buttonName; // for struts2
+					let viewUrl = formDom ? dojo.attr(formDom, 'action'):'#';
+					viewUrl = self.viewMotion ? self.viewMotion:'#';
+					
+					self.LOG.debug(`[postCreate.click] viewMethod, viewUrl, postData: ${queryMethod}, ${viewUrl}, `, postData);
+					let xhrArgs = {
+						url : viewUrl,
+						method: 'POST',
+						query: `!${queryMethod}`, // for struts2
+						data : postData,
+						preventCache: false,
+						//async
+						headers: {
+							'Content-Type': 'application/json;charset=UTF-8'
+						},
+						handleAs : 'json'
+					};
+					
+					self.LOG.debug('[_pluginAjax.click] xhrArgs: ', xhrArgs);
+					
+					let widget = self;
+					xhr(xhrArgs.url, xhrArgs).then((data) => {
 						// Do something with the handled data
 						widget.LOG.debug('[_pluginAjax.xhr.then] xhrArgs data: ', data);
 						widget.LOG.debug('[_pluginAjax.xhr.then] queryMethod: ', queryMethod);
 						
+						if(withMock) {
+							
+						}else {
+							
+						}
 						// mock service, choice user case
 						let caseId = 1;
 						let coWidgetOpts = data[queryMethod][caseId+''];
@@ -227,12 +231,13 @@ define([ 'dojo/_base/declare'
 						}, self.domNode);
 						
 						coWidgetView.placeAt(coWidgetOpts.viewPlace);
-
+	
 					}, (err) => {
 						widget.LOG.error('[_pluginAjax.xhr.err] err: ', err);
 					}, (evt) => {
 						widget.LOG.debug('[_pluginAjax.xhr.evt] evt: ', evt);
 					});
+				}
 			});
 		},
 		
@@ -244,8 +249,16 @@ define([ 'dojo/_base/declare'
 
 			if ('undefined' === typeof model || 'undefined' === typeof model.set) {
 				self.LOG.debug(`[getModel] model is undefined`);
-				model = new StatefulModel({data: {}});
+				self.LOG.warn(`[getModel] self.get('model'): `, self.get('model'));
+				model = new StatefulModel({data: {}}); //ok
+				//self.set('model', model);
+				//model = mvc.newStatefulModel({ data : { logon : {message: 'xx'}}}); //ok
 				// model = getStateful({});
+				//model = new mvc.getStateful({});
+				//model = new mvc.EditModelRefController(sourceModel: mvc.getStateful());
+
+
+				self.LOG.warn(`[getModel] self.get('model'): `, self.get('model'));
 			}
 			
 			self.LOG.debug(`[getModel] model: `, model);
@@ -258,6 +271,9 @@ define([ 'dojo/_base/declare'
 		 */
 		setModel: function(_model){
 			let self = this;
+			
+			//self.set('model', self.getModel());
+			self.LOG.warn(`[setModel] self.get('model'): `, self.get('model'));
 			self.LOG.warn(`[setModel] call _model: `, _model);
 		},
 		

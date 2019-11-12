@@ -98,7 +98,7 @@ class MockService extends ((staticField) => {
 		return localStorage;
 	}
 	
-	prepareUseCase (useCaseURI) {
+	populateUseCase (useCaseURI) {
 		let self = this;
 		MockService.LOG.debug('[prepareUseCase] useCaseURI: ' + useCaseURI);
 		
@@ -126,7 +126,7 @@ class MockService extends ((staticField) => {
 		// self.useCaseStorage.get(oUrl.fileBaseName));
 	}
 	
-	prepareUseCaseStep (useCaseStepURI) {
+	populateUseCasePlay (useCaseStepURI) {
 		let self = this;
 		
 		let xhrArgs = {
@@ -135,23 +135,24 @@ class MockService extends ((staticField) => {
 				handleAs: 'json'
 			}
 		
-		let useCaseStepTos = cowidget.common.NetXhr.request(xhrArgs).getResult();
-		useCaseStepTos = useCaseStepTos.reverse();
-		self.storage.setItem('MockService.UseCaseStep', JSON.stringify(useCaseStepTos));
+		let useCaseStepTo = cowidget.common.NetXhr.request(xhrArgs).getResult();
+		MockService.LOG.debug('[populateUseCasePlay] useCaseStepTo: ', useCaseStepTo);
+		let screenplayTos = useCaseStepTo.screenplay.reverse();
+		self.storage.setItem('MockService.UseCasePlay.' + useCaseStepTo.viewName, JSON.stringify(screenplayTos));
 	}
 	
-	popUseCaseStep() {
+	popUseCasePlay(viewName) {
 		let self = this;
 		
-		let useCaseStepTos = self.storage.getItem('MockService.UseCaseStep');
+		let useUseCasePlayTos = self.storage.getItem('MockService.UseCasePlay.' + viewName);
 		
-		useCaseStepTos = JSON.parse(useCaseStepTos);
+		useUseCasePlayTos = JSON.parse(useUseCasePlayTos);
 	
-		let retUseCaseStepTo = useCaseStepTos.pop();
+		let retUseUseCasePlayTo = useUseCasePlayTos.pop();
 		
-		self.storage.setItem('MockService.UseCaseStep', JSON.stringify(useCaseStepTos));
+		self.storage.setItem('MockService.UseCasePlay.' + viewName, JSON.stringify(useUseCasePlayTos));
 		
-		return retUseCaseStepTo;
+		return retUseUseCasePlayTo;
 	}
 	
 	/**

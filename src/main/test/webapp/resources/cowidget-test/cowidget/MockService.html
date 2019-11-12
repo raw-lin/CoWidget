@@ -15,73 +15,91 @@
 		packages : {
 			debug : './debug'
 		},
-		logger: {
-			'rootc': 'DEBUG'
+		logger : {
+			'root' : 'INFO',
+			'Empty' : 'DEBUG'
 		},
 	};
 </script>
-<script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script>
+<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
+<!-- <script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script> -->
 </head>
 
 <body class="api">
 	<h1>MockService Test</h1>
 
-	<textarea id="logger" style="width: 100%; height: 500px; ">
+	<textarea id="logger" style="width: 100%; height: 500px;">
 	</textarea>
-	
+
 	<script type="text/javascript">
 		'use strict';
-		
-		if(false) {
+
+		if (false) {
 			cowidget.common;
-		
+
 			cowidget.common.LogFactory = debug.common.LogFactory;
 			cowidget.common.Log = debug.common.Log;
 			cowidget.common.NetXhr = debug.common.NetXhr;
 			cowidget.common.UrlUtil = debug.common.UrlUtil;
-					
+
 			cowidget.service;
 			cowidget.service.MockService = debug.service.MockService;
 		}
-		
+
 		let LOG = cowidget.common.LogFactory.getLog();
 
-		LOG.debug('MockService: ' +  cowidget.service.MockService.isLoaded());
-		
-		let mockService = cowidget.service.MockService.getInstance(); 
-		cowidget.service.MockService.getInstance().prepareUseCase('./mock/usecase/mock.view.App.json');
-		cowidget.service.MockService.getInstance().prepareUseCase('./mock/usecase/mock.view.auth.Logon.json');
-		
+		LOG.debug('MockService: ' + cowidget.service.MockService.isLoaded());
+
+		let mockService = cowidget.service.MockService.getInstance();
+		cowidget.service.MockService.getInstance().populateUseCase(
+				'./mock/usecase/motion/view.App.json');
+		cowidget.service.MockService.getInstance().populateUseCase(
+				'./mock/usecase/motion/view.auth.Logon.json');
+
 		cowidget.service.MockService.getInstance().resetUseCaseStep();
-		cowidget.service.MockService.getInstance().prepareUseCaseStep('./mock/usecase/mock.UseCaseStep.json');
-		
+		cowidget.service.MockService.getInstance().populateUseCasePlay(
+				'./mock/usecase/screenplay/view.App.json');
+		cowidget.service.MockService.getInstance().populateUseCasePlay(
+				'./mock/usecase/screenplay/view.auth.Logon.json');
+
 		LOG.debug('---------------------------------------------------------');
-		
-		let mockUseCaseStep, mockUseCase;
-		
-		LOG.debug('====>');
-		mockUseCaseStep = cowidget.service.MockService.getInstance().popUseCaseStep();		
-		LOG.debug('popUseCaseStep: ', mockUseCaseStep);
-		mockUseCase = cowidget.service.MockService.getInstance().getUseCase(mockUseCaseStep);
-		LOG.debug('getUseCase: ', mockUseCase);
-		
-		LOG.debug('====>');
-		mockUseCaseStep = cowidget.service.MockService.getInstance().popUseCaseStep();
-		LOG.debug('popUseCaseStep: ', mockUseCaseStep);
-		mockUseCase = cowidget.service.MockService.getInstance().getUseCase(mockUseCaseStep);
-		LOG.debug('getUseCase: ', mockUseCase);
-		
-		
-		
-// 		let mockUseCase = {
-//			viewName: 'mock.view.App',
-//			viewMethod: 'method:doLogout',
-//			useCaseNum: '1'
-//	}
-//	mockService.getUseCase(mockUseCase);
-//	LOG.debug('mock.view.App 1: ', mockUseCase, ' ', mockService.getUseCase(mockUseCase));
-		
-		
+
+		if (true) {
+			let mockUseCaseStep, mockUseCase;
+
+			LOG.debug('====> view.App');
+			mockUseCaseStep = cowidget.service.MockService.getInstance()
+					.popUseCasePlay('view.App');
+			LOG.debug('popUseCasePlay: ', mockUseCaseStep);
+			mockUseCase = cowidget.service.MockService.getInstance()
+					.getUseCase(mockUseCaseStep);
+			LOG.debug('getUseCase: ', mockUseCase);
+
+			LOG.debug('====> view.auth.Logon');
+			mockUseCaseStep = cowidget.service.MockService.getInstance()
+					.popUseCasePlay('view.auth.Logon');
+			LOG.debug('popUseCasePlay: ', mockUseCaseStep);
+			mockUseCase = cowidget.service.MockService.getInstance()
+					.getUseCase(mockUseCaseStep);
+			LOG.debug('getUseCase: ', mockUseCase);
+			
+			LOG.debug('====> view.auth.Logon');
+			mockUseCaseStep = cowidget.service.MockService.getInstance()
+					.popUseCasePlay('view.auth.Logon');
+			LOG.debug('popUseCasePlay: ', mockUseCaseStep);
+			mockUseCase = cowidget.service.MockService.getInstance()
+					.getUseCase(mockUseCaseStep);
+			LOG.debug('getUseCase: ', mockUseCase);
+
+			// 		let mockUseCase = {
+			//			viewName: 'mock.view.App',
+			//			viewMethod: 'method:doLogout',
+			//			useCaseNum: '1'
+			//	}
+			//	mockService.getUseCase(mockUseCase);
+			//	LOG.debug('mock.view.App 1: ', mockUseCase, ' ', mockService.getUseCase(mockUseCase));
+
+		}
 	</script>
 </body>
 </html>
