@@ -12,10 +12,6 @@ class Log {
 	constructor(clazz) {
 		let self = this;
 		
-		console.debug('[Log.constructor] typeof clazz: ', typeof clazz);
-		
-		
-		
 		self.withDebug = false;
 		
 		self._init(clazz);
@@ -46,7 +42,7 @@ class Log {
 			self.logLevel = 'DEBUG';
 		}
 		
-		if(CoWidget.configure && CoWidget.configure.logger) {
+		if('undefined' != typeof CoWidget && CoWidget.configure && CoWidget.configure.logger) {
 			if('string' === typeof CoWidget.configure.logger.root) {
 				self.logLevel = CoWidget.configure.logger.root;
 			}
@@ -188,6 +184,10 @@ class Log {
 	log(logTag, args) {
 		logTag = logTag ? logTag:'INFO';
 		args = args ? args:arguments;
+		
+		if(this.withDebug) {
+			console.debug('[Log.log] args: ', args);
+		}
 		
 		if(null === args[0]) {
 			args[0] = this.getPrefixed(args, logTag) + ' ' + args[0];

@@ -23,19 +23,39 @@
     	
     } else {
         let coWidgetConf = global.coWidgetConfig ? global.coWidgetConfig : (coWidgetConfig ? coWidgetConfig:{});
-        console.debug('[Universal JS module loader] coWidgetConf: ', coWidgetConf);
+        
+        if(coWidgetConf.logger && coWidgetConf.logger.root && 'DEBUG' === coWidgetConf.logger.root) {
+        	console.debug('[Universal JS module loader] coWidgetConf: ', coWidgetConf);
+    	}
         
         global.CoWidget = global.CoWidget ? global.CoWidget : factory(global, coWidgetConf);
 
         // Object.assign(global.CoWidget, {
         	// 'coWidgetConfig' : coWidgetConf
         // });
-        console.debug('[Universal JS module loader] global.CoWidget: ', global.CoWidget ? 'success' : 'failure');
+        
+        if(coWidgetConf.logger && coWidgetConf.logger.root && 'DEBUG' === coWidgetConf.logger.root) {
+        	console.debug('[Universal JS module loader] global.CoWidget: ', global.CoWidget ? 'success' : 'failure');
+        }
     }
 
 }(this, (function(container, userConfig) {
     'use strict';
 
+    class Logger {
+    	
+    }
+    
+    Object.defineProperty(Logger, 'withDebug', {
+        value: false,
+        writable: true
+    });
+    
+    if(userConfig.logger && userConfig.logger.root && 'DEBUG' === userConfig.logger.root) {
+    	Logger.withDebug = true;
+	}
+    
+    
     let emptyObject = {};
     Object.freeze(emptyObject);
 
@@ -46,7 +66,9 @@
     	
     	class _CoWidgetClass {
 	    	static assertSame(targetClass) {
-	    		console.debug('[_CoWidgetClass.assertSame] targetClass.name: ', (null === targetClass ? 'null':targetClass.name));
+	    		if (Logger.withDebug) {
+	    			console.debug('[_CoWidgetClass.assertSame] targetClass.name: ', (null === targetClass ? 'null':targetClass.name));
+	    		}
 	    		return null === targetClass ? false:(this === targetClass);
 	    	}
     	}
@@ -59,7 +81,8 @@
     			let jsScripts = doc.scripts;
     			
     			let currentScript = jsScripts[jsScripts.length - 1];
-    			console.debug('[UrlUtil.getCurrentScrip] currentScript: ', currentScript);
+    			
+    			if (Logger.withDebug) console.debug('[UrlUtil.getCurrentScrip] currentScript: ', currentScript);
     			
     	        return currentScript;
     		}
@@ -75,8 +98,9 @@
     					baseHref = '/' + item;
     				}
 				});
-    			console.debug('[UrlUtil.getBaseHref] baseHref: ', baseHref);
-
+    			
+    			if (Logger.withDebug) console.debug('[UrlUtil.getBaseHref] baseHref: ', baseHref);
+    			
     	        return baseHref;
     		}
     		
@@ -84,13 +108,13 @@
     			doc = doc ? doc:wondow.document;
     			let currentScript = UrlUtil.getCurrentScrip(doc);
 
-    	        console.debug('[UrlUtil.getCurrentHref] currentScript: ', currentScript);
+    			if (Logger.withDebug)  console.debug('[UrlUtil.getCurrentHref] currentScript: ', currentScript);
 
     	        let currentHref = currentScript && currentScript.src ? currentScript.src : './';
 
-    	        console.debug('[UrlUtil.getCurrentHref] currentHref: ', currentHref);
+    	        if (Logger.withDebug) console.debug('[UrlUtil.getCurrentHref] currentHref: ', currentHref);
     	        let currentBaseHref = currentHref ? currentHref.replace('/cowidget/CoWidget.js', '') : './';
-    	        console.debug('[UrlUtil.getCurrentHref] currentBaseHref: ', currentBaseHref);
+    	        if (Logger.withDebug) console.debug('[UrlUtil.getCurrentHref] currentBaseHref: ', currentBaseHref);
 
     	        return currentBaseHref;
     		}
@@ -146,11 +170,11 @@
 				if(false) {
 				// async function asyncCall(xhrProps) {
 					NetXhr._xhrPromise(xhrProps);
-					console.log('[NetXhr.xhr] xhrProps: ', xhrProps);	
+					if (Logger.withDebug) console.log('[NetXhr.xhr] xhrProps: ', xhrProps);	
 				// }
 				}else{
 					NetXhr._xhr(xhrProps);
-					console.log('[NetXhr.xhr] response: ', response);
+					if (Logger.withDebug) console.log('[NetXhr.xhr] response: ', response);
 				}
 				
 				return xhrProps.response;
@@ -178,19 +202,19 @@
 			static _xhrLoad(xhr, xhrProps, event) {
 				let response = '';
 				
-				console.debug('[NetXhr.xhr._xhrLoad] xhr: ');
+				if (Logger.withDebug) console.debug('[NetXhr.xhr._xhrLoad] xhr: ');
 				// console.debug('[NetXhr.xhr._xhrLoad]', xhr);
 				// console.debug('[NetXhr.xhr._xhrLoad] event: ', event);
                 // This is called even on 404 etc
                 // so check the status
 
-				console.debug('[NetXhr.xhr._xhrLoad] xhr.status: ', xhr.status);
+				if (Logger.withDebug) console.debug('[NetXhr.xhr._xhrLoad] xhr.status: ', xhr.status);
                 if (200 === xhr.status) {
                     // Resolve the promise with the response text
                     Object.assign(xhrProps, { response : xhr.response });
                     
                     if(xhrProps.load) {
-        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is exsits: ');
+                    	if (Logger.withDebug) console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is exsits: ');
                     	if ('json' === xhrProps.handleAs) {
                     		xhrProps.load(NetXhr.eval(xhr.response));
                     	}else if ('classloader' === xhrProps.handleAs) {
@@ -199,7 +223,7 @@
                     		xhrProps.load(xhr.response);
                     	}
                     }else {
-        				console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is not exsits: ');
+                    	if (Logger.withDebug) console.debug('[NetXhr.xhr._xhrLoad] xhrProps.load is not exsits: ');
         				response = xhr.response;
                     }
                 } else {
@@ -215,7 +239,7 @@
 	    class ClassLoader {
     	    
     	    constructor(options) {
-    	    	console.error('[ClassLoader.constructor] not work');
+    	    	if (Logger.withDebug) console.error('[ClassLoader.constructor] not work');
     	    	throw new Error('not work');
             }
     	    
@@ -228,7 +252,7 @@
     	    static loadClass(name) {
     	    	let self = this;
     	    	let retClass = null;
-    	    	console.debug('[ClassLoader.loadClass] name: ' + name);
+    	    	if (Logger.withDebug) console.debug('[ClassLoader.loadClass] name: ' + name);
     	    	
     	    	if('cowidget.ClassLoader' === name) {
 					retClass = (() => {return ClassLoader;})();
@@ -257,14 +281,14 @@
 				}else {
 					let prePackage = name.split('.', 1);
 					let baseHref = ClassLoader.packageMap[prePackage+''];
-					console.debug('[ClassLoader.loadClass] baseHref: ' + baseHref);
+					if (Logger.withDebug) console.debug('[ClassLoader.loadClass] baseHref: ' + baseHref);
 					let targetUrl = '';
 					if(null != baseHref.match(/^http(s)?:\/\/.+/)) {
 						targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
 					}else {
 						targetUrl = baseHref + '/../' + name.replace(/\./gi, '/') + '.js';
 					}
-        	    	console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
+					if (Logger.withDebug) console.debug('[ClassLoader.loadClass] targetUrl: ' + targetUrl);
         	    	
     				let xhrProps = {
     						url: targetUrl,
@@ -272,16 +296,16 @@
     						handleAs: 'classloader',
     						
     						load: (srcClass) => {
-    							console.debug('[ClassLoader.loadClass] srcClass.name: ', srcClass.name);
-    							console.debug('[ClassLoader.loadClass] srcClass.constructor.name: ', (srcClass.constructor ? srcClass.constructor.name:null));
-    							console.debug('[ClassLoader.loadClass] srcClass.packageName: ', srcClass.packageName);
+    							if (Logger.withDebug) console.debug('[ClassLoader.loadClass] srcClass.name: ', srcClass.name);
+    							if (Logger.withDebug) console.debug('[ClassLoader.loadClass] srcClass.constructor.name: ', (srcClass.constructor ? srcClass.constructor.name:null));
+    							if (Logger.withDebug) console.debug('[ClassLoader.loadClass] srcClass.packageName: ', srcClass.packageName);
     							// console.debug('[ClassLoader.loadClass]
 								// srcClass.constructor.packageName: ',
 								// (srcClass.constructor ?
 								// srcClass.constructor.packageName:null));
-    							console.debug('[ClassLoader.loadClass] srcClass PrototypeOf: ', Object.getPrototypeOf(srcClass));
-    							console.debug('[ClassLoader.loadClass] srcClass prototype: ', srcClass.prototype);
-    							console.debug('[ClassLoader.loadClass] srcClass: ', srcClass);
+    							if (Logger.withDebug) console.debug('[ClassLoader.loadClass] srcClass PrototypeOf: ', Object.getPrototypeOf(srcClass));
+    							if (Logger.withDebug) console.debug('[ClassLoader.loadClass] srcClass prototype: ', srcClass.prototype);
+    							if (Logger.withDebug) console.debug('[ClassLoader.loadClass] srcClass: ', srcClass);
     							
 // if(srcClass instanceof cowidget.lang.ClassLoader) {
 // retClass = srcClass;
@@ -312,7 +336,7 @@
     				// console.debug('[ClassLoader.loadClass] xhrProps.response:
 					// ' + xhrProps.response);
     				// retClass = NetXhr.eval(xhrProps.response);
-    				console.debug('[ClassLoader.loadClass] retClass: ', retClass);
+    				if (Logger.withDebug) console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     				
 // console.debug('[ClassLoader.loadClass] retClass.assertSame: ' + name + ', ' +
 // ClassLoader.name);
@@ -334,9 +358,9 @@
     	        return {    	        	
     	            'get': function(obj, prop, receiver) {// obj, prop
     	            	if ('undefined' === typeof obj[prop]) {
-        	                console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
-        	                console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
-        	                console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
+    	            		if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
+    	            		if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] prop: ' + (typeof prop), prop);
+    	            		if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] prop.toString: ' + prop.toString());
     	            	}
 
 // console.debug('[ClassLoader.proxyHandler]
@@ -350,16 +374,16 @@
 // obj['toPrimitive']));
 
     	                if ('then' === typeof prop) {
-    	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
+    	                	if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
     	                    return function(hint) {
-    	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
+    	                    	if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
     	                        // return obj.toString();
     	                        return obj.prop;
     	                        // return Reflect.get(target, propertyName,
 								// receiver);
     	                    };
     	                }else if ('symbol' === typeof prop) {
-    	                    console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
+    	                	if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol');
     	                    return function(hint) {
     	                        console.debug('[ClassLoader.proxyHandler.get] obj instanceof Symbol: ', obj.prop);
     	                        // return obj.toString();
@@ -434,7 +458,7 @@
 	    packageMap = Object.assign(packageMap, {
 	    		cowidget: UrlUtil.getCurrentHref(container.document) + '/cowidget'
 	    	});
-		console.debug('[CoWidget.factory] packageMap: ', packageMap);
+	    if (Logger.withDebug) console.debug('[CoWidget.factory] packageMap: ', packageMap);
     	
 		Object.defineProperty(ClassLoader, 'baseHref', {
     		value: UrlUtil.getCurrentHref(container.document),
@@ -453,7 +477,7 @@
 		
     	// let package lazy loading like java
     	Object.keys(packageMap).forEach(function(key, index, array) {
-    		console.debug('[CoWidget.factory] key: ', key);
+    		if (Logger.withDebug) console.debug('[CoWidget.factory] key: ', key);
     		
     		container[key] = container[key] ? container[key] : new Proxy({
                 packageName: key,
@@ -470,9 +494,10 @@
     
     /* start plugin */
     // console.debug('[CoWidget.factory] container: ', container);
-    console.debug('[CoWidget.factory] userConfig: ', userConfig);
+    if (Logger.withDebug) console.debug('[CoWidget.factory] userConfig: ', userConfig);
 
-    console.debug('[CoWidget.factory] UrlUtil.getCurrentHref(container.document): ', cowidget.common.UrlUtil.getCurrentHref(container.document));
+    if (Logger.withDebug) console.debug('[CoWidget.factory] UrlUtil.getCurrentHref(container.document): ', cowidget.common.UrlUtil.getCurrentHref(container.document));
+    
     let defaultConfig = cowidget.common.Util.mixin({
         version: '1.0',
         baseHref: cowidget.common.UrlUtil.getCurrentHref(container.document),

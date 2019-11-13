@@ -26,7 +26,7 @@
 
 - Adapter pattern.
 
-> Test: <a hre="http://res.rawya.net/cowidget-test/cowidget/">http://res.rawya.net/cowidget-test/cowidget/</a>
+> Test: <a hre="http://res.rawya.net/resources/cowidget-test/cowidget/">http://res.rawya.net/resources/cowidget-test/cowidget/</a>
 
 
 ## 計劃整合UI:

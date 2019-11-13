@@ -5,6 +5,10 @@
  * To get sources and documentation, please visit: http://cowidget.rawya.net
  */
 class Util extends cowidget.Util {
+
+	static get LOG() {
+		return cowidget.common.LogFactory.getLog(Util);
+	}
 	
     constructor(option) {
 
@@ -24,7 +28,7 @@ class Util extends cowidget.Util {
 //    	  }
     	
         desObj = desObj ? desObj : {};
-        console.log('[Util.mixin] srcObj: ' + typeof srcObj);
+        Util.LOG.debug('[mixin] srcObj: ' + typeof srcObj);
 
         let empty = {};
 

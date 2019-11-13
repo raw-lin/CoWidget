@@ -20,7 +20,8 @@
 		}
 	};
 </script>
-<script type="text/javascript" src="http://res.rawya.net/cowidget/CoWidget.js"></script>
+<script type="text/javascript" src="../../../resources/cowidget/CoWidget.js"></script> 
+<!-- <script type="text/javascript" src="http://res.rawya.net/resources/cowidget/CoWidget.js"></script> -->
 </head>
 
 <body class="api">
@@ -33,9 +34,9 @@
 	<script type="text/javascript">
 		'use strict';
 
-		let LOG = mock.LogFactory.getLog();
+		let LOG = cowidget.common.LogFactory.getLog('StorageUtil.html');
 
-		let StorageUtil = mock.StorageUtil;
+		let StorageUtil = cowidget.common.StorageUtil;
 
 		LOG.debug('StorageUtil: ' + StorageUtil);
 		LOG.debug('StorageUtil: ' + StorageUtil.isLive());

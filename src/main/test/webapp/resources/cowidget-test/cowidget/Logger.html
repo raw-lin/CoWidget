@@ -24,7 +24,8 @@
 		}
 	};
 </script>
-<script type="text/javascript" src="../../cowidget/CoWidget.js"></script>
+<script type="text/javascript" src="../../../resources/cowidget/CoWidget.js"></script> 
+<!-- <script type="text/javascript" src="http://res.rawya.net/resources/cowidget/CoWidget.js"></script> -->
 </head>
 
 <body class="api">
@@ -53,7 +54,7 @@
 		
 		cowidget.common.LogFactory.getLog({}).debug('{}: cowidget.common.LogFactory.getLog().debug(\'{}\')');
 		
-		let LOG = cowidget.common.LogFactory.getLog();
+		let LOG = cowidget.common.LogFactory.getLog().setDebug(true);
 
 		LOG.info('CoWidget.configure.logger: ' + CoWidget.configure.logger);
 		

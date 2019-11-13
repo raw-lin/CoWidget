@@ -110,6 +110,7 @@ class LogFactory {
 		}else if('string' === typeof clazz || 'object' === typeof clazz) {
 			logger = LogFactory._getLog(clazz);
 		}else {
+			LogFactory.LOG.debug('[getLog] typeof clazz: ', typeof clazz);
 			//logger = LogFactory._getLog('EMPTY');
 			logger = LogFactory._getEmpty().LOG;
 		}
