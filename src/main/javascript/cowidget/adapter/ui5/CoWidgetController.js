@@ -48,17 +48,17 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		 */
 		_init(mOptions) {
 			let that = this;
-			that.LOG.debug('[_init] call: ', that);
+			that.LOG.debug('[_init] CoWidgetController call: ', that);
 		},
 		
 		onInit : function() {
 			var that = this;
-			that.LOG.debug('[onInit] call');
+			that.LOG.debug('[onInit] CoWidgetController call');
 		},
 		
 		fireEvent: function(sEventId, oParameters, bAllowPreventDefault, bEnableEventBubbling) {
 			let that = this;
-			that.LOG.debug('[fireEvent] call: ', that);
+			that.LOG.debug('[fireEvent] CoWidgetController call: ', that);
 			
 			// that[[Prototype]].fireEvent();
 			// Object.getPrototypeOf(Object.getPrototypeOf(that))
@@ -66,7 +66,30 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		
 		createView: function(options, container) {
 			return CoWidget.create(options, container);
-		}
+		},
+		
+		postView: function(/*method, */ options, container, place) {
+			let that = this;
+			
+			options = options ? options:{};
+
+			that.LOG.debug('[postView] that: ', that);
+			that.LOG.debug('[postView] options: ', options);
+			
+
+			that.LOG.debug('[postView] that.viewMotion: ', that.viewMotion);
+			that.LOG.debug('[postView] options.viewMethod: ', options.viewMethod);
+			// viewMotion and viewName
+			// request viewMotion?viewMethod
+			// viewResult is josn
+			
+			let viewResult = {
+					"viewName" : "view/common/Reload",
+					"viewModel" : that.viewModel
+			}
+			
+			return that.createView(viewResult, container).placeAt(place);
+		},
 
 	});
 			

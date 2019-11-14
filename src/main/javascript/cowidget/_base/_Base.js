@@ -11,7 +11,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-class _Base {
+class _Base extends (()=>{
+	class StaticField {
+		constructor(...props) {
+			
+		}
+	}
+	
+	Object.defineProperty(StaticField, 'staticFieldName', {
+						value: 'a STATIC_FIELD01 by defineProperty',
+						writable: true
+						});
+	
+	return StaticField;
+	
+})(){
 	
 	static get LOG() {
 		return cowidget.common.LogFactory.getLog(this);
@@ -45,10 +59,10 @@ class _Base {
 	 */
 	constructor(...props) {
         let self = this;
-        //options = options ? options : {};
+        // options = options ? options : {};
 
-        //console.log('[_Base.constructor] self: ', self);
-        //console.log('[_Base.constructor] options: ', options);
+        // console.log('[_Base.constructor] self: ', self);
+        // console.log('[_Base.constructor] options: ', options);
 
         // self.adapter = new Objecy();
         self.metaData = option ? option : {};

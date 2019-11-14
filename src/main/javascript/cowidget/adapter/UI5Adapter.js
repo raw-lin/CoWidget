@@ -179,7 +179,7 @@ class UI5Adapter extends CoWidget {
 			viewName: that.metaData.viewName,
 			customData: {
 					Type: 'sap.ui.core.CustomData',
-						key:'modelData',
+						key:'viewModel',
 						value: that.viewModel
 					}
 		});

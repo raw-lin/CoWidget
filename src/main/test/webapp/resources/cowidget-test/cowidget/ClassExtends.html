@@ -20,7 +20,7 @@
 		}
 	};
 </script>
-<script type="text/javascript" src="../../../resources/cowidget/CoWidget.js"></script> 
+<script type="text/javascript" src="../../../resources/cowidget/CoWidget.js"></script>
 <!-- <script type="text/javascript" src="http://res.rawya.net/resources/cowidget/CoWidget.js"></script> -->
 
 </head>
@@ -82,9 +82,40 @@
 		LOG.debug('new ClassExtend.classField01: ', new ClassExtend().classField01);
 		LOG.debug('---------------------------------------------------------');
 		
-		class ClassExtend2 extends (() => {
-			class FieldClass {
-				
+		class ParentClass {
+			static get LOG() {
+				return cowidget.common.LogFactory.getLog(ParentClass);
+			}
+			
+			constructor(...props) {
+				ParentClass.LOG.debug('I am Parent');
+			}
+		}
+		
+		class ClassExtendParent extends ((ParentClass) => {
+			let fieldClass;
+			
+			if(ParentClass) {
+				fieldClass = class FieldClass extends ParentClass {
+					static get LOG() {
+						return cowidget.common.LogFactory.getLog(FieldClass);
+					}
+					
+					constructor(...props) {
+						super(...props);
+						FieldClass.LOG.debug('I am FieldClass');
+					}
+				}
+			}else {
+				fieldClass = class FieldClass {
+					static get LOG() {
+						return cowidget.common.LogFactory.getLog(FieldClass);
+					}
+					
+					constructor(...props) {
+						FieldClass.LOG.debug('I am FieldClass');
+					}
+				}
 			}
 			
 			let staticField = {
@@ -100,7 +131,7 @@
 			
 			// defined static field				
 			for(let staticFieldName in staticField) {
-				Object.defineProperty(FieldClass, staticFieldName, staticField[staticFieldName]);
+				Object.defineProperty(fieldClass, staticFieldName, staticField[staticFieldName]);
 			}
 			
 			let classField = {
@@ -110,47 +141,29 @@
 			
 			// defined class method
 			if(true) {
-				Object.setPrototypeOf(FieldClass.prototype, classField);				
+				Object.setPrototypeOf(fieldClass.prototype, classField);				
 			}else {
-				Object.assign(FieldClass, classField);
+				Object.assign(fieldClass, classField);
 			}
 			
-			return FieldClass;
-		})(){
+			return fieldClass;
+		})(ParentClass){
 			
 			// finial field
 			static get LOG() {
-				return cowidget.common.LogFactory.getLog(ClassExtend);
+				return cowidget.common.LogFactory.getLog(ClassExtendParent);
 			}
 		}
 		
-		LOG.debug('ClassExtend2: ', ClassExtend2);
-		LOG.debug('ClassExtend2.STATIC_FIELD01 : ', ('undefined' != typeof ClassExtend2.STATIC_FIELD01 ? ClassExtend2.STATIC_FIELD01:'undefined'));
-		LOG.debug('ClassExtend2.classField01 : ', ('undefined' != typeof ClassExtend2.classField01 ? ClassExtend2.classField01:'undefined'));
+		LOG.debug('ClassExtend: ', ClassExtend);
+		LOG.debug('ClassExtend.STATIC_FIELD01 : ', ('undefined' != typeof ClassExtend.STATIC_FIELD01 ? ClassExtend.STATIC_FIELD01:'undefined'));
+		LOG.debug('ClassExtend.classField01 : ', ('undefined' != typeof ClassExtend.classField01 ? ClassExtend.classField01:'undefined'));
 		
-		LOG.debug('new ClassExtend2: ', new ClassExtend2());
-		LOG.debug('new ClassExtend2.staticField01: ', ('undefined' != typeof new ClassExtend2().staticField01 ? new ClassExtend2().staticField01:'static field be undefined'));
-		LOG.debug('new ClassExtend2.classField01: ', new ClassExtend2().classField01);
+		LOG.debug('new ClassExtendParent: ', new ClassExtendParent());
+		LOG.debug('new ClassExtendParent.staticField01: ', ('undefined' != typeof new ClassExtendParent().staticField01 ? new ClassExtendParent().staticField01:'static field be undefined'));
+		LOG.debug('new ClassExtendParent.classField01: ', new ClassExtendParent().classField01);
 		LOG.debug('---------------------------------------------------------');
-		
-// 		/* object field */
-// 		Object.setPrototypeOf(ClassExtend.prototype, {
-// 			field01: 'field01'
-// 		});
-		
-// 		LOG.debug('ClassExtend.field01: ', ClassExtend.field01);
-// 		LOG.debug('new ClassExtend.field01: ', new ClassExtend().field01);
-// 		LOG.debug('---------------------------------------------------------');
-		
-
-// 		/* static field */
-// 		Object.assign(ClassExtend, {
-// 			assignTest: 'assignTest'
-// 		})
-
-// 		LOG.debug('ClassExtend.assignTest: ', ClassExtend.assignTest);
-// 		LOG.debug('new ClassExtend.assignTest: ', new ClassExtend().assignTest);
-		
+				
 	</script>
 </body>
 </html>

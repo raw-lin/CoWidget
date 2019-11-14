@@ -31,7 +31,7 @@ define([ 'dojo/_base/declare'
 		//ctrl: null,
 		
 		/*
-		 * model = new StatefulModel({data: self.modelData});
+		 * model = new StatefulModel({data: self.viewModel});
 		 * self.setModel(model);
 		 */
 		_model: null, /*StatefulModel from chirdlen*/
@@ -211,7 +211,7 @@ define([ 'dojo/_base/declare'
 						}
 						
 						if('function' === typeof self.getModel) {
-							self.LOG.debug('[_pluginAjax.xhr.then] self.modelData: ', self.modelData);
+							self.LOG.debug('[_pluginAjax.xhr.then] self.viewModel: ', self.viewModel);
 							self.LOG.debug('[_pluginAjax.xhr.then] model: ', model);
 						}else {
 							widget.LOG.warn('[_pluginAjax.xhr.then] please implement getModel');

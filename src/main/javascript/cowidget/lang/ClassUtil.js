@@ -14,9 +14,20 @@ class ClassUtil {
     }
     
     /**
-	 * class Fork extends ClassUtil.assignStaticField(null, {});
+     * <pre>
+     * <code>
+	 * class Fork extends ClassUtil.assignStaticField({
+	 * 									STATIC_FIELD01: {
+	 *										value: 'a STATIC_FIELD01 by defineProperty',
+	 *										writable: true
+	 *									}
+	 * 								});
+	 * </code>
+	 * </pre>
+	 * 
+	 * @param	staticField	{}
 	 */
-    static assignStaticField(clazz, staticField) {
+    static assignStaticField(staticField) {
     	class StaticFieldClass {
 			
 		}
@@ -27,7 +38,6 @@ class ClassUtil {
                 writable: true
             });
 		}
-		
 		
 		return StaticFieldClass;
     }
