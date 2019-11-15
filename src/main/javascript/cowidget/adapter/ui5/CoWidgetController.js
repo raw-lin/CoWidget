@@ -38,11 +38,6 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 			return that;
 		},
 		
-		newInstance : function(mProperties) {
-			let that = this;
-			that.LOG.debug('[newInstance] call: ', that);
-		},
-		
 		/**
 		 * @private
 		 */
@@ -92,10 +87,27 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		},
 
 	});
+	
+	const _extend = CoWidgetController.extend;
+	LOG.debug('[extend] _extend: ', _extend);
+	CoWidgetController.extendX = function() {
+		//Let LOG = cowidget.common.LogFactory.getLog('CoWidgetController.extend');
+		//const extend = CoWidgetController.extend;
+		//LOG.debug('[extend] extend: ', extend);
+		//LOG.debug('[extend] arg: ', arg);
+		
+		//let extObj = Controller.extend(argim);
+		//let extObj = Controller.extend.apply(CoWidgetController, arguments);
+		let extObj = Reflect.apply(_extend, undefined, arguments);
+		LOG.debug('[extend] extObj: ', extObj);
+		
+		//return extObj;
+		return new Proxy(extObj, proxyHandler);
+	};
 			
 	const proxyHandler = {
 		LOG : cowidget.common.LogFactory.getLog(this),
-		construct : function(target, args) {
+		constructX : function(target, args) {
 			this.LOG.debug('[proxyHandler.construct] target: ', target);
 			this.LOG.debug('[proxyHandler.construct] args: ', args);
 			// const obj = Object.create(base.prototype);
