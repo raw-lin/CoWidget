@@ -33,7 +33,7 @@
 		
 		class ClassLoader {
 			
-			static getProxyHandler() {
+			static getProxyHandler(proxyObj) {
 				return {
 					construct : function(target, args) {
 						console.debug('[getProxyHandler.construct] target: ', target);
@@ -129,9 +129,9 @@
 						return obj[prop];
 					},
 					
-					apply : function(target, thisArg, argumentList) {
-						console.debug('[getProxyHandler.apply] argumentList: ', argumentList);
-						return target(argumentList);
+					apply : function(target, thisArg, args) {
+						console.debug('[getProxyHandler.apply] target, thisArg, args: ', target, thisArg, args);
+						return target(args);
 					}
 				}
 			}

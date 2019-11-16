@@ -116,8 +116,8 @@ class CoWidgetImpl {
     };
     
     /**
-     * @private
-     */
+	 * @private
+	 */
     constructor(metaData) {
         let self = this;
         metaData = metaData ? metaData:{};
@@ -136,8 +136,7 @@ class CoWidgetImpl {
     
     /**
 	 * @param option:
-	 *            viewName, viewMethod, container, viewMethod is mapping to
-	 *            server token.
+	 *            viewName, viewMethod, container, viewMethod is mapping to server token.
 	 */
     static create(option, container){
     	option = option ? option:{};
@@ -162,7 +161,61 @@ class CoWidgetImpl {
     	}
     	
     	return retCoWidget;
-    };
+    }
+    
+    static createView(option, container){
+    	return CoWidgetImpl.create(option, container);
+	}
+    
+	static postView(option, container){
+		
+	}
+
+	static xhrView(option, container){
+    	option = option ? option:{};
+    	
+    	let viewResult;
+    	    	
+    	if('mock.view.Shell' === option.viewMotion) {
+    		viewResult = {
+    			"viewName" : "view.Shell",
+    			"viewModel" : {
+    				"withLogon" : false
+    			}
+    		}
+    	}else if('mock.view.App' === option.viewMotion) {
+    		viewResult = {
+        			"viewName" : "view.App",
+        			"viewModel" : {
+        				"withLogon" : false
+        			}
+    		}
+    	}else if('mock.view.SplitApp' === option.viewMotion) {
+    		viewResult = {
+        			"viewName" : "view.SplitApp",
+        			"viewModel" : {
+        				"withLogon" : true
+        			}
+    		}
+    	}else if('mock.view.auth.Logon' === option.viewMotion) {
+    		
+    		if(option.viewMethod && 'onLogon' === option.viewMethod) {
+        		viewResult = {
+            			"viewName" : "view.common.Reload"
+        		}
+    		}else {
+        		viewResult = {
+            			"viewName" : "view.auth.Logon",
+            			"viewModel" : {
+            				"userName" : '',
+            				"password" : ''
+            			}
+        		}	
+    		}
+        }
+    	
+    	return CoWidgetImpl.createView(viewResult, container);
+    }
 
     placeAt(place, position) {
         var self = this;

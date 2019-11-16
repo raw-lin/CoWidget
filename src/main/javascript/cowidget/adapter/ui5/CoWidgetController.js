@@ -14,21 +14,17 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 	let CoWidgetController = Controller.extend('cowidgetUI5/CoWidgetController', {
 		LOG : cowidget.common.LogFactory.getLog('cowidgetUI5/CoWidgetController'),
 		
-		calledCount: 0,
+		viewModel: null,
 		
-// newInstance: function(mOptions) {
-// let that = this;
-// that.LOG.debug('[netInstance] call CoWidgetController: ', mOptions);
-//			
-// return that;
-// },
+		calledCount: 0,
 		
 		constructor : function(mOptions) {
 			let that = this;
 			
-			that.LOG.debug('[constructor] call CoWidgetController: ', that);
-			that.LOG.debug('[constructor] CoWidgetController Object.getPrototypeOf: ', Object.getPrototypeOf(Object.getPrototypeOf(that)));
-			that.LOG.debug('[constructor] CoWidgetController Object.getPrototypeOf: ', Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(that))));
+			that.LOG.debug('[constructor] CoWidgetController call');
+			//that.LOG.debug('[constructor] CoWidgetController: ', that);
+			//that.LOG.debug('[constructor] CoWidgetController Object.getPrototypeOf: ', Object.getPrototypeOf(Object.getPrototypeOf(that)));
+			//that.LOG.debug('[constructor] CoWidgetController Object.getPrototypeOf: ', Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(that))));
 			
 			that.calledCount = that.calledCount + 1;
 			that.LOG.debug(`[constructor] that.calledCount: ${that.calledCount}`);
@@ -44,12 +40,27 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		_init(mOptions) {
 			let that = this;
 			that.LOG.debug('[_init] CoWidgetController call: ', that);
+			
+			
+			
+//			let customData = that.getView().getCustomData();
+//			let viewModel;
+//			customData.forEach(function(element) {
+//				if('viewModel' === element.getKey()) {
+//					that.viewModel = element.getValue();
+//				}
+//			});
 		},
 		
-		onInit : function() {
-			var that = this;
-			that.LOG.debug('[onInit] CoWidgetController call');
+		setModel: function(viewModel) {
+			let that = this;
+			that.model = new JSONModel(viewModel);
 		},
+		
+		getModel: function() {
+			let that = this;
+			return that.model.oData;
+		},	
 		
 		fireEvent: function(sEventId, oParameters, bAllowPreventDefault, bEnableEventBubbling) {
 			let that = this;
@@ -63,7 +74,7 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 			return CoWidget.create(options, container);
 		},
 		
-		postView: function(/*method, */ options, container, place) {
+		xhrView: function(/* method */ options, container) {
 			let that = this;
 			
 			options = options ? options:{};
@@ -78,100 +89,145 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 			// request viewMotion?viewMethod
 			// viewResult is josn
 			
-			let viewResult = {
-					"viewName" : "view/common/Reload",
-					"viewModel" : that.viewModel
-			}
-			
-			return that.createView(viewResult, container).placeAt(place);
+			return CoWidget.xhrView(options, container);
+			//return that.createView(viewResult, container);
 		},
+		
+		/**
+		 * TODO
+		 */
+		resetInputValueState : function(oView) {
+		
+			//sap.ui.getCore().byId(
+			jQuery(jQuery.sap.byId(oView.sId)).find('[id]').each(function(iIndex, node) {
+				var id = jQuery(node).attr('id');
+				
+				var oInput = oView.byId(jQuery(node).attr('id'));
+				if (oInput && oInput.setValueState) {
+					oInput.setValueState('None');
+				}
+				
+				if (oInput && oInput.setValueStateText) {
+					oInput.setValueStateText('');
+				}
+			});
+		},
+		
+		/**
+		 * TODO
+		 * <pre>
+		 * constructor : function() {
+		 * 		var that = this;
+		 * 		return tarolsui.TarolsUtil.pluginView(that, {
+		 * 			viewAction : '/net.tarols.webapp/Shell.do'
+		 * 		});
+		 * },
+		 * </pre>
+		 */
+		pluginView : function(target, mOptions) {
+			mOptions = (mOptions) ? mOptions : {};
+	
+			var viewAction = mOptions.viewAction;
+			var handler = {};
+			// jQuery(sap.ui.core.mvc.View, {});
+	
+			// sap.ui.core.Control.getMetadata()
+			var viewName = target.getMetadata().getName();
+	
+			jQuery.extend(target, {
+				viewName : viewName,
+				viewAction : viewAction
+			});
+	
+			console.debug('[TarolsUtil.pluginView] target: ', target);
+	
+			jQuery.sap.require('sap.ui.model.json.JSONModel');
+			var oModel = new sap.ui.model.json.JSONModel({});
+			// if(target.getView && target.getView().setModel) {
+			// target.getView().setModel(oModel);
+			// }
+	
+			return new Proxy(target, /* oTarolsHandler */ null);
+		}
 
 	});
 	
-	const _extend = CoWidgetController.extend;
-	LOG.debug('[extend] _extend: ', _extend);
-	CoWidgetController.extendX = function() {
-		//Let LOG = cowidget.common.LogFactory.getLog('CoWidgetController.extend');
-		//const extend = CoWidgetController.extend;
-		//LOG.debug('[extend] extend: ', extend);
-		//LOG.debug('[extend] arg: ', arg);
+	const proxyHandler = (proxyObj) => {
+		proxyObj = proxyObj ? proxyObj:{};
+		let LOG = cowidget.common.LogFactory.getLog(proxyObj);
 		
-		//let extObj = Controller.extend(argim);
-		//let extObj = Controller.extend.apply(CoWidgetController, arguments);
-		let extObj = Reflect.apply(_extend, undefined, arguments);
-		LOG.debug('[extend] extObj: ', extObj);
-		
-		//return extObj;
-		return new Proxy(extObj, proxyHandler);
-	};
+		return {
+			LOG : LOG,
+			proxyObj : proxyObj,
 			
-	const proxyHandler = {
-		LOG : cowidget.common.LogFactory.getLog(this),
-		constructX : function(target, args) {
-			this.LOG.debug('[proxyHandler.construct] target: ', target);
-			this.LOG.debug('[proxyHandler.construct] args: ', args);
-			// const obj = Object.create(base.prototype);
-			//const obj = Object.create(target.prototype);
-			//this.apply(target, obj, args);
-			//return obj;
-			//return Reflect.set(...arguments);
-			return target.construct(...arguments);
-		},
-		
-		get: function(obj, prop, receiver) {
-			let retProp = null;
-			this.LOG.debug(`[proxyHandler.get] prop: ${typeof prop}`, prop);
-			this.LOG.debug('[proxyHandler.get] obj: ', obj);
+			construct : function(target, args) {
+				this.LOG.debug('[proxyHandler.construct] target: ', target);
+				this.LOG.debug('[proxyHandler.construct] args: ', args);
+				// const obj = Object.create(base.prototype);
+				// const obj = Object.create(target.prototype);
+				// this.apply(target, obj, args);
+				// return obj;
+				// return Reflect.set(...arguments);
+				return Reflect.apply(target, undefined, args);
+			},
 			
-			if ('string' === typeof prop && 'extend' === prop) {
-				retProp = obj[prop];
+			get: function(obj, prop, receiver) {
+				let retProp = null;
+				this.LOG.debug(`[proxyHandler.get] prop, obj: ${typeof prop}`, prop, obj);
+				// this.LOG.debug('[proxyHandler.get] obj: ', obj);
 				
-				//retProp = () => {
-				//	return new Proxy(obj[prop], proxyHandler);
-				//};
-			}else if ('string' === typeof prop && 'prototype' === prop) {
-				retProp = obj[prop];
+				if ('symbol' === typeof prop) {
+					retProp = function(hint) {
+                        return obj.prop;
+                    };
+				}else if ('string' === typeof prop && 'extend' === prop) {
+					//retProp = obj[prop];
+					retProp = Reflect.get(obj, prop, receiver);
+					
+					retProp = ((obj, retProp, receiver) => {	
+						return new Proxy(retProp, proxyHandler(retProp))
+						//return Reflect.get(obj, prop, receiver);
+					})(obj, retProp, receiver);
+				}else if ('string' === typeof prop && 'prototype' === prop) {
+					retProp = obj[prop];
+			
+					retProp = new Proxy(retProp, proxyHandler('prototype'));
+				}else if ('string' === typeof prop && 'connectToView' === prop) {
+					retProp = obj[prop];
+					
+					// retProp = new Proxy(obj[prop], proxyHandler);
+				}else if(obj[prop]){
+					//retProp = obj[prop];
+					retProp = Reflect.get(obj, prop, receiver);
+				}else {
+					retProp = () => {
+						return `${this.proxyHandlerName}`;
+					}
+				}
 				
-				retProp = new Proxy(obj[prop], proxyHandler);
-			}else {
-				retProp = obj[prop];
+				return retProp;
+			},
+			
+			setX: function(obj, prop, value) {
+				this.LOG.debug('[proxyHandler.set] obj: ', obj);
+				
+				return Reflect.set(...arguments);
+			},
+			
+			definePropertyX : function(target, key, descriptor) {
+				this.LOG.debug('[proxyHandler.defineProperty] key: ', key);
+				
+				return true;
+			},
+			
+			apply : function(target, thisArg, args) {
+				this.LOG.debug(`[proxyHandler.apply] target, thisArg, args: ${target}, ${thisArg}, ${args}`);
+				
+				return Reflect.apply(target, thisArg, args);
 			}
-			
-			return retProp;
-		},
-		
-		set: function(obj, prop, value) {
-			this.LOG.debug('[proxyHandler.get] obj: ', obj);
-			
-			return Reflect.set(...arguments);
-		},
-		
-		defineProperty : function(target, key, descriptor) {
-			this.LOG.debug('[proxyHandler.defineProperty] key: ', key);
-			
-			return true;
-		},
-		
-		apply : function(target, thisArg, argumentList) {
-			this.LOG.debug('[proxyHandler.apply] argumentList: ', argumentList);
-			return target(argumentList);
 		}
 	}
 	
-	let proxy = new Proxy(CoWidgetController, proxyHandler);
-	
-	// let descriptor =
-	// Object.getOwnPropertyDescriptor(CoWidgetController.prototype,
-	// 'constructor');
-	// descriptor.value = proxy;
-	// Object.defineProperty(CoWidgetController.prototype, 'constructor',
-	// descriptor);
-	
-//	return class extends (()=>{
-//		return new Proxy(CoWidgetController, proxyHandler);;
-//	})() {
-//		
-//	};
-	return CoWidgetController;
-	// return new Proxy(CoWidgetController, ClassLoader.getProxyHandler());
+	//return CoWidgetController;
+	return new Proxy(CoWidgetController, proxyHandler(CoWidgetController));
 });

@@ -210,6 +210,19 @@ class UI5Adapter extends CoWidget {
 						oTarget = rTarget;
 					}
 					
+					/* process viewModel */
+					let customData = oView.getCustomData();
+					let viewModel;
+					customData.forEach(function(element) {
+						if('viewModel' === element.getKey()) {
+							viewModel = element.getValue();
+						}
+					});
+					
+					if('function' === typeof oView.getController().setModel) {
+						oView.getController().setModel(viewModel);
+					}
+					
 					return { oView: oView, oTarget: oTarget};
 				}).then((result) => {
 					/* append oView to oTarget */

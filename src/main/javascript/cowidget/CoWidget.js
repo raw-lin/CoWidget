@@ -331,31 +331,20 @@
     				}
     				
     				NetXhr.xhr(xhrProps);
-    				// console.debug('[ClassLoader.loadClass] xhrProps: ',
-					// xhrProps);
-    				// console.debug('[ClassLoader.loadClass] xhrProps.response:
-					// ' + xhrProps.response);
-    				// retClass = NetXhr.eval(xhrProps.response);
-    				if (Logger.withDebug) console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     				
-// console.debug('[ClassLoader.loadClass] retClass.assertSame: ' + name + ', ' +
-// ClassLoader.name);
-// console.debug('[ClassLoader.loadClass] retClass.assertSame: ',
-// retClass.assertSame(ClassLoader));
-// if('undefined' != typeof retClass.assertSame && false ===
-// retClass.assertSame(ClassLoader)) {
-// console.debug('[ClassLoader.loadClass] extends retClass.assertSame: ',
-// retClass);
-// }
+    				if (Logger.withDebug) console.debug('[ClassLoader.loadClass] retClass: ', retClass);
     	    	}
     	    	
     	    	return retClass;
     	    }
     	    
-    	    static getProxyHandler() {
+    	    static getProxyHandler(proxyObj) {
+    	    	proxyObj = proxyObj ? proxyObj:{};
     	    	let self = this;
     	    	
-    	        return {    	        	
+    	        return {
+    	        	proxyObj: proxyObj,
+    	        	
     	            'get': function(obj, prop, receiver) {// obj, prop
     	            	if ('undefined' === typeof obj[prop]) {
     	            		if (Logger.withDebug) console.debug('[ClassLoader.proxyHandler.get] obj: ' + (typeof obj), obj);
@@ -427,14 +416,12 @@
 
                                 }
                                 
-                                obj[prop] = new Proxy(packageObj, ClassLoader.getProxyHandler());
+                                obj[prop] = new Proxy(packageObj, ClassLoader.getProxyHandler(packageObj));
                             }
     	                }
     	                
-    	                // console.debug('[ClassLoader.proxyHandler.get]
-						// obj[prop]: ', obj ? obj[prop]:null);
-    	                
     	                return obj[prop];
+    	                //return Reflect.get(obj, prop, receiver);
     	            },
 
     	            none: null
@@ -479,18 +466,15 @@
     	Object.keys(packageMap).forEach(function(key, index, array) {
     		if (Logger.withDebug) console.debug('[CoWidget.factory] key: ', key);
     		
-    		container[key] = container[key] ? container[key] : new Proxy({
-                packageName: key,
-            }, ClassLoader.getProxyHandler());
+    		container[key] = container[key] ? container[key] : ((key)=>{
+    			let pcakageObj = {
+                    packageName: key,
+                }
+    			
+    			return new Proxy(pcakageObj, ClassLoader.getProxyHandler(pcakageObj));
+    		})(key);
     	});
-       
-// packageMap.forEach((value, key, map) => {
-// console.log(key);
-// container[key] = container[key] ? container[key] : new Proxy({
-// packageName: key,
-// }, ClassLoader.getProxyHandler());
-// });
-    };
+    }
     
     /* start plugin */
     // console.debug('[CoWidget.factory] container: ', container);
