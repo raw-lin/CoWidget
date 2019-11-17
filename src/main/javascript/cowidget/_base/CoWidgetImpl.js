@@ -164,42 +164,70 @@ class CoWidgetImpl {
     }
     
     static createView(option, container){
-    	return CoWidgetImpl.create(option, container);
-	}
-    
-	static postView(option, container){
+
+    	option = option ? option:{};
+    	
+    	let viewResult;
+    	
+		if(option.viewMotion) {
+			viewResult = CoWidgetImpl.xhrView(option, container);
+		}else if(option.viewName) {
+			viewResult = option;
+		}
 		
+    	return CoWidgetImpl.create(viewResult, container);
 	}
 
 	static xhrView(option, container){
     	option = option ? option:{};
     	
+    	let withLogon = false;
     	let viewResult;
     	    	
     	if('mock.view.Shell' === option.viewMotion) {
+    		// doRender
     		viewResult = {
     			"viewName" : "view.Shell",
     			"viewModel" : {
-    				"withLogon" : false
+    				"withLogon" : withLogon
     			}
     		}
-    	}else if('mock.view.App' === option.viewMotion) {
-    		viewResult = {
-        			"viewName" : "view.App",
-        			"viewModel" : {
-        				"withLogon" : false
-        			}
+    	}
+    	
+    	if('mock.view.App' === option.viewMotion) {
+    		if(true) {
+    			//option.viewMotion = 'mock.view.auth.Logon';
+    		}else {
+    			//option.viewMotion = 'mock.view.common.Reload';
     		}
-    	}else if('mock.view.SplitApp' === option.viewMotion) {
+    		
+    		//option.viewMotion = 'mock.view.App';
+    		
+    		if(option.viewMethod) {
+    			
+    		}else {
+    			viewResult = {
+        				"viewName" : "view.App",
+            			"viewModel" : {
+            				"withLogon" : withLogon
+            			}
+        		}
+    		}
+    	}
+    	
+    	if('mock.view.SplitApp' === option.viewMotion) {
     		viewResult = {
         			"viewName" : "view.SplitApp",
         			"viewModel" : {
-        				"withLogon" : true
+        				"withLogon" : withLogon
         			}
     		}
-    	}else if('mock.view.auth.Logon' === option.viewMotion) {
+    	}
+
+    	if('mock.view.auth.Logon' === option.viewMotion) {
     		
     		if(option.viewMethod && 'onLogon' === option.viewMethod) {
+    			// chain to mock.common.Reload
         		viewResult = {
             			"viewName" : "view.common.Reload"
         		}
@@ -214,7 +242,14 @@ class CoWidgetImpl {
     		}
         }
     	
-    	return CoWidgetImpl.createView(viewResult, container);
+    	if('mock.view.main.Main' === option.viewMotion) {
+    		viewResult = {
+        			"viewName" : "view.main.Main"
+    		}	
+    	}
+    	
+    	CoWidgetImpl.LOG.debug('[CoWidgetImpl.xhrView] viewResult: ', viewResult);
+    	return viewResult;
     }
 
     placeAt(place, position) {

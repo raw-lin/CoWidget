@@ -71,7 +71,7 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		},		
 		
 		createView: function(options, container) {
-			return CoWidget.create(options, container);
+			return CoWidget.createView(options, container);
 		},
 		
 		xhrView: function(/* method */ options, container) {

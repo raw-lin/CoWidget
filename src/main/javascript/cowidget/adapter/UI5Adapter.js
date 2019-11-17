@@ -56,11 +56,21 @@ class UI5Adapter extends CoWidget {
 		if(true) {
 			
 			if(ViewClass) {
-				if(ViewClass === sap.m.Page || 'App' === id) {
+				if(ViewClass === sap.m.Page) {
 					UI5Adapter.LOG.debug('[determineTarget] find App');
 					
 					if(that.isInstanceOf(container, sap.m.App)) {
 						if(container instanceof sap.m.App) {
+							retView = container;
+						}else if('function' === typeof container.getContent){
+							retView = container.getContent()[0];
+						}
+					}
+				}else if(ViewClass === sap.m.App) {
+					UI5Adapter.LOG.debug('[determineTarget] find Shell');
+					
+					if(that.isInstanceOf(container, sap.m.Shell)) {
+						if(container instanceof sap.m.Shell) {
 							retView = container;
 						}else if('function' === typeof container.getContent){
 							retView = container.getContent()[0];
@@ -197,13 +207,16 @@ class UI5Adapter extends CoWidget {
 						UI5Adapter.LOG.debug('[_placeAt.then] oView is sap.m.Page');
 						// let oTarget to be App
 						oTarget = that.determineTarget(rTarget, that.container, sap.m.Page);
-						
-						if(oTarget && oTarget.setBusy) {
-							oTarget.setBusy(true);
-						}
+					}else if(true === that.isInstanceOf(oView, sap.m.App)) {
+						UI5Adapter.LOG.debug('[_placeAt.then] oView is sap.m.App');
+						oTarget = that.determineTarget(rTarget, that.container, sap.m.App);
 						
 					}else {
 						oTarget = that.determineTarget(rTarget, that.container);
+					}
+					
+					if(oTarget && oTarget.setBusy) {
+						oTarget.setBusy(true);
 					}
 					
 					if(null === oTarget) {
@@ -227,7 +240,9 @@ class UI5Adapter extends CoWidget {
 				}).then((result) => {
 					/* append oView to oTarget */
 					UI5Adapter.LOG.debug('[placeAt.then] append oView to oTarget: ', result.oTarget);
-					if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.App)){
+					if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.Shell)){
+						result.oTarget.setApp(result.oView);
+					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.App)){
 						result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
 					}else if(result.oTarget && 'string' === typeof result.oTarget.sId){
 						result.oView.placeAt(result.oTarget.sId, sPosition);
