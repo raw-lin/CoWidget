@@ -181,7 +181,7 @@ class CoWidgetImpl {
 	static xhrView(option, container){
     	option = option ? option:{};
     	
-    	let withLogon = false;
+    	let withLogon = true;
     	let viewResult;
     	    	
     	if('mock.view.Shell' === option.viewMotion) {
@@ -219,7 +219,8 @@ class CoWidgetImpl {
     		viewResult = {
         			"viewName" : "view.SplitApp",
         			"viewModel" : {
-        				"withLogon" : withLogon
+        				"withLogon" : withLogon,
+            			"menus" : [{"menuName" : "List 1"}, {"menuName" : "List 2"}]
         			}
     		}
     	}
@@ -235,7 +236,7 @@ class CoWidgetImpl {
         		viewResult = {
             			"viewName" : "view.auth.Logon",
             			"viewModel" : {
-            				"userName" : '',
+            				"userName" : 'Test',
             				"password" : ''
             			}
         		}	

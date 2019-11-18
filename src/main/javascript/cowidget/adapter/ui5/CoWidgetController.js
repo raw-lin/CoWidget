@@ -41,7 +41,17 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 			let that = this;
 			that.LOG.debug('[_init] CoWidgetController call: ', that);
 			
-			
+//			let customData = that.getView().getCustomData();
+//			customData.forEach(function(element) {
+//				if('viewModel' === element.getKey()) {
+//					that.viewModel = element.getValue();
+//				}
+//			});
+//			
+//			var oModel = new JSONModel(that.viewModel ? that.viewModel: {});
+//			
+//			// Assign the model object to the SAPUI5 core
+//			that.getView().setModel(oModel);
 			
 //			let customData = that.getView().getCustomData();
 //			let viewModel;
@@ -52,14 +62,18 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 //			});
 		},
 		
-		setModel: function(viewModel) {
+		setViewModel: function(viewModel) {
 			let that = this;
-			that.model = new JSONModel(viewModel);
+			that.viewModel = viewModel;
+			
+			let oModel = new JSONModel(viewModel);
+			
+			that.getView().setModel(oModel);
 		},
 		
-		getModel: function() {
+		getViewModel: function() {
 			let that = this;
-			return that.model.oData;
+			return that.viewModel;
 		},	
 		
 		fireEvent: function(sEventId, oParameters, bAllowPreventDefault, bEnableEventBubbling) {
@@ -73,7 +87,9 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		createView: function(options, container) {
 			return CoWidget.createView(options, container);
 		},
-		
+		/**
+		 * @private
+		 */
 		xhrView: function(/* method */ options, container) {
 			let that = this;
 			

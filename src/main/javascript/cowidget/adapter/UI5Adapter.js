@@ -57,10 +57,10 @@ class UI5Adapter extends CoWidget {
 			
 			if(ViewClass) {
 				if(ViewClass === sap.m.Page) {
-					UI5Adapter.LOG.debug('[determineTarget] find App');
+					UI5Adapter.LOG.debug('[determineTarget] find App or SplitApp');
 					
-					if(that.isInstanceOf(container, sap.m.App)) {
-						if(container instanceof sap.m.App) {
+					if(that.isInstanceOf(container, sap.m.App) || that.isInstanceOf(container, sap.m.SplitApp)) {
+						if(container instanceof sap.m.App || container instanceof sap.m.SplitApp) {
 							retView = container;
 						}else if('function' === typeof container.getContent){
 							retView = container.getContent()[0];
@@ -232,8 +232,8 @@ class UI5Adapter extends CoWidget {
 						}
 					});
 					
-					if('function' === typeof oView.getController().setModel) {
-						oView.getController().setModel(viewModel);
+					if('function' === typeof oView.getController().setViewModel) {
+						oView.getController().setViewModel(viewModel);
 					}
 					
 					return { oView: oView, oTarget: oTarget};
@@ -244,6 +244,8 @@ class UI5Adapter extends CoWidget {
 						result.oTarget.setApp(result.oView);
 					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.App)){
 						result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
+					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.SplitApp)){
+						result.oTarget.addDetailPage(result.oView).to(result.oView.sId, 'fade');
 					}else if(result.oTarget && 'string' === typeof result.oTarget.sId){
 						result.oView.placeAt(result.oTarget.sId, sPosition);
 					}else if(result.oTarget && 'string' === typeof result.oTarget.id){
