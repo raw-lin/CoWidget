@@ -215,8 +215,8 @@ class UI5Adapter extends CoWidget {
 						oTarget = that.determineTarget(rTarget, that.container);
 					}
 					
-					if(oTarget && oTarget.setBusy) {
-						oTarget.setBusy(true);
+					if(oTarget) {
+						UI5Adapter.showBusyIndicator(oTarget);
 					}
 					
 					if(null === oTarget) {
@@ -265,12 +265,12 @@ class UI5Adapter extends CoWidget {
 					UI5Adapter.LOG.debug('[_placeAt] oView: ', result.oView);
 					UI5Adapter.LOG.debug('[_placeAt] oTarget: ', result.oTarget);
 					
-					if(result.oTarget && result.oTarget.setBusy) {
-						result.oTarget.setBusy(false);
+					if(result.oTarget) {
+						UI5Adapter.hideBusyIndicator(result.oTarget);
 					}
 				}).catch((error) => {
 					// try{
-						sap.ui.core.BusyIndicator.hide();
+					UI5Adapter.hideBusyIndicator();
 					// }catch(exception) {
 						
 					// }
@@ -289,5 +289,35 @@ class UI5Adapter extends CoWidget {
 		}
 		
 		return that; 
+	}
+
+	
+	static showBusyIndicator(oTarget) {
+		if(oTarget) {
+			if('function' === typeof oTarget.setBusyIndicatorDelay) {
+				//oTarget.setBusyIndicatorDelay(1);
+			}
+			if('function' === typeof oTarget.setBusy) {
+				oTarget.setBusy(true);
+			}
+		}else {
+			sap.ui.core.BusyIndicator.show(1);
+		}
+	}
+	
+	static hideBusyIndicator(oTarget) {
+		let timeoutID = window.setTimeout(function() {
+			
+			if(oTarget) {
+				if('function' === typeof oTarget.setBusyIndicatorDelay) {
+					//oTarget.setBusyIndicatorDelay(1);
+				}
+				if('function' === typeof oTarget.setBusy) {
+					oTarget.setBusy(false);
+				}
+			}else {
+				sap.ui.core.BusyIndicator.hide();
+			}
+		}, 1 * 1000);
 	}
 }

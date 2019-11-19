@@ -85,6 +85,7 @@ sap.ui.define([ 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sa
 		},		
 		
 		createView: function(options, container) {
+			//MessageBox.information("This functionality is not ready yet.", {title: "Aw, Snap!"});
 			return CoWidget.createView(options, container);
 		},
 		/**
