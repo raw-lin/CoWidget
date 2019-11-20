@@ -80,7 +80,7 @@ class UI5Adapter extends CoWidget {
 			}else {
 				if(container && 'function' === typeof container.byId) {
 					retView = container.byId(id);
-				}else {
+				}else if(false){
 					// retView = sap.ui.getCore().byId(id);
 					retView = jQuery(document.getElementById(id));
 					
@@ -91,15 +91,6 @@ class UI5Adapter extends CoWidget {
 						if(retView.context.id) {
 							retView = retView.context;
 						}
-						// UI5Adapter.LOG.debug('[determineTarget]
-						// retView.contents(): ', retView.contents());
-// retView.contents().forEach((element) => {
-// if(null === retViewTmp) {
-// retViewTmp = element;
-// }
-// });
-						
-						// retView = retViewTmp;
 					}
 				}
 			}
@@ -109,6 +100,17 @@ class UI5Adapter extends CoWidget {
 				if (container && 'function' === typeof container.getParent) {
 					UI5Adapter.LOG.debug('[determineTarget] call determineTarget.');
 					retView = that.determineTarget(id, container.getParent(), ViewClass);
+				}else {
+					retView = jQuery(document.getElementById(id));
+					
+					if(retView && 'function' === typeof retView.contents) {
+						let retViewTmp = null;
+						UI5Adapter.LOG.debug('[determineTarget] retView: ', retView);
+						
+						if(retView.context.id) {
+							retView = retView.context;
+						}
+					}
 				}
 			}
 			

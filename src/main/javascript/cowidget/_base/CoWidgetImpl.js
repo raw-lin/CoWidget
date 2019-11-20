@@ -136,7 +136,8 @@ class CoWidgetImpl {
     
     /**
 	 * @param option:
-	 *            viewName, viewMethod, container, viewMethod is mapping to server token.
+	 *            viewName, viewMethod, container, viewMethod is mapping to
+	 *            server token.
 	 */
     static create(option, container){
     	option = option ? option:{};
@@ -196,12 +197,12 @@ class CoWidgetImpl {
     	
     	if('mock.view.App' === option.viewMotion) {
     		if(true) {
-    			//option.viewMotion = 'mock.view.auth.Logon';
+    			// option.viewMotion = 'mock.view.auth.Logon';
     		}else {
-    			//option.viewMotion = 'mock.view.common.Reload';
+    			// option.viewMotion = 'mock.view.common.Reload';
     		}
     		
-    		//option.viewMotion = 'mock.view.App';
+    		// option.viewMotion = 'mock.view.App';
     		
     		if(option.viewMethod) {
     			
@@ -228,6 +229,15 @@ class CoWidgetImpl {
             				{
             					"menuName" : "Item 2",
             					"menuMotion" : "mock.auth.urseProfile"
+            				},
+            				{
+            					"menuName" : "Item 3",
+            					"menus" : [
+            						{
+	                					"menuName" : "Item 2",
+	                					"menuMotion" : "mock.auth.urseProfile"
+            						}
+            					]
             				}]
         			}
     		}
@@ -235,7 +245,7 @@ class CoWidgetImpl {
 
     	if('mock.view.auth.Logon' === option.viewMotion) {
     		
-    		if(option.viewMethod && 'onLogon' === option.viewMethod) {
+    		if(option.viewMethod && 'doLogon' === option.viewMethod) {
     			// chain to mock.common.Reload
         		viewResult = {
             			"viewName" : "view.common.Reload",
@@ -249,6 +259,28 @@ class CoWidgetImpl {
             			"viewModel" : {
             				"userName" : 'Test...',
             				"password" : ''
+            			}
+        		}	
+    		}
+        }
+    	
+    	if('mock.view.auth.UserProfile' === option.viewMotion) {
+    		
+    		if(option.viewMethod && 'doAccept' === option.viewMethod) {
+    			// chain to mock.common.Reload
+    			viewResult = {
+            			"viewName" : "view.auth.UserProfile",
+            			"viewModel" : {
+            				"userName" : 'changed',
+            				"email" : ''
+            			}
+        		}	
+    		}else {
+        		viewResult = {
+            			"viewName" : "view.auth.UserProfile",
+            			"viewModel" : {
+            				"userName" : 'Test...',
+            				"email" : ''
             			}
         		}	
     		}
