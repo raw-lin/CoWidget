@@ -207,13 +207,13 @@ class UI5Adapter extends CoWidget {
 					
 					if(true === that.isInstanceOf(oView, sap.m.Page)) {
 						UI5Adapter.LOG.debug('[_placeAt.then] oView is sap.m.Page');
-						// let oTarget to be App
 						oTarget = that.determineTarget(rTarget, that.container, sap.m.Page);
 					}else if(true === that.isInstanceOf(oView, sap.m.App)) {
 						UI5Adapter.LOG.debug('[_placeAt.then] oView is sap.m.App');
 						oTarget = that.determineTarget(rTarget, that.container, sap.m.App);
 						
 					}else {
+						UI5Adapter.LOG.debug('[_placeAt.then] oView is Panel');
 						oTarget = that.determineTarget(rTarget, that.container);
 					}
 					
@@ -244,8 +244,15 @@ class UI5Adapter extends CoWidget {
 					UI5Adapter.LOG.debug('[placeAt.then] append oView to oTarget: ', result.oTarget);
 					if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.Shell)){
 						result.oTarget.setApp(result.oView);
+						
 					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.App)){
-						result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
+						if(result.oView && that.isInstanceOf(result.oView, sap.m.Page)){
+							result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
+						}else{
+							// generate Page
+							result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
+						}
+						
 					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.SplitApp)){
 						result.oTarget.addDetailPage(result.oView).to(result.oView.sId, 'fade');
 					}else if(result.oTarget && 'string' === typeof result.oTarget.sId){
