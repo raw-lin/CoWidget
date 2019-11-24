@@ -228,7 +228,7 @@ class UI5Adapter extends CoWidget {
 					/* process viewModel */
 					let customData = oView.getCustomData();
 					let viewModel;
-					customData.forEach(function(element) {
+					customData.forEach((element) => {
 						if('viewModel' === element.getKey()) {
 							viewModel = element.getValue();
 						}
@@ -241,24 +241,27 @@ class UI5Adapter extends CoWidget {
 					return { oView: oView, oTarget: oTarget};
 				}).then((result) => {
 					/* append oView to oTarget */
-					UI5Adapter.LOG.debug('[placeAt.then] append oView to oTarget: ', result.oTarget);
+					UI5Adapter.LOG.debug('[_placeAt.then] append oView to oTarget: ', result.oTarget);
+					
 					if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.Shell)){
 						result.oTarget.setApp(result.oView);
 						
 					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.App)){
-						if(result.oView && that.isInstanceOf(result.oView, sap.m.Page)){
-							result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
-						}else{
-							// generate Page
-							result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
-						}
+						
+						result.oTarget.addPage(result.oView).to(result.oView.sId, 'fade');
 						
 					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.SplitApp)){
 						result.oTarget.addDetailPage(result.oView).to(result.oView.sId, 'fade');
+						
+					}else if(result.oTarget && that.isInstanceOf(result.oTarget, sap.m.Page)){
+						result.oTarget.removeAllContent();
+						result.oTarget.addContent(result.oView);
 					}else if(result.oTarget && 'string' === typeof result.oTarget.sId){
 						result.oView.placeAt(result.oTarget.sId, sPosition);
+						
 					}else if(result.oTarget && 'string' === typeof result.oTarget.id){
 						result.oView.placeAt(result.oTarget.id, sPosition);
+						
 					}else if(result.oTarget && 'string' === typeof result.oTarget){
 						result.oView.placeAt(result.oTarget, sPosition);
 					}else {

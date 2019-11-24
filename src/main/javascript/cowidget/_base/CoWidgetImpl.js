@@ -6,6 +6,7 @@
  * development.
  */
 class CoWidgetImpl {
+	
 	static get LOG() {
 		return cowidget.common.LogFactory.getLog(CoWidgetImpl);
 	}
@@ -182,7 +183,7 @@ class CoWidgetImpl {
 	static xhrView(option, container){
     	option = option ? option:{};
     	
-    	let withLogon = false;
+    	let withLogon = true;
     	let viewResult;
     	    	
     	if('mock.view.Shell' === option.viewMotion) {
@@ -234,11 +235,39 @@ class CoWidgetImpl {
             					"menuName" : "Item 3",
             					"menus" : [
             						{
-	                					"menuName" : "Item 2",
+	                					"menuName" : "Item 3.1",
+	                					"menuMotion" : "mock.auth.urseProfile"
+            						},
+            						{
+	                					"menuName" : "Item 3.2",
 	                					"menuMotion" : "mock.auth.urseProfile"
             						}
             					]
-            				}]
+            				},
+            				{
+            					"menuName" : "Item 4",
+            					"menus" : [
+            						{
+	                					"menuName" : "Item 4.1",
+	                					"menuMotion" : "mock.auth.urseProfile"
+            						},
+            						{
+	                					"menuName" : "Item 4.2",
+	                					"menus" : [
+	                						{
+	    	                					"menuName" : "Item 4.2.1",
+	    	                					"menuMotion" : "mock.auth.urseProfile"
+	                						},
+	                						{
+	    	                					"menuName" : "Item 4.2.2",
+	    	                					"menuMotion" : "mock.auth.urseProfile"
+	                						}
+	                					]
+            						}
+            					]
+            				}
+            				
+            			]
         			}
     		}
     	}
@@ -246,6 +275,14 @@ class CoWidgetImpl {
     	if('mock.view.auth.Logon' === option.viewMotion) {
     		
     		if(option.viewMethod && 'doLogon' === option.viewMethod) {
+    			// chain to mock.common.Reload
+        		viewResult = {
+            			"viewName" : "view.common.Reload",
+                			"viewModel" : {
+                				"nextUrl" : './ui5.html'
+                			}
+        		}
+    		}else if(option.viewMethod && 'doLogout' === option.viewMethod) {
     			// chain to mock.common.Reload
         		viewResult = {
             			"viewName" : "view.common.Reload",
@@ -290,6 +327,15 @@ class CoWidgetImpl {
     		viewResult = {
         			"viewName" : "view.main.Main"
     		}	
+    	}
+    	
+    	if('mock.view.common.Reload' === option.viewMotion) {
+    		viewResult = {
+        			"viewName" : "view.common.Reload",
+            			"viewModel" : {
+            				"nextUrl" : './ui5.html'
+            			}
+    		}
     	}
     	
     	CoWidgetImpl.LOG.debug('[CoWidgetImpl.xhrView] viewResult: ', viewResult);
